@@ -1,0 +1,300 @@
+!<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AfriArena - La plateforme gaming africaine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111217;
+    --card: #191A21;
+    --card2: #15161C;
+    --orange: #FF6B35;
+    --vert: #B8F27C;
+    --bleu: #78B7FF;
+    --violet: #CC8CFF;
+    --texte: #F5F5F5;
+    --texte2: rgba(245,245,245,0.6);
+    --bordure: rgba(255,255,255,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--texte);
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1.5;
+  }
+  .mono { font-family: 'DM Mono', monospace; }
+
+  /* NAV */
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(17,18,23,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--bordure);
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 20px;
+  }
+  .logo { display:flex; align-items:center; gap:8px; }
+  .logo-icone {
+    width:32px; height:32px; background:var(--orange); border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:16px;
+  }
+  .logo-texte { font-weight:700; font-size:18px; }
+  .logo-texte span { color: var(--orange); }
+  .logo-sub { font-size:9px; letter-spacing:1px; color:var(--texte2); font-family:'DM Mono'; }
+  .point-vert { width:7px; height:7px; background:var(--vert); border-radius:50%; display:inline-block; margin-left:4px; }
+  .liens-nav { display:flex; gap:22px; font-size:14px; }
+  .liens-nav a { color:var(--texte2); text-decoration:none; }
+  .liens-nav a.actif { color:var(--texte); border-bottom:2px solid var(--orange); padding-bottom:4px; }
+
+  /* HERO */
+  .hero { padding: 50px 20px 30px; text-align:center; }
+  .badge-live {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--card); border:1px solid var(--bordure); border-radius:20px;
+    padding:6px 14px; font-size:12px; font-family:'DM Mono'; color:var(--texte2);
+    margin-bottom:20px;
+  }
+  .hero h1 { font-size:36px; font-weight:700; line-height:1.15; margin-bottom:16px; }
+  .hero h1 .accent { color: var(--orange); }
+  .hero p { color:var(--texte2); font-size:15px; max-width:480px; margin:0 auto 24px; }
+  .btns-hero { display:flex; flex-direction:column; gap:12px; max-width:320px; margin:0 auto; }
+  .btn {
+    display:block; text-decoration:none; text-align:center;
+    padding:14px; border-radius:12px; font-weight:600; font-size:15px;
+  }
+  .btn-primaire { background:var(--orange); color:#111; }
+  .btn-secondaire { background:transparent; border:1px solid var(--bordure); color:var(--texte); }
+
+  .stats-hero { display:flex; justify-content:center; gap:24px; margin-top:36px; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat b { display:block; font-size:20px; color:var(--vert); }
+  .stat span { font-size:11px; color:var(--texte2); font-family:'DM Mono'; }
+
+  /* SECTIONS GENERALES */
+  section { padding: 40px 20px; }
+  .titre-section { font-size:24px; font-weight:700; text-align:center; margin-bottom:8px; }
+  .soustitre-section { text-align:center; color:var(--texte2); font-size:14px; margin-bottom:28px; }
+
+  /* AVANTAGES */
+  .grille-avantages { display:flex; flex-direction:column; gap:14px; }
+  .carte-avantage {
+    background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:20px;
+  }
+  .carte-avantage h3 { font-size:16px; margin-bottom:6px; color:var(--bleu); }
+  .carte-avantage p { font-size:13px; color:var(--texte2); }
+
+  /* JEUX */
+  .grille-jeux { display:flex; flex-direction:column; gap:14px; }
+  .carte-jeu {
+    background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:18px;
+    display:flex; align-items:center; gap:14px; text-decoration:none; color:var(--texte);
+  }
+  .icone-jeu {
+    width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-family:'DM Mono'; font-size:14px; flex-shrink:0;
+  }
+  .infos-jeu { flex:1; }
+  .infos-jeu h4 { font-size:15px; margin-bottom:2px; }
+  .infos-jeu span { font-size:12px; color:var(--texte2); font-family:'DM Mono'; }
+  .compteur-jeu { font-size:12px; font-family:'DM Mono'; padding:4px 10px; border-radius:10px; }
+
+  /* RESEAU AFRICAIN */
+  .villes { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .ville {
+    padding:10px 16px; border-radius:20px; font-size:13px; font-family:'DM Mono';
+    border:1px solid var(--bordure);
+  }
+  .ville-active { background:var(--vert); color:#111; font-weight:600; }
+  .ville-bientot { color:var(--texte2); }
+
+  /* CTA FINAL */
+  .cta-finale {
+    background:linear-gradient(135deg, var(--card), var(--card2));
+    border:1px solid var(--bordure); border-radius:20px; padding:36px 20px; text-align:center;
+  }
+  .cta-finale h2 { font-size:22px; margin-bottom:20px; }
+
+  footer {
+    padding:30px 20px; border-top:1px solid var(--bordure); text-align:center;
+    color:var(--texte2); font-size:12px;
+  }
+  footer .liens-footer { display:flex; justify-content:center; gap:16px; margin:14px 0; }
+  footer a { color:var(--texte2); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icone">🎮</div>
+    <div>
+      <div class="logo-texte">Afri<span>Arena</span><span class="point-vert"></span></div>
+      <div class="logo-sub">PLAY TOGETHER</div>
+    </div>
+  </div>
+  <div class="liens-nav">
+    <a href="index.html" class="actif">Accueil</a>
+    <a href="communaute.html">Communauté</a>
+    <a href="chat.html">Discussion</a>
+    <a href="tournois.html">Tournois</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge-live"><span class="point-vert"></span> LA PLATEFORME GAMING AFRICAINE</div>
+  <h1>Joue fort.<br>Rassemble<br><span class="accent">ta team.</span></h1>
+  <p>AfriArena réunit les joueurs du Togo et de toute l'Afrique autour de leurs jeux préférés. Trouve tes coéquipiers, construis ta réputation et prépare-toi pour les prochains tournois.</p>
+  <div class="btns-hero">
+    <a href="communaute.html" class="btn btn-primaire">Explorer la communauté</a>
+    <a href="tournois.html" class="btn btn-secondaire">Voir les tournois</a>
+  </div>
+  <div class="stats-hero">
+    <div class="stat"><b id="nbTotal">0</b><span>JOUEURS INSCRITS</span></div>
+    <div class="stat"><b id="nbEnLigne">0</b><span>EN LIGNE MAINTENANT</span></div>
+    <div class="stat"><b>6</b><span>JEUX DISPONIBLES</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="titre-section">Pourquoi AfriArena</div>
+  <div class="grille-avantages">
+    <div class="carte-avantage">
+      <h3>Ta communauté</h3>
+      <p>Des joueurs qui parlent ta langue et partagent ton niveau.</p>
+    </div>
+    <div class="carte-avantage">
+      <h3>Des matchs rapides</h3>
+      <p>Forme une équipe ou trouve un adversaire en quelques secondes.</p>
+    </div>
+    <div class="carte-avantage">
+      <h3>Ton moment arrive</h3>
+      <p>Classements, tournois et récompenses arrivent bientôt.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="titre-section">Choisis ton jeu</div>
+  <div class="soustitre-section">Chaque jeu a son propre hub avec ses joueurs en ligne</div>
+  <div class="grille-jeux" id="listeJeux">
+    <a href="freefire.html" class="carte-jeu">
+      <div class="icone-jeu" style="background:#FF6B35;color:#111">FF</div>
+      <div class="infos-jeu"><h4>Free Fire</h4><span>Battle Royale</span></div>
+      <div class="compteur-jeu" style="background:rgba(255,107,53,0.15);color:#FF6B35" id="compteurFreeFire">0 en ligne</div>
+    </a>
+    <a href="efootball.html" class="carte-jeu">
+      <div class="icone-jeu" style="background:#78B7FF;color:#111">EF</div>
+      <div class="infos-jeu"><h4>eFootball</h4><span>Football</span></div>
+      <div class="compteur-jeu" style="background:rgba(120,183,255,0.15);color:#78B7FF" id="compteurEfootball">0 en ligne</div>
+    </a>
+    <a href="fcmobile.html" class="carte-jeu">
+      <div class="icone-jeu" style="background:var(--vert);color:#111">FC</div>
+      <div class="infos-jeu"><h4>FC Mobile</h4><span>Football</span></div>
+      <div class="compteur-jeu" style="background:rgba(184,242,124,0.15);color:var(--vert)" id="compteurFcmobile">0 en ligne</div>
+    </a>
+    <a href="bloodstrike.html" class="carte-jeu">
+      <div class="icone-jeu" style="background:var(--violet);color:#111">BS</div>
+      <div class="infos-jeu"><h4>Blood Strike</h4><span>PC Gaming</span></div>
+      <div class="compteur-jeu" style="background:rgba(204,140,255,0.15);color:var(--violet)" id="compteurBluestacks">0 en ligne</div>
+    </a>
+    <a href="pubg.html" class="carte-jeu">
+      <div class="icone-jeu" style="background:#f39c12;color:#111">PU</div>
+      <div class="infos-jeu"><h4>PUBG</h4><span>Battle Royale</span></div>
+      <div class="compteur-jeu" style="background:rgba(243,156,18,0.15);color:#f39c12" id="compteurPubg">0 en ligne</div>
+    </a>
+    <a href="callofduty.html" class="carte-jeu">
+      <div class="icone-jeu" style="background:#e94560;color:#111">CD</div>
+      <div class="infos-jeu"><h4>Call of Duty</h4><span>FPS</span></div>
+      <div class="compteur-jeu" style="background:rgba(233,69,96,0.15);color:#e94560" id="compteurCallofduty">0 en ligne</div>
+    </a>
+  </div>
+</section>
+
+<section>
+  <div class="titre-section">On commence au Togo.</div>
+  <div class="soustitre-section">On grandit ensemble.</div>
+  <div class="villes">
+    <div class="ville ville-active">Lomé — actif</div>
+    <div class="ville ville-bientot">Accra — bientôt</div>
+    <div class="ville ville-bientot">Cotonou — bientôt</div>
+    <div class="ville ville-bientot">Abidjan — bientôt</div>
+  </div>
+</section>
+  <section>
+  <div class="contact" style="background:linear-gradient(135deg, var(--card), var(--card2)); border:1px solid var(--bordure); border-radius:16px; padding:24px; text-align:center;">
+    <h3 style="margin-bottom:8px;">Tu cherches un adversaire maintenant ?</h3>
+    <p style="color:var(--texte2); font-size:13px; margin-bottom:16px;">Rejoins le groupe WhatsApp AfriArena pour rencontrer des joueurs, proposer un match et rester informé.</p>
+    <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5?s=cl&p=a&mlu=4&ilr=4" target="_blank" rel="noopener noreferrer" style="display:inline-block; background:#25D366; color:#fff; text-decoration:none; padding:13px 24px; border-radius:10px; font-weight:600;">Rejoindre le groupe WhatsApp</a>
+  </div>
+  </section>
+
+<section>
+  <div class="cta-finale">
+    <h2>Ta prochaine squad est déjà là.</h2>
+    <a href="communaute.html" class="btn btn-primaire" style="display:inline-block;max-width:260px;margin:0 auto;">Je rejoins AfriArena</a>
+  </div>
+</section>
+
+<footer>
+  <div class="logo-texte">Afri<span style="color:var(--orange)">Arena</span></div>
+  <p>La maison des gamers africains.</p>
+  <div class="liens-footer">
+    <a href="communaute.html">Communauté</a>
+    <a href="tournois.html">Tournois</a>
+  </div>
+  <p>AfriArena - Top - 2026</p>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDX1XYwFhSYoloOwEbFWQXTZZoPRltEkec",
+    authDomain: "gaming-togo.firebaseapp.com",
+    projectId: "gaming-togo",
+    storageBucket: "gaming-togo.firebasestorage.app",
+    messagingSenderId: "901018030357",
+    appId: "1:901018030357:web:505a5c7dfe73838009d91c"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Compteur total de joueurs inscrits (toutes plateformes/jeux confondus)
+  onSnapshot(collection(db, "joueurs"), (snap) => {
+    document.getElementById("nbTotal").textContent = snap.size;
+  });
+
+  // Compteur "en ligne" global : présence de moins de 2 minutes
+  onSnapshot(collection(db, "presence"), (snap) => {
+    const maintenant = Date.now();
+    let enLigne = 0;
+    snap.forEach(doc => {
+      if (maintenant - doc.data().derniereActivite < 120000) enLigne++;
+    });
+    document.getElementById("nbEnLigne").textContent = enLigne;
+  });
+
+  // Compteur par jeu : on filtre la collection "joueurs" avec where("jeu","==",...)
+  const jeux = [
+    { nom: "Free Fire", id: "compteurFreeFire" },
+    { nom: "eFootball", id: "compteurEfootball" },
+    { nom: "FC Mobile", id: "compteurFcmobile" },
+    { nom: "BlueStacks", id: "compteurBluestacks" },
+    { nom: "PUBG", id: "compteurPubg" },
+    { nom: "Call of Duty", id: "compteurCallofduty" }
+  ];
+  jeux.forEach(j => {
+    const q = query(collection(db, "joueurs"), where("jeu", "==", j.nom));
+    onSnapshot(q, (snap) => {
+      document.getElementById(j.id).textContent = snap.size + " inscrits";
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call of Duty - AfriArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111217; --card: #191A21; --card2: #15161C;
+    --orange: #FF6B35; --vert: #B8F27C; --bleu: #78B7FF; --violet: #CC8CFF;
+    --texte: #F5F5F5; --texte2: rgba(245,245,245,0.6); --bordure: rgba(255,255,255,0.08);
+    --accentJeu: #e94560;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: var(--bg); color: var(--texte); font-family:'Space Grotesk',sans-serif; line-height:1.5; }
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(17,18,23,0.85); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--bordure);
+    display:flex; align-items:center; justify-content:space-between; padding:14px 20px;
+  }
+  .logo { display:flex; align-items:center; gap:8px; }
+  .logo-icone { width:32px; height:32px; background:var(--orange); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .logo-texte { font-weight:700; font-size:18px; }
+  .logo-texte span { color: var(--orange); }
+  .logo-sub { font-size:9px; letter-spacing:1px; color:var(--texte2); font-family:'DM Mono'; }
+  .point-vert { width:7px; height:7px; background:var(--vert); border-radius:50%; display:inline-block; margin-left:4px; }
+  .liens-nav { display:flex; gap:22px; font-size:14px; }
+  .liens-nav a { color:var(--texte2); text-decoration:none; }
+  .liens-nav a.actif { color:var(--texte); border-bottom:2px solid var(--orange); padding-bottom:4px; }
+
+  .hero-jeu { padding:40px 20px 24px; text-align:center; }
+  .icone-hero {
+    width:64px; height:64px; border-radius:16px; background:var(--accentJeu); color:#111;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:22px;
+    margin:0 auto 16px; font-family:'DM Mono';
+  }
+  .hero-jeu h1 { font-size:26px; margin-bottom:6px; }
+  .hero-jeu p { color:var(--texte2); font-size:14px; max-width:400px; margin:0 auto; }
+
+  .stats-jeu { display:flex; justify-content:center; gap:20px; margin-top:24px; flex-wrap:wrap; }
+  .stat { background:var(--card); border:1px solid var(--bordure); border-radius:14px; padding:14px 22px; text-align:center; }
+  .stat b { display:block; font-size:20px; color:var(--accentJeu); }
+  .stat span { font-size:11px; color:var(--texte2); font-family:'DM Mono'; }
+
+  section { padding:30px 20px; }
+  .titre-section { font-size:20px; font-weight:700; margin-bottom:16px; }
+
+  input, select {
+    width:100%; padding:12px; margin-bottom:12px; border-radius:10px;
+    background:var(--card); border:1px solid var(--bordure); color:var(--texte); font-family:'Space Grotesk';
+  }
+  input::placeholder { color:var(--texte2); }
+  button, .btn {
+    display:block; width:100%; padding:13px; border:none; border-radius:10px;
+    font-weight:600; font-size:14px; text-align:center; text-decoration:none; cursor:pointer;
+  }
+  .btn-inscrire { background:var(--accentJeu); color:#111; margin-bottom:10px; }
+  .btn-whatsapp { background:#25D366; color:#fff; margin-top:8px; }
+  .btn-supprimer { background:transparent; border:1px solid var(--bordure); color:var(--texte2); font-size:12px; padding:8px; margin-top:6px; }
+
+  .carte-joueur { background:var(--card); border:1px solid var(--bordure); border-left:3px solid var(--accentJeu); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .carte-joueur strong { font-size:16px; }
+  .badge-info { display:inline-block; background:rgba(233,69,96,0.12); color:var(--accentJeu); font-size:11px; font-family:'DM Mono'; padding:3px 10px; border-radius:8px; margin:6px 0; }
+
+  .contact { background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:20px; text-align:center; margin-top:10px; }
+  .admin { text-align:center; margin-top:20px; }
+  footer { padding:24px 20px; border-top:1px solid var(--bordure); text-align:center; color:var(--texte2); font-size:12px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icone">🎮</div>
+    <div>
+      <div class="logo-texte">Afri<span>Arena</span><span class="point-vert"></span></div>
+      <div class="logo-sub">PLAY TOGETHER</div>
+    </div>
+  </div>
+  <div class="liens-nav">
+    <a href="index.html">Accueil</a>
+    <a href="communaute.html" class="actif">Communauté</a>
+    <a href="chat.html">Discussion</a>
+    <a href="tournois.html">Tournois</a>
+  </div>
+</nav>
+
+<div class="hero-jeu">
+  <div class="icone-hero">CD</div>
+  <h1>Call of Duty Togo</h1>
+  <p>Trouve des adversaires, défie la communauté et prépare-toi pour les tournois Call of Duty.</p>
+  <div class="stats-jeu">
+    <div class="stat"><b id="nbInscrits">0</b><span>INSCRITS</span></div>
+    <div class="stat"><b id="nbEnLigne">0</b><span>EN LIGNE</span></div>
+  </div>
+</div>
+
+<section>
+  <div class="titre-section">Rejoindre le hub Call of Duty</div>
+  <input type="text" id="pseudo" placeholder="Ton pseudo">
+  <input type="text" id="telephone" placeholder="Ton numéro WhatsApp (ex: 90123456)">
+  <select id="plateforme">
+    <option value="Mobile">Mobile</option>
+    <option value="PC">PC (émulateur)</option>
+  </select>
+  <select id="niveau">
+    <option value="Débutant">Débutant</option>
+    <option value="Intermédiaire">Intermédiaire</option>
+    <option value="Pro">Pro</option>
+  </select>
+  <button class="btn-inscrire" onclick="inscrire()">S'inscrire sur Call of Duty</button>
+</section>
+
+<section>
+  <div class="titre-section">Joueurs Call of Duty</div>
+  <div id="listeJoueurs"></div>
+</section>
+
+<section>
+  <div class="contact">
+    <h3>Une question ?</h3>
+    <a class="btn btn-whatsapp" href="https://wa.me/22870762545" target="_blank">Contacter AfriArena</a>
+  </div>
+  <div class="admin">
+    <button class="btn-supprimer" onclick="toutEffacer()">Effacer les joueurs Call of Duty (admin)</button>
+  </div>
+</section>
+
+<footer>
+  <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5" target="_blank" rel="noopener noreferrer" style="color:#25D366; text-decoration:none; font-weight:600;">📱 Rejoindre le groupe WhatsApp</a>
+  <p style="margin-top:10px;">AfriArena - Lomé - 2026</p>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc,
+    setDoc, getDocs, query, where
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDX1XYwFhSYoloOwEbFWQXTZZoPRltEkec",
+    authDomain: "gaming-togo.firebaseapp.com",
+    projectId: "gaming-togo",
+    storageBucket: "gaming-togo.firebasestorage.app",
+    messagingSenderId: "901018030357",
+    appId: "1:901018030357:web:505a5c7dfe73838009d91c"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const NOM_JEU = "Call of Duty";
+
+  window.inscrire = async function () {
+    const pseudo = document.getElementById("pseudo").value.trim();
+    let telephone = document.getElementById("telephone").value.trim();
+    const plateforme = document.getElementById("plateforme").value;
+    const niveau = document.getElementById("niveau").value;
+
+    if (pseudo === "" || telephone === "") { alert("Remplis au moins le pseudo et le téléphone !"); return; }
+
+    telephone = telephone.replace(/[^0-9]/g, "");
+    if (telephone.length === 8) telephone = "228" + telephone;
+
+    await addDoc(collection(db, "joueurs"), {
+      pseudo, telephone, jeu: NOM_JEU, plateforme, niveau,
+      timestamp: new Date().toISOString()
+    });
+
+    document.getElementById("pseudo").value = "";
+    document.getElementById("telephone").value = "";
+  };
+
+  const qJoueurs = query(collection(db, "joueurs"), where("jeu", "==", NOM_JEU));
+  const listeDiv = document.getElementById("listeJoueurs");
+  onSnapshot(qJoueurs, (snapshot) => {
+    listeDiv.innerHTML = "";
+    document.getElementById("nbInscrits").textContent = snapshot.size;
+    snapshot.forEach((docJoueur) => {
+      const j = docJoueur.data();
+      const message = encodeURIComponent("Salut " + j.pseudo + ", je te défie sur " + NOM_JEU + " via AfriArena !");
+      const carte = document.createElement("div");
+      carte.className = "carte-joueur";
+      carte.innerHTML =
+        "<strong>" + j.pseudo + "</strong><br>" +
+        "<span class='badge-info'>" + j.plateforme + " - " + j.niveau + "</span><br>" +
+        "<a class='btn btn-whatsapp' href='https://wa.me/" + j.telephone + "?text=" + message + "' target='_blank'>Défier sur WhatsApp</a>" +
+        "<button class='btn-supprimer' onclick=\"supprimerJoueur('" + docJoueur.id + "')\">Supprimer</button>";
+      listeDiv.appendChild(carte);
+    });
+  });
+
+  window.supprimerJoueur = async function (id) { await deleteDoc(doc(db, "joueurs", id)); };
+
+  window.toutEffacer = async function () {
+    const motDePasse = prompt("Mot de passe admin :");
+    if (motDePasse !== "admin2024") { alert("Mot de passe incorrect."); return; }
+    const snapshot = await getDocs(qJoueurs);
+    for (const docJoueur of snapshot.docs) { await deleteDoc(doc(db, "joueurs", docJoueur.id)); }
+  };
+
+  let monId = localStorage.getItem("afriArenaVisiteurId");
+  if (!monId) { monId = "visiteur-" + Math.random().toString(36).substring(2, 10); localStorage.setItem("afriArenaVisiteurId", monId); }
+
+  async function signalerPresence() { await setDoc(doc(db, "presence", monId), { derniereActivite: Date.now(), jeu: NOM_JEU }); }
+  signalerPresence();
+  setInterval(signalerPresence, 15000);
+
+  async function compterEnLigne() {
+    const qPresence = query(collection(db, "presence"), where("jeu", "==", NOM_JEU));
+    const snapshot = await getDocs(qPresence);
+    let compte = 0; const maintenant = Date.now();
+    snapshot.forEach((d) => { if (maintenant - d.data().derniereActivite < 60000) compte++; });
+    document.getElementById("nbEnLigne").textContent = compte;
+  }
+  compterEnLigne();
+  setInterval(compterEnLigne, 15000);
+</script>
+
+</body>
+</html>

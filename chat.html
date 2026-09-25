@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discussion - AfriArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111217; --card: #191A21; --card2: #15161C;
+    --orange: #FF6B35; --vert: #B8F27C; --bleu: #78B7FF; --violet: #CC8CFF;
+    --texte: #F5F5F5; --texte2: rgba(245,245,245,0.6); --bordure: rgba(255,255,255,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body { background: var(--bg); color: var(--texte); font-family:'Space Grotesk',sans-serif; line-height:1.5; display:flex; flex-direction:column; }
+
+  nav {
+    position: sticky; top:0; z-index:100;
+    background: rgba(17,18,23,0.85); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--bordure);
+    display:flex; align-items:center; justify-content:space-between; padding:14px 20px;
+  }
+  .logo { display:flex; align-items:center; gap:8px; }
+  .logo-icone { width:32px; height:32px; background:var(--orange); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .logo-texte { font-weight:700; font-size:18px; }
+  .logo-texte span { color: var(--orange); }
+  .logo-sub { font-size:9px; letter-spacing:1px; color:var(--texte2); font-family:'DM Mono'; }
+  .point-vert { width:7px; height:7px; background:var(--vert); border-radius:50%; display:inline-block; margin-left:4px; }
+  .liens-nav { display:flex; gap:18px; font-size:13px; }
+  .liens-nav a { color:var(--texte2); text-decoration:none; }
+  .liens-nav a.actif { color:var(--texte); border-bottom:2px solid var(--orange); padding-bottom:4px; }
+
+  .entete-chat { padding:16px 20px; text-align:center; border-bottom:1px solid var(--bordure); }
+  .entete-chat h1 { font-size:18px; }
+  .entete-chat p { font-size:12px; color:var(--texte2); font-family:'DM Mono'; }
+
+  #zoneMessages {
+    flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:10px;
+  }
+  .bulle {
+    background:var(--card); border:1px solid var(--bordure); border-radius:14px;
+    padding:10px 14px; max-width:80%; align-self:flex-start;
+  }
+  .bulle .pseudo { font-size:12px; font-weight:700; color:var(--bleu); margin-bottom:3px; }
+  .bulle .texte { font-size:14px; word-wrap:break-word; }
+  .bulle .heure { font-size:10px; color:var(--texte2); font-family:'DM Mono'; margin-top:4px; text-align:right; }
+  .bulle-moi { align-self:flex-end; border-color:var(--orange); }
+  .bulle-moi .pseudo { color:var(--orange); }
+
+  form#formEnvoi {
+    display:flex; gap:8px; padding:14px 20px; border-top:1px solid var(--bordure);
+    background:var(--card2); position:sticky; bottom:0;
+  }
+  #champMessage {
+    flex:1; padding:12px; border-radius:24px; border:1px solid var(--bordure);
+    background:var(--card); color:var(--texte); font-family:'Space Grotesk';
+  }
+  #champMessage::placeholder { color:var(--texte2); }
+  #boutonEnvoyer {
+    background:var(--orange); color:#111; border:none; border-radius:24px;
+    padding:0 20px; font-weight:700; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icone">🎮</div>
+    <div>
+      <div class="logo-texte">Afri<span>Arena</span><span class="point-vert"></span></div>
+      <div class="logo-sub">PLAY TOGETHER</div>
+    </div>
+  </div>
+  <div class="liens-nav">
+    <a href="index.html">Accueil</a>
+    <a href="communaute.html">Communauté</a>
+    <a href="chat.html" class="actif">Discussion</a>
+    <a href="tournois.html">Tournois</a>
+  </div>
+</nav>
+
+<div class="entete-chat">
+  <h1>💬 Discussion générale</h1>
+  <p>Sois respectueux, fair-play, pas d'insultes ni de spam</p>
+</div>
+
+<div id="zoneMessages"></div>
+
+<form id="formEnvoi">
+  <input type="text" id="champMessage" placeholder="Écris un message..." autocomplete="off" required>
+  <button type="submit" id="boutonEnvoyer">Envoyer</button>
+</form>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, onSnapshot, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDX1XYwFhSYoloOwEbFWQXTZZoPRltEkec",
+    authDomain: "gaming-togo.firebaseapp.com",
+    projectId: "gaming-togo",
+    storageBucket: "gaming-togo.firebasestorage.app",
+    messagingSenderId: "901018030357",
+    appId: "1:901018030357:web:505a5c7dfe73838009d91c"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ===== Pseudo mémorisé sur cet appareil =====
+  let monPseudo = localStorage.getItem("afriArenaPseudoChat");
+  if (!monPseudo) {
+    monPseudo = prompt("Choisis ton pseudo pour le chat :") || "Anonyme";
+    localStorage.setItem("afriArenaPseudoChat", monPseudo);
+  }
+
+  // ===== Affichage des messages, en direct, triés par heure =====
+  const zoneMessages = document.getElementById("zoneMessages");
+  const qMessages = query(collection(db, "messages_chat"), orderBy("timestamp", "asc"));
+
+  onSnapshot(qMessages, (snapshot) => {
+    zoneMessages.innerHTML = "";
+    snapshot.forEach((docMsg) => {
+      const m = docMsg.data();
+      const heure = new Date(m.timestamp).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+      const bulle = document.createElement("div");
+      bulle.className = "bulle" + (m.pseudo === monPseudo ? " bulle-moi" : "");
+      bulle.innerHTML =
+        "<div class='pseudo'>" + m.pseudo + "</div>" +
+        "<div class='texte'></div>" +
+        "<div class='heure'>" + heure + "</div>";
+      bulle.querySelector(".texte").textContent = m.texte; // textContent évite les balises HTML piégées
+      zoneMessages.appendChild(bulle);
+    });
+    // On descend automatiquement vers le dernier message
+    zoneMessages.scrollTop = zoneMessages.scrollHeight;
+  });
+
+  // ===== Envoi d'un message =====
+  document.getElementById("formEnvoi").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const champ = document.getElementById("champMessage");
+    const texte = champ.value.trim();
+    if (texte === "") return;
+
+    await addDoc(collection(db, "messages_chat"), {
+      pseudo: monPseudo,
+      texte: texte,
+      timestamp: Date.now()
+    });
+
+    champ.value = "";
+  });
+</script>
+
+</body>
+</html>
