@@ -65,7 +65,8 @@
   .btn-supprimer { background:transparent; border:1px solid var(--bordure); color:var(--texte2); font-size:12px; padding:8px; margin-top:6px; }
 
   .carte-joueur { background:var(--card); border:1px solid var(--bordure); border-left:3px solid var(--accentJeu); border-radius:12px; padding:16px; margin-bottom:12px; }
-  .carte-joueur strong { font-size:16px; }
+  .carte-joueur strong { font-size:14px; }
+.id-jeu { font-size:11px; color:var(--texte2); font-family:'DM Mono'; display:block; margin-bottom:8px; }
   .badge-info { display:inline-block; background:rgba(233,69,96,0.12); color:var(--accentJeu); font-size:11px; font-family:'DM Mono'; padding:3px 10px; border-radius:8px; margin:6px 0; }
 
   .contact { background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:20px; text-align:center; margin-top:10px; }
@@ -104,6 +105,7 @@
 <section>
   <div class="titre-section">Rejoindre le hub Call of Duty</div>
   <input type="text" id="pseudo" placeholder="Ton pseudo">
+<input type="text" id="idJeu" placeholder="Ton ID de jeu (ex: 123456789)">
   <input type="text" id="telephone" placeholder="Ton numéro WhatsApp (ex: 90123456)">
   <select id="plateforme">
     <option value="Mobile">Mobile</option>
@@ -159,6 +161,7 @@
 
   window.inscrire = async function () {
     const pseudo = document.getElementById("pseudo").value.trim();
+    const idJeu = document.getElementById("idJeu").value.trim();
     let telephone = document.getElementById("telephone").value.trim();
     const plateforme = document.getElementById("plateforme").value;
     const niveau = document.getElementById("niveau").value;
@@ -168,8 +171,8 @@
     telephone = telephone.replace(/[^0-9]/g, "");
     if (telephone.length === 8) telephone = "228" + telephone;
 
-    await addDoc(collection(db, "joueurs"), {
-      pseudo, telephone, jeu: NOM_JEU, plateforme, niveau,
+  await addDoc(collection(db, "joueurs"), {
+      pseudo, telephone, idJeu, jeu: NOM_JEU, plateforme, niveau,
       timestamp: new Date().toISOString()
     });
 
@@ -189,6 +192,7 @@
       carte.className = "carte-joueur";
       carte.innerHTML =
         "<strong>" + j.pseudo + "</strong><br>" +
+        (j.idJeu ? "<span class='id-jeu'>ID: " + j.idJeu + "</span>" : "") +
         "<span class='badge-info'>" + j.plateforme + " - " + j.niveau + "</span><br>" +
         "<a class='btn btn-whatsapp' href='https://wa.me/" + j.telephone + "?text=" + message + "' target='_blank'>Défier sur WhatsApp</a>" +
         "<button class='btn-supprimer' onclick=\"supprimerJoueur('" + docJoueur.id + "')\">Supprimer</button>";
