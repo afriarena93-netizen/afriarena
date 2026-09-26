@@ -1,8 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF6B35">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Discussion - AfriArena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -45,9 +49,14 @@
   }
   .bulle .pseudo { font-size:12px; font-weight:700; color:var(--bleu); margin-bottom:3px; }
   .bulle .texte { font-size:14px; word-wrap:break-word; }
-  .bulle .heure { font-size:10px; color:var(--texte2); font-family:'DM Mono'; margin-top:4px; text-align:right; }
+  .bulle .bas-bulle { display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+  .bulle .heure { font-size:10px; color:var(--texte2); font-family:'DM Mono'; }
   .bulle-moi { align-self:flex-end; border-color:var(--orange); }
   .bulle-moi .pseudo { color:var(--orange); }
+  .btn-supprimer-message {
+    background:none; border:none; color:var(--texte2); font-size:11px; cursor:pointer; padding:0;
+    text-decoration:underline;
+  }
 
   form#formEnvoi {
     display:flex; gap:8px; padding:14px 20px; border-top:1px solid var(--bordure);
@@ -97,7 +106,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, onSnapshot, query, orderBy
+    getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -127,19 +136,28 @@
     snapshot.forEach((docMsg) => {
       const m = docMsg.data();
       const heure = new Date(m.timestamp).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      const estMoi = m.pseudo === monPseudo;
 
       const bulle = document.createElement("div");
-      bulle.className = "bulle" + (m.pseudo === monPseudo ? " bulle-moi" : "");
+      bulle.className = "bulle" + (estMoi ? " bulle-moi" : "");
       bulle.innerHTML =
         "<div class='pseudo'>" + m.pseudo + "</div>" +
         "<div class='texte'></div>" +
-        "<div class='heure'>" + heure + "</div>";
+        "<div class='bas-bulle'>" +
+          "<span class='heure'>" + heure + "</span>" +
+          (estMoi ? "<button class='btn-supprimer-message' onclick=\"supprimerMessage('" + docMsg.id + "')\">Supprimer</button>" : "") +
+        "</div>";
       bulle.querySelector(".texte").textContent = m.texte; // textContent évite les balises HTML piégées
       zoneMessages.appendChild(bulle);
     });
     // On descend automatiquement vers le dernier message
     zoneMessages.scrollTop = zoneMessages.scrollHeight;
   });
+
+  // ===== Suppression de son propre message =====
+  window.supprimerMessage = async function (id) {
+    await deleteDoc(doc(db, "messages_chat", id));
+  };
 
   // ===== Envoi d'un message =====
   document.getElementById("formEnvoi").addEventListener("submit", async (e) => {
@@ -157,6 +175,11 @@
     champ.value = "";
   });
 </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+  </script>
 
 </body>
 </html>

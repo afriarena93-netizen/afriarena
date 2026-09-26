@@ -1,8 +1,13 @@
-!<!DOCTYPE html>
+
+  
+  <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF6B35">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>AfriArena - La plateforme gaming africaine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -28,7 +33,6 @@
   }
   .mono { font-family: 'DM Mono', monospace; }
 
-  /* NAV */
   nav {
     position: sticky; top:0; z-index:100;
     background: rgba(17,18,23,0.85);
@@ -46,11 +50,10 @@
   .logo-texte span { color: var(--orange); }
   .logo-sub { font-size:9px; letter-spacing:1px; color:var(--texte2); font-family:'DM Mono'; }
   .point-vert { width:7px; height:7px; background:var(--vert); border-radius:50%; display:inline-block; margin-left:4px; }
-  .liens-nav { display:flex; gap:22px; font-size:14px; }
+  .liens-nav { display:flex; gap:18px; font-size:13px; }
   .liens-nav a { color:var(--texte2); text-decoration:none; }
   .liens-nav a.actif { color:var(--texte); border-bottom:2px solid var(--orange); padding-bottom:4px; }
 
-  /* HERO */
   .hero { padding: 50px 20px 30px; text-align:center; }
   .badge-live {
     display:inline-flex; align-items:center; gap:6px;
@@ -74,12 +77,10 @@
   .stat b { display:block; font-size:20px; color:var(--vert); }
   .stat span { font-size:11px; color:var(--texte2); font-family:'DM Mono'; }
 
-  /* SECTIONS GENERALES */
   section { padding: 40px 20px; }
   .titre-section { font-size:24px; font-weight:700; text-align:center; margin-bottom:8px; }
   .soustitre-section { text-align:center; color:var(--texte2); font-size:14px; margin-bottom:28px; }
 
-  /* AVANTAGES */
   .grille-avantages { display:flex; flex-direction:column; gap:14px; }
   .carte-avantage {
     background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:20px;
@@ -87,7 +88,6 @@
   .carte-avantage h3 { font-size:16px; margin-bottom:6px; color:var(--bleu); }
   .carte-avantage p { font-size:13px; color:var(--texte2); }
 
-  /* JEUX */
   .grille-jeux { display:flex; flex-direction:column; gap:14px; }
   .carte-jeu {
     background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:18px;
@@ -102,7 +102,6 @@
   .infos-jeu span { font-size:12px; color:var(--texte2); font-family:'DM Mono'; }
   .compteur-jeu { font-size:12px; font-family:'DM Mono'; padding:4px 10px; border-radius:10px; }
 
-  /* RESEAU AFRICAIN */
   .villes { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
   .ville {
     padding:10px 16px; border-radius:20px; font-size:13px; font-family:'DM Mono';
@@ -111,12 +110,38 @@
   .ville-active { background:var(--vert); color:#111; font-weight:600; }
   .ville-bientot { color:var(--texte2); }
 
-  /* CTA FINAL */
   .cta-finale {
     background:linear-gradient(135deg, var(--card), var(--card2));
     border:1px solid var(--bordure); border-radius:20px; padding:36px 20px; text-align:center;
   }
   .cta-finale h2 { font-size:22px; margin-bottom:20px; }
+
+  .contact { border-radius:16px; padding:24px; text-align:center; }
+
+  /* ===== ADMIN ===== */
+  .zone-admin { text-align:center; margin-top:10px; }
+  .btn-lien-admin {
+    background:none; border:none; color:var(--texte2); font-size:12px;
+    text-decoration:underline; cursor:pointer;
+  }
+  #panneauAdmin {
+    display:none; background:var(--card); border:1px solid var(--bordure); border-radius:16px;
+    padding:18px; margin-top:16px; text-align:left;
+  }
+  #panneauAdmin h3 { font-size:15px; margin-bottom:12px; text-align:center; }
+  .ligne-joueur-admin {
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--card2); border-radius:10px; padding:10px 12px; margin-bottom:8px; font-size:13px;
+  }
+  .ligne-joueur-admin span { color:var(--texte2); font-size:11px; font-family:'DM Mono'; }
+  .btn-suppr-admin {
+    background:transparent; border:1px solid var(--bordure); color:#e94560;
+    border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer;
+  }
+  .btn-tout-effacer-admin {
+    width:100%; background:#e94560; color:#fff; border:none; border-radius:10px;
+    padding:12px; font-weight:600; margin-top:10px; cursor:pointer;
+  }
 
   footer {
     padding:30px 20px; border-top:1px solid var(--bordure); text-align:center;
@@ -197,9 +222,9 @@
       <div class="compteur-jeu" style="background:rgba(184,242,124,0.15);color:var(--vert)" id="compteurFcmobile">0 en ligne</div>
     </a>
     <a href="bloodstrike.html" class="carte-jeu">
-      <div class="icone-jeu" style="background:var(--violet);color:#111">BS</div>
-      <div class="infos-jeu"><h4>Blood Strike</h4><span>PC Gaming</span></div>
-      <div class="compteur-jeu" style="background:rgba(204,140,255,0.15);color:var(--violet)" id="compteurBluestacks">0 en ligne</div>
+      <div class="icone-jeu" style="background:var(--violet);color:#111">BST</div>
+      <div class="infos-jeu"><h4>Blood Strike</h4><span>Battle Royale</span></div>
+      <div class="compteur-jeu" style="background:rgba(204,140,255,0.15);color:var(--violet)" id="compteurBloodStrike">0 en ligne</div>
     </a>
     <a href="pubg.html" class="carte-jeu">
       <div class="icone-jeu" style="background:#f39c12;color:#111">PU</div>
@@ -224,18 +249,30 @@
     <div class="ville ville-bientot">Abidjan — bientôt</div>
   </div>
 </section>
-  <section>
-  <div class="contact" style="background:linear-gradient(135deg, var(--card), var(--card2)); border:1px solid var(--bordure); border-radius:16px; padding:24px; text-align:center;">
-    <h3 style="margin-bottom:8px;">Tu cherches un adversaire maintenant ?</h3>
-    <p style="color:var(--texte2); font-size:13px; margin-bottom:16px;">Rejoins le groupe WhatsApp AfriArena pour rencontrer des joueurs, proposer un match et rester informé.</p>
-    <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5?s=cl&p=a&mlu=4&ilr=4" target="_blank" rel="noopener noreferrer" style="display:inline-block; background:#25D366; color:#fff; text-decoration:none; padding:13px 24px; border-radius:10px; font-weight:600;">Rejoindre le groupe WhatsApp</a>
-  </div>
-  </section>
 
 <section>
   <div class="cta-finale">
     <h2>Ta prochaine squad est déjà là.</h2>
     <a href="communaute.html" class="btn btn-primaire" style="display:inline-block;max-width:260px;margin:0 auto;">Je rejoins AfriArena</a>
+  </div>
+</section>
+
+<section>
+  <div class="contact" style="background:linear-gradient(135deg, var(--card), var(--card2)); border:1px solid var(--bordure);">
+    <h3 style="margin-bottom:8px;">Tu cherches un adversaire maintenant ?</h3>
+    <p style="color:var(--texte2); font-size:13px; margin-bottom:16px;">Rejoins le groupe WhatsApp AfriArena pour rencontrer des joueurs, proposer un match et rester informé.</p>
+    <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5" target="_blank" rel="noopener noreferrer" style="display:inline-block; background:#25D366; color:#fff; text-decoration:none; padding:13px 24px; border-radius:10px; font-weight:600;">Rejoindre le groupe WhatsApp</a>
+  </div>
+</section>
+
+<section>
+  <div class="zone-admin">
+    <button class="btn-lien-admin" onclick="ouvrirAdmin()">Administration</button>
+    <div id="panneauAdmin">
+      <h3>Tous les joueurs inscrits (tous jeux)</h3>
+      <div id="listeAdmin"></div>
+      <button class="btn-tout-effacer-admin" onclick="toutEffacerAdmin()">Tout effacer (tous les jeux)</button>
+    </div>
   </div>
 </section>
 
@@ -246,12 +283,15 @@
     <a href="communaute.html">Communauté</a>
     <a href="tournois.html">Tournois</a>
   </div>
-  <p>AfriArena - Top - 2026</p>
+  <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5" target="_blank" rel="noopener noreferrer" style="color:#25D366; text-decoration:none; font-weight:600;">📱 Rejoindre le groupe WhatsApp</a>
+  <p style="margin-top:10px;">AfriArena - Lomé - 2026</p>
 </footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  import {
+    getFirestore, collection, query, where, onSnapshot, getDocs, doc, deleteDoc
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDX1XYwFhSYoloOwEbFWQXTZZoPRltEkec",
@@ -279,12 +319,12 @@
     document.getElementById("nbEnLigne").textContent = enLigne;
   });
 
-  // Compteur par jeu : on filtre la collection "joueurs" avec where("jeu","==",...)
+  // Compteur par jeu
   const jeux = [
     { nom: "Free Fire", id: "compteurFreeFire" },
     { nom: "eFootball", id: "compteurEfootball" },
     { nom: "FC Mobile", id: "compteurFcmobile" },
-    { nom: "BlueStacks", id: "compteurBluestacks" },
+    { nom: "Blood Strike", id: "compteurBloodStrike" },
     { nom: "PUBG", id: "compteurPubg" },
     { nom: "Call of Duty", id: "compteurCallofduty" }
   ];
@@ -294,7 +334,58 @@
       document.getElementById(j.id).textContent = snap.size + " inscrits";
     });
   });
+
+  // ===== ADMIN : voir et supprimer TOUS les joueurs, peu importe le jeu =====
+  window.ouvrirAdmin = function () {
+    const motDePasse = prompt("Mot de passe admin :");
+    if (motDePasse !== "admin2024") {
+      if (motDePasse !== null) alert("Mot de passe incorrect.");
+      return;
+    }
+    document.getElementById("panneauAdmin").style.display = "block";
+    chargerListeAdmin();
+  };
+
+  async function chargerListeAdmin() {
+    const snapshot = await getDocs(collection(db, "joueurs"));
+    const listeDiv = document.getElementById("listeAdmin");
+    listeDiv.innerHTML = "";
+
+    if (snapshot.empty) {
+      listeDiv.innerHTML = "<p style='color:var(--texte2);font-size:13px;'>Aucun joueur inscrit.</p>";
+      return;
+    }
+
+    snapshot.forEach((docJoueur) => {
+      const j = docJoueur.data();
+      const ligne = document.createElement("div");
+      ligne.className = "ligne-joueur-admin";
+      ligne.innerHTML =
+        "<div><strong>" + j.pseudo + "</strong><br><span>" + j.jeu + " - " + j.telephone + "</span></div>" +
+        "<button class='btn-suppr-admin' onclick=\"supprimerJoueurAdmin('" + docJoueur.id + "')\">Supprimer</button>";
+      listeDiv.appendChild(ligne);
+    });
+  }
+
+  window.supprimerJoueurAdmin = async function (id) {
+    await deleteDoc(doc(db, "joueurs", id));
+    chargerListeAdmin(); // on rafraîchit la liste après suppression
+  };
+
+  window.toutEffacerAdmin = async function () {
+    if (!confirm("Supprimer TOUS les joueurs de TOUS les jeux ? Cette action est définitive.")) return;
+    const snapshot = await getDocs(collection(db, "joueurs"));
+    for (const docJoueur of snapshot.docs) {
+      await deleteDoc(doc(db, "joueurs", docJoueur.id));
+    }
+    chargerListeAdmin();
+  };
 </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+  </script>
 
 </body>
 </html>
