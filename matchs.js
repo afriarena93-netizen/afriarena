@@ -77,9 +77,45 @@
 
   // ===== Sauvegarde dans Supabase =====
   async function saveRoom(matchId, code, password) {
-    const cfg = getCfg();
-    if (!cfg) return false;
-    try {
+  const cfg = getCfg();
+  if (!cfg) return false;
+
+  try {
+    // Vérifie s'il existe déjà une room pour ce match
+    const checkRes = await fetch(
+      cfg.SUPABASE_URL + '/rest/v1/rooms?match_id=eq.' + matchId + '&select=id',
+      {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      }
+    );
+    const existing = checkRes.ok ? await checkRes.json() : [];
+
+    if (existing && existing.length > 0) {
+      // Mise à jour de la room existante
+      const roomId = existing[0].id;
+      const res = await fetch(
+        cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId,
+        {
+          method: 'PATCH',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            room_code: code,
+            room_password: password,
+            created_by: getMyTag()
+          })
+        }
+      );
+      return res.ok;
+    } else {
+      // Création d'une nouvelle room
       const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms', {
         method: 'POST',
         headers: {
@@ -96,9 +132,10 @@
         })
       });
       return res.ok;
-    } catch (e) {
-      return false;
     }
+  } catch (e) {
+    return false;
+  }
   }
 
   // ===== Affiche les infos dans la carte =====
