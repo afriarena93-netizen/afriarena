@@ -126,16 +126,16 @@
             ` : ''}
           </div>
           ${iAlreadyJoined ? `
-            <button class="btn btn-outline btn-sm" data-leave-room="${room.id}" disabled>
-              ✅ Tu as rejoint
-            </button>
-          ` : isFull ? `
-            <button class="btn btn-outline btn-sm" disabled>🔒 Complète</button>
-          ` : `
-            <button class="btn btn-primary btn-sm" data-join-room="${room.id}">
-              ➕ Rejoindre
-            </button>
-          `}
+  <button class="btn btn-outline btn-sm" data-leave-room="${room.id}">
+    🚪 Quitter
+  </button>
+` : isFull ? `
+  <button class="btn btn-outline btn-sm" disabled>🔒 Complète</button>
+` : `
+  <button class="btn btn-primary btn-sm" data-join-room="${room.id}">
+    ➕ Rejoindre
+  </button>
+`}
         </div>
       </div>
     </article>
@@ -181,7 +181,61 @@ async function joinRoom(roomId) {
     return false;
   }
 }
+  
+// ===== Quitter une room =====
+async function leaveRoom(roomId) {
+  const cfg = getCfg();
+  const tag = getMyTag();
+  if (!cfg || !tag) return false;
 
+  try {
+    // Récupère la room actuelle
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    });
+    const rooms = await res.json();
+    if (!rooms || !rooms.length) return false;
+
+    const room = rooms[0];
+    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+    const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
+
+    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+      method: 'PATCH',
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ players: newPlayers })
+    });
+    return updateRes.ok;
+  } catch (e) {
+    return false;
+  }
+}
+  
+  // Quitter une room
+const leaveBtn = e.target.closest('[data-leave-room]');
+if (leaveBtn) {
+  e.preventDefault();
+  const roomId = leaveBtn.getAttribute('data-leave-room');
+  leaveBtn.textContent = '⏳…';
+  leaveBtn.disabled = true;
+  const ok = await leaveRoom(roomId);
+  if (ok) {
+    if (window.afriToast) window.afriToast('🚪 Tu as quitté la room');
+    loadRooms();
+  } else {
+    leaveBtn.textContent = '❌ Erreur';
+    setTimeout(() => { leaveBtn.textContent = '🚪 Quitter'; leaveBtn.disabled = false; }, 2000);
+  }
+  return;
+}
+  
 // ===== Supprimer une room =====
 async function deleteRoom(roomId) {
   const cfg = getCfg();
