@@ -52,102 +52,33 @@
   </section>
 
   <section class="wrap section-tight">
-    <div class="tabs" data-tabs>
-      <button class="tab active" data-tab="recues">Invitations reçues</button>
-      <button class="tab" data-tab="envoyees">Envoyées</button>
-      <button class="tab" data-tab="organiser">À organiser</button>
-      <button class="tab" data-tab="confirmes">Confirmés</button>
-      <button class="tab" data-tab="resultats">Résultats</button>
-      <button class="tab" data-tab="termines">Terminés</button>
+  <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div>
+      <p class="label">Rooms actives</p>
+      <h2 class="section" style="margin-top:12px;font-size:clamp(1.4rem,3vw,2rem)">Trouve ta partie.</h2>
     </div>
+    <button class="btn btn-primary" data-open-create-room>+ Créer ma room</button>
+  </div>
 
-    <div data-tab-panel="recues">
-      <div class="grid grid-2">
-        <article class="match">
-          <div class="match-head">
-            <span class="match-id">INVITATION · 001</span>
-            <span class="chip brand">Nouveau</span>
-          </div>
-          <div class="match-body">
-            <div class="match-player">
-              <div class="avatar" style="background:linear-gradient(135deg,var(--brand),var(--brand-light))">K</div>
-              <div><p style="font-size:14px;color:var(--ink);font-weight:500">Kossi_228</p><p class="vs-city">Lomé · Togo</p></div>
-            </div>
-            <span class="match-vs">→</span>
-            <div class="match-player">
-              <div class="avatar" style="background:linear-gradient(135deg,var(--info),var(--violet))">M</div>
-              <div><p style="font-size:14px;color:var(--ink);font-weight:500">Moi</p><p class="vs-city">Togo</p></div>
-            </div>
-          </div>
-          <div class="match-info">
-            <div class="match-row"><span class="k">Jeu</span><span class="v">Free Fire · 1v1</span></div>
-            <div class="match-row"><span class="k">Message</span><span class="v">Partant pour un duel ce soir ?</span></div>
-          </div>
-          <div class="room-box" style="display:none;margin-top:16px;padding:16px;background:var(--panel);border-radius:12px;border:1px solid var(--line);"></div>
-          <div class="match-actions">
-            <button class="btn btn-primary btn-sm">Accepter</button>
-            <button class="btn btn-outline btn-sm" data-gen-room="1">🎲 Générer la room</button>
-            <button class="btn btn-outline btn-sm">Refuser</button>
-          </div>
-        </article>
-      </div>
+  <div class="filters" style="margin-bottom:24px">
+    <div class="field">
+      <select id="filter-game">
+        <option value="">Tous les jeux</option>
+        <option value="Free Fire">Free Fire</option>
+        <option value="eFootball">eFootball</option>
+        <option value="FC Mobile">FC Mobile</option>
+        <option value="PUBG Mobile">PUBG Mobile</option>
+        <option value="Call of Duty">Call of Duty</option>
+        <option value="Blood Strike">Blood Strike</option>
+      </select>
     </div>
+  </div>
 
-    <div data-tab-panel="envoyees" hidden>
-      <div class="grid grid-2">
-        <article class="match">
-          <div class="match-head">
-            <span class="match-id">INVITATION · 002</span>
-            <span class="chip info">En attente</span>
-          </div>
-          <div class="match-body">
-            <div class="match-player">
-              <div class="avatar" style="background:linear-gradient(135deg,var(--info),var(--violet))">M</div>
-              <div><p style="font-size:14px;color:var(--ink);font-weight:500">Moi</p><p class="vs-city">Togo</p></div>
-            </div>
-            <span class="match-vs">→</span>
-            <div class="match-player">
-              <div class="avatar" style="background:linear-gradient(135deg,var(--positive),var(--info))">A</div>
-              <div><p style="font-size:14px;color:var(--ink);font-weight:500">Ayo_BJ</p><p class="vs-city">Cotonou · Bénin</p></div>
-            </div>
-          </div>
-          <div class="match-info">
-            <div class="match-row"><span class="k">Jeu</span><span class="v">FC Mobile · 1v1</span></div>
-            <div class="match-row"><span class="k">Envoyée</span><span class="v">Il y a 22 min</span></div>
-          </div>
-          <div class="match-actions">
-            <button class="btn btn-outline btn-sm">Annuler l'invitation</button>
-          </div>
-        </article>
-      </div>
+  <div id="rooms-list" class="grid grid-2">
+    <div class="empty">
+      <strong>Chargement des rooms…</strong>
     </div>
-
-    <div data-tab-panel="organiser" hidden>
-      <div class="empty">
-        <strong>Aucun match à organiser.</strong>
-        Tes invitations acceptées apparaîtront ici.
-      </div>
-    </div>
-
-    <div data-tab-panel="confirmes" hidden>
-      <div class="empty">
-        <strong>Aucun match confirmé pour le moment.</strong>
-        Les matchs avec heure fixée s'afficheront ici.
-      </div>
-    </div>
-
-    <div data-tab-panel="resultats" hidden>
-      <div class="empty">
-        <strong>Aucun résultat en attente.</strong>
-      </div>
-    </div>
-
-    <div data-tab-panel="termines" hidden>
-      <div class="empty">
-        <strong>Aucun match terminé.</strong>
-        Ton historique de matchs apparaîtra ici.
-      </div>
-    </div>
+  </div>
   </section>
 
   <section class="wrap section-tight">
@@ -197,6 +128,6 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script src="admin.js"></script>
-  <script src="matchs.js"></script>
+  <script src="rooms.js"></script>
 </body>
 </html>
