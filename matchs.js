@@ -175,7 +175,15 @@
   });
 
   // ===== Chargement au démarrage =====
-  document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     setTimeout(loadExistingRooms, 800);
+
+    // Auto-refresh toutes les 5 secondes
+    setInterval(loadExistingRooms, 5000);
+
+    // Refresh quand on revient sur l'onglet
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) loadExistingRooms();
+    });
   });
 })();
