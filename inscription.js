@@ -17,6 +17,7 @@
     const country = document.getElementById('reg-country')?.value;
     const city = document.getElementById('reg-city')?.value.trim();
     const game = document.getElementById('reg-game')?.value;
+    const gameId = document.getElementById('reg-game-id')?.value.trim();
 
     if (!tag || !city) {
       alert('Le pseudo et la ville sont obligatoires');
@@ -48,6 +49,7 @@
           city: city,
           country: country || 'Togo',
           game: game || 'Free Fire',
+          level: gameId || 'Niveau ?',
           availability: 'Disponible maintenant',
           rating: 5.0,
           matches_count: 0
