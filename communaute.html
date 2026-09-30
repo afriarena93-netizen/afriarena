@@ -1,242 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FF6B35">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Communauté - AfriArena</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Communauté — AfriArena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #111217; --card: #191A21; --card2: #15161C;
-    --orange: #FF6B35; --vert: #B8F27C; --bleu: #78B7FF; --violet: #CC8CFF;
-    --texte: #F5F5F5; --texte2: rgba(245,245,245,0.6); --bordure: rgba(255,255,255,0.08);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background: var(--bg); color: var(--texte); font-family:'Space Grotesk',sans-serif; line-height:1.5; }
-  .mono { font-family:'DM Mono',monospace; }
-
-  nav {
-    position: sticky; top:0; z-index:100;
-    background: rgba(17,18,23,0.85); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--bordure);
-    display:flex; align-items:center; justify-content:space-between; padding:14px 20px;
-  }
-  .logo { display:flex; align-items:center; gap:8px; }
-  .logo-icone { width:32px; height:32px; background:var(--orange); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; }
-  .logo-texte { font-weight:700; font-size:18px; }
-  .logo-texte span { color: var(--orange); }
-  .logo-sub { font-size:9px; letter-spacing:1px; color:var(--texte2); font-family:'DM Mono'; }
-  .point-vert { width:7px; height:7px; background:var(--vert); border-radius:50%; display:inline-block; margin-left:4px; }
-  .liens-nav { display:flex; gap:22px; font-size:14px; }
-  .liens-nav a { color:var(--texte2); text-decoration:none; }
-  .liens-nav a.actif { color:var(--texte); border-bottom:2px solid var(--orange); padding-bottom:4px; }
-
-  .entete { padding:36px 20px 20px; text-align:center; }
-  .entete h1 { font-size:26px; margin-bottom:10px; }
-  .entete p { color:var(--texte2); font-size:14px; max-width:420px; margin:0 auto; }
-
-  section { padding:20px 20px 40px; }
-  input#recherche {
-    width:100%; padding:13px; border-radius:12px; background:var(--card);
-    border:1px solid var(--bordure); color:var(--texte); font-family:'Space Grotesk'; margin-bottom:20px;
-  }
-  input#recherche::placeholder { color:var(--texte2); }
-
-  .grille-hubs { display:flex; flex-direction:column; gap:14px; }
-  .carte-hub {
-    background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:18px;
-  }
-  .carte-hub-haut { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
-  .icone-hub {
-    width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center;
-    font-weight:700; font-family:'DM Mono'; font-size:14px; flex-shrink:0; color:#111;
-  }
-  .infos-hub h3 { font-size:16px; }
-  .infos-hub span { font-size:12px; color:var(--texte2); font-family:'DM Mono'; }
-  .stats-hub { display:flex; gap:16px; margin-bottom:12px; font-size:12px; font-family:'DM Mono'; color:var(--texte2); }
-  .stats-hub b { color:var(--vert); }
-  .badge-online { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-family:'DM Mono'; color:var(--vert); }
-  .btn-rejoindre {
-    display:block; text-align:center; text-decoration:none; padding:11px; border-radius:10px;
-    font-weight:600; font-size:14px; color:#111;
-  }
-
-  .principes { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
-  .principe { background:var(--card2); border:1px solid var(--bordure); border-radius:12px; padding:14px; font-size:13px; color:var(--texte2); }
-
-  .cta-finale {
-    background:linear-gradient(135deg, var(--card), var(--card2));
-    border:1px solid var(--bordure); border-radius:20px; padding:30px 20px; text-align:center; margin-top:30px;
-  }
-  .cta-finale h2 { font-size:20px; margin-bottom:16px; }
-  .cta-finale a {
-    display:inline-block; background:var(--orange); color:#111; text-decoration:none;
-    padding:13px 24px; border-radius:10px; font-weight:600;
-  }
-
-  footer { padding:24px 20px; border-top:1px solid var(--bordure); text-align:center; color:var(--texte2); font-size:12px; }
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
 
-<nav>
-  <div class="logo">
-    <div class="logo-icone">🎮</div>
-    <div>
-      <div class="logo-texte">Afri<span>Arena</span><span class="point-vert"></span></div>
-      <div class="logo-sub">PLAY TOGETHER</div>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+    <nav class="nav-links">
+      <a data-nav href="index.html" class="nav-link">Accueil</a>
+      <a data-nav href="communaute.html" class="nav-link">Communauté</a>
+      <a data-nav href="adversaires.html" class="nav-link">Adversaires</a>
+      <a data-nav href="matchs.html" class="nav-link">Mes matchs</a>
+      <a data-nav href="chat.html" class="nav-link">Discussion</a>
+      <a data-nav href="tournois.html" class="nav-link">Tournois</a>
+      <a data-whatsapp href="#" class="nav-link whatsapp">WhatsApp</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="connexion.html" class="btn btn-primary btn-sm">Rejoindre</a>
     </div>
+    <button class="hamburger" data-burger aria-expanded="false" aria-label="Ouvrir le menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
   </div>
-  <div class="liens-nav">
-    <a href="index.html">Accueil</a>
-    <a href="communaute.html" class="actif">Communauté</a>
-    <a href="chat.html">Discussion</a>
-    <a href="tournois.html">Tournois</a>
-  </div>
-</nav>
+  <nav class="mobile-nav wrap" data-mobile-nav>
+    <a data-nav href="index.html">Accueil</a>
+    <a data-nav href="communaute.html">Communauté</a>
+    <a data-nav href="adversaires.html">Adversaires</a>
+    <a data-nav href="matchs.html">Mes matchs</a>
+    <a data-nav href="chat.html">Discussion</a>
+    <a data-nav href="tournois.html">Tournois</a>
+    <a data-whatsapp href="#" class="whatsapp">Groupe WhatsApp</a>
+  </nav>
+</header>
 
-<div class="entete">
-  <h1>Trouve ton terrain de jeu.</h1>
-  <p>Des espaces pour parler, jouer et progresser avec des gamers qui comprennent ta passion. Commence près de chez toi, puis ouvre ton réseau.</p>
-</div>
+<main>
+  <section class="wrap" style="padding-block:64px 32px">
+    <p class="label">Communauté</p>
+    <h1 class="page" style="margin-top:12px">Trouve ton terrain de jeu.</h1>
+    <p style="margin-top:16px;max-width:600px">
+      Rejoins les hubs actifs par jeu et par ville. Discute, trouve des coéquipiers,
+      organise des matchs avec des joueurs de ta région.
+    </p>
+  </section>
 
-<section>
-  <input type="text" id="recherche" placeholder="Rechercher un jeu ou une ville…" onkeyup="filtrer()">
+  <section class="wrap section-tight">
+    <div class="game-grid">
+      <article class="game-card">
+        <div class="game-badge" style="background:linear-gradient(135deg,#FF6B35,#FF8457)">FF</div>
+        <h3>Free Fire Togo</h3>
+        <p>Battle royale · Lomé · Togo</p>
+        <div class="game-meta"><span>· 412 membres</span><span style="color:var(--positive)">· 38 en ligne</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <a href="freefire.html" class="btn btn-primary btn-sm" style="flex:1">Rejoindre</a>
+          <a href="chat.html" class="btn btn-outline btn-sm" style="flex:1">Discuter</a>
+        </div>
+      </article>
 
-  <div class="grille-hubs" id="grilleHubs">
-    <div class="carte-hub" data-recherche="free fire">
-      <div class="carte-hub-haut">
-        <div class="icone-hub" style="background:#FF6B35">FF</div>
-        <div class="infos-hub"><h3>Free Fire</h3><span>Lomé - Duos, squads et scrims du soir</span></div>
-      </div>
-      <div class="stats-hub"><span><b id="membresFreeFire">0</b> inscrits</span><span class="badge-online">● <b id="ligneFreeFire">0</b> en ligne</span></div>
-      <a href="freefire.html" class="btn-rejoindre" style="background:#FF6B35">Rejoindre</a>
+      <article class="game-card">
+        <div class="game-badge" style="background:linear-gradient(135deg,#78B7FF,#CC8CFF)">eF</div>
+        <h3>eFootball Lomé</h3>
+        <p>Football 1v1 · Lomé · Togo</p>
+        <div class="game-meta"><span>· 268 membres</span><span style="color:var(--positive)">· 24 en ligne</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <a href="efootball.html" class="btn btn-primary btn-sm" style="flex:1">Rejoindre</a>
+          <a href="chat.html" class="btn btn-outline btn-sm" style="flex:1">Discuter</a>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="game-badge" style="background:linear-gradient(135deg,#B8F27C,#78B7FF)">FC</div>
+        <h3>FC Mobile Africa</h3>
+        <p>Football mobile · Panafricain</p>
+        <div class="game-meta"><span>· 195 membres</span><span style="color:var(--positive)">· 17 en ligne</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <a href="fcmobile.html" class="btn btn-primary btn-sm" style="flex:1">Rejoindre</a>
+          <a href="chat.html" class="btn btn-outline btn-sm" style="flex:1">Discuter</a>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="game-badge" style="background:linear-gradient(135deg,#78B7FF,#B8F27C)">PB</div>
+        <h3>PUBG Mobile Africa</h3>
+        <p>Battle royale · Panafricain</p>
+        <div class="game-meta"><span>· 318 membres</span><span style="color:var(--positive)">· 29 en ligne</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <a href="pubg.html" class="btn btn-primary btn-sm" style="flex:1">Rejoindre</a>
+          <a href="chat.html" class="btn btn-outline btn-sm" style="flex:1">Discuter</a>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="game-badge" style="background:linear-gradient(135deg,#FF8457,#CC8CFF)">CD</div>
+        <h3>Call of Duty Mobile</h3>
+        <p>FPS compétitif · Lomé · Togo</p>
+        <div class="game-meta"><span>· 231 membres</span><span style="color:var(--positive)">· 20 en ligne</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <a href="callofduty.html" class="btn btn-primary btn-sm" style="flex:1">Rejoindre</a>
+          <a href="chat.html" class="btn btn-outline btn-sm" style="flex:1">Discuter</a>
+        </div>
+      </article>
+
+      <article class="game-card">
+        <div class="game-badge" style="background:linear-gradient(135deg,#CC8CFF,#FF6B35)">BS</div>
+        <h3>Blood Strike Togo</h3>
+        <p>FPS rapide · Lomé · Togo</p>
+        <div class="game-meta"><span>· 142 membres</span><span style="color:var(--positive)">· 11 en ligne</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <a href="bloodstrike.html" class="btn btn-primary btn-sm" style="flex:1">Rejoindre</a>
+          <a href="chat.html" class="btn btn-outline btn-sm" style="flex:1">Discuter</a>
+        </div>
+      </article>
     </div>
+  </section>
 
-    <div class="carte-hub" data-recherche="efootball">
-      <div class="carte-hub-haut">
-        <div class="icone-hub" style="background:#78B7FF">EF</div>
-        <div class="infos-hub"><h3>eFootball</h3><span>Le foot virtuel, version locale</span></div>
-      </div>
-      <div class="stats-hub"><span><b id="membresEfootball">0</b> inscrits</span><span class="badge-online">● <b id="ligneEfootball">0</b> en ligne</span></div>
-      <a href="efootball.html" class="btn-rejoindre" style="background:#78B7FF">Rejoindre</a>
+  <section class="wrap section-tight">
+    <p class="label">Règles de la communauté</p>
+    <h2 class="section" style="margin-top:12px;font-size:clamp(1.5rem,3vw,2.4rem)">Fair-play avant tout.</h2>
+    <div class="grid grid-3" style="margin-top:24px">
+      <div class="card"><h3 class="card-title">🤝 Respect</h3><p style="font-size:14px;margin-top:8px">Aucune insulte, aucun propos discriminatoire. On reste courtois, même en cas de défaite.</p></div>
+      <div class="card"><h3 class="card-title">⚔️ Fair-play</h3><p style="font-size:14px;margin-top:8px">Pas de triche, pas de logiciels tiers, pas de manipulation de résultats.</p></div>
+      <div class="card"><h3 class="card-title">🚫 Zéro spam</h3><p style="font-size:14px;margin-top:8px">Pas de pub non autorisée, pas de demande d’argent en privé.</p></div>
     </div>
+  </section>
 
-    <div class="carte-hub" data-recherche="fc mobile afrique">
-      <div class="carte-hub-haut">
-        <div class="icone-hub" style="background:var(--vert)">FC</div>
-        <div class="infos-hub"><h3>FC Mobile Africa</h3><span>Défis rapides et équipes ambitieuses</span></div>
+  <section class="wrap section-tight">
+    <div class="wa-card">
+      <div class="wa-inner">
+        <div>
+          <span class="label" style="color:var(--positive)">Canal communautaire</span>
+          <h3 class="title">Tu cherches un adversaire maintenant ?</h3>
+          <p class="desc">Rejoins le groupe WhatsApp AfriArena pour rencontrer des joueurs et proposer un match.</p>
+        </div>
+        <a data-whatsapp href="#" class="btn btn-primary">Rejoindre le groupe →</a>
       </div>
-      <div class="stats-hub"><span><b id="membresFcmobile">0</b> inscrits</span><span class="badge-online">● <b id="ligneFcmobile">0</b> en ligne</span></div>
-      <a href="fcmobile.html" class="btn-rejoindre" style="background:var(--vert)">Rejoindre</a>
     </div>
-
-    <div class="carte-hub" data-recherche="blood strike pc afrique">
-      <div class="carte-hub-haut">
-        <div class="icone-hub" style="background:var(--violet)">BS</div>
-        <div class="infos-hub"><h3>Blood Strike</h3><span>Joue sur PC, pense grand</span></div>
-      </div>
-      <div class="stats-hub"><span><b id="membresBloodstrike">0</b> inscrits</span><span class="badge-online">● <b id="ligneBluestacks">0</b> en ligne</span></div>
-      <a href="bloodstrike.html" class="btn-rejoindre" style="background:var(--violet)">Rejoindre</a>
-    </div>
-
-    <div class="carte-hub" data-recherche="pubg battle royale">
-      <div class="carte-hub-haut">
-        <div class="icone-hub" style="background:#f39c12">PU</div>
-        <div class="infos-hub"><h3>PUBG </h3><span>Battle royale, drop en équipe</span></div>
-      </div>
-      <div class="stats-hub"><span><b id="membresPubg">0</b> inscrits</span><span class="badge-online">● <b id="lignePubg">0</b> en ligne</span></div>
-      <a href="pubg.html" class="btn-rejoindre" style="background:#f39c12">Rejoindre</a>
-    </div>
-
-    <div class="carte-hub" data-recherche="call of duty fps">
-      <div class="carte-hub-haut">
-        <div class="icone-hub" style="background:#e94560">CD</div>
-        <div class="infos-hub"><h3>Call of Duty </h3><span>FPS, duels et équipes tactiques</span></div>
-      </div>
-      <div class="stats-hub"><span><b id="membresCallofduty">0</b> inscrits</span><span class="badge-online">● <b id="ligneCallofduty">0</b> en ligne</span></div>
-      <a href="callofduty.html" class="btn-rejoindre" style="background:#e94560">Rejoindre</a>
-    </div>
-  </div>
-
-  <div class="principes">
-    <div class="principe">🗣️ Parle librement</div>
-    <div class="principe">🎮 Joue ensemble</div>
-    <div class="principe">🤝 Reste fair-play</div>
-  </div>
-
-  <div class="cta-finale">
-    <h2>Tu ne trouves pas ta ville ?</h2>
-    <a href="index.html">Créer mon profil</a>
-  </div>
-</section>
+  </section>
+</main>
 
 <footer>
-  <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5" target="_blank" rel="noopener noreferrer" style="color:#25D366; text-decoration:none; font-weight:600;">📱 Rejoindre le groupe WhatsApp</a>
-  <p style="margin-top:10px;">AfriArena - Lomé - 2026</p>
+  <div class="wrap footer-grid">
+    <div>
+      <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+      <p style="margin-top:16px;max-width:380px;font-size:14px">La plateforme gaming africaine — née au Togo, pensée pour toute l'Afrique.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Plateforme</h4>
+      <ul>
+        <li><a href="communaute.html">Communautés</a></li>
+        <li><a href="adversaires.html">Adversaires</a></li>
+        <li><a href="matchs.html">Mes matchs</a></li>
+        <li><a href="chat.html">Discussion</a></li>
+        <li><a href="tournois.html">Tournois</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Communauté</h4>
+      <ul>
+        <li><a data-whatsapp href="#" class="wa">Groupe WhatsApp</a></li>
+        <li><a href="mailto:contact@afriarena.gg">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>© 2026 AfriArena — Né au Togo, pensé pour l’Afrique.</p>
+    <p class="mono">Les tournois payants arriveront progressivement.</p>
+  </div>
 </footer>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getFirestore, collection, query, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDX1XYwFhSYoloOwEbFWQXTZZoPRltEkec",
-    authDomain: "gaming-togo.firebaseapp.com",
-    projectId: "gaming-togo",
-    storageBucket: "gaming-togo.firebasestorage.app",
-    messagingSenderId: "901018030357",
-    appId: "1:901018030357:web:505a5c7dfe73838009d91c"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const jeux = [
-    { nom: "Free Fire", idMembres: "membresFreeFire", idLigne: "ligneFreeFire" },
-    { nom: "eFootball", idMembres: "membresEfootball", idLigne: "ligneEfootball" },
-    { nom: "FC Mobile", idMembres: "membresFcmobile", idLigne: "ligneFcmobile" },
-    { nom: "Blood Strike", idMembres: "membresBloodstrike", idLigne: "ligneBluestacks" },
-    { nom: "PUBG", idMembres: "membresPubg", idLigne: "lignePubg" },
-    { nom: "Call of Duty", idMembres: "membresCallofduty", idLigne: "ligneCallofduty" }
-  ];
-
-  jeux.forEach(j => {
-    // Inscrits, en direct
-    const qJoueurs = query(collection(db, "joueurs"), where("jeu", "==", j.nom));
-    onSnapshot(qJoueurs, (snap) => {
-      document.getElementById(j.idMembres).textContent = snap.size;
-    });
-
-    // En ligne, recalculé toutes les 15s (basé sur derniereActivite < 60s)
-    async function compterEnLigne() {
-      const qPresence = query(collection(db, "presence"), where("jeu", "==", j.nom));
-      const snap = await getDocs(qPresence);
-      let compte = 0;
-      const maintenant = Date.now();
-      snap.forEach(d => { if (maintenant - d.data().derniereActivite < 60000) compte++; });
-      document.getElementById(j.idLigne).textContent = compte;
-    }
-    compterEnLigne();
-    setInterval(compterEnLigne, 15000);
-  });
-
-  window.filtrer = function () {
-    const texte = document.getElementById("recherche").value.toLowerCase();
-    document.querySelectorAll(".carte-hub").forEach(carte => {
-      const correspond = carte.dataset.recherche.includes(texte);
-      carte.style.display = correspond ? "block" : "none";
-    });
-  };
-</script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
-  }
-  </script>
-
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/admin.js"></script>
 </body>
 </html>

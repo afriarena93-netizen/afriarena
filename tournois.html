@@ -1,283 +1,219 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FF6B35">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>Tournois - AfriArena</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tournois — AfriArena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #111217; --card: #191A21; --card2: #15161C;
-    --orange: #FF6B35; --vert: #B8F27C; --bleu: #78B7FF; --violet: #CC8CFF;
-    --texte: #F5F5F5; --texte2: rgba(245,245,245,0.6); --bordure: rgba(255,255,255,0.08);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background: var(--bg); color: var(--texte); font-family:'Space Grotesk',sans-serif; line-height:1.5; }
-  .mono { font-family:'DM Mono',monospace; }
-
-  nav {
-    position: sticky; top:0; z-index:100;
-    background: rgba(17,18,23,0.85); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--bordure);
-    display:flex; align-items:center; justify-content:space-between; padding:14px 20px;
-  }
-  .logo { display:flex; align-items:center; gap:8px; }
-  .logo-icone { width:32px; height:32px; background:var(--orange); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; }
-  .logo-texte { font-weight:700; font-size:18px; }
-  .logo-texte span { color: var(--orange); }
-  .logo-sub { font-size:9px; letter-spacing:1px; color:var(--texte2); font-family:'DM Mono'; }
-  .point-vert { width:7px; height:7px; background:var(--vert); border-radius:50%; display:inline-block; margin-left:4px; }
-  .liens-nav { display:flex; gap:22px; font-size:14px; }
-  .liens-nav a { color:var(--texte2); text-decoration:none; }
-  .liens-nav a.actif { color:var(--texte); border-bottom:2px solid var(--orange); padding-bottom:4px; }
-
-  .entete { padding:36px 20px 16px; text-align:center; }
-  .entete h1 { font-size:24px; margin-bottom:8px; }
-  .entete p { color:var(--texte2); font-size:13px; max-width:420px; margin:0 auto; }
-
-  section { padding:20px 20px 30px; }
-  .titre-section { font-size:18px; font-weight:700; margin-bottom:14px; }
-
-  input, select {
-    width:100%; padding:12px; margin-bottom:12px; border-radius:10px;
-    background:var(--card); border:1px solid var(--bordure); color:var(--texte); font-family:'Space Grotesk';
-  }
-  input::placeholder { color:var(--texte2); }
-  button, .btn {
-    padding:12px 16px; border:none; border-radius:10px; font-weight:600; font-size:13px;
-    cursor:pointer; margin-top:6px; margin-right:6px;
-  }
-  .btn-creer { background:var(--orange); color:#111; width:100%; }
-  .btn-inscrire { background:var(--bleu); color:#111; }
-  .btn-lancer { background:var(--vert); color:#111; }
-  .btn-supprimer { background:transparent; border:1px solid var(--bordure); color:var(--texte2); font-size:12px; }
-  .btn-gagne { background:var(--card2); border:1px solid var(--bordure); color:var(--texte); }
-
-  .carte-tournoi { background:var(--card); border:1px solid var(--bordure); border-radius:16px; padding:18px; margin-bottom:16px; }
-  .carte-tournoi h3 { font-size:16px; margin-bottom:4px; }
-  .carte-tournoi p { font-size:13px; color:var(--texte2); margin-bottom:8px; }
-  .liste-participants { font-size:13px; color:var(--texte2); margin-bottom:8px; padding-left:18px; }
-  .match { background:var(--card2); border:1px solid var(--bordure); border-radius:10px; padding:12px; margin-top:8px; font-size:13px; }
-  .champion { color:var(--vert); font-weight:700; font-size:16px; }
-
-  footer { padding:24px 20px; border-top:1px solid var(--bordure); text-align:center; color:var(--texte2); font-size:12px; }
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
 
-<nav>
-  <div class="logo">
-    <div class="logo-icone">🎮</div>
-    <div>
-      <div class="logo-texte">Afri<span>Arena</span><span class="point-vert"></span></div>
-      <div class="logo-sub">PLAY TOGETHER</div>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+    <nav class="nav-links">
+      <a data-nav href="index.html" class="nav-link">Accueil</a>
+      <a data-nav href="communaute.html" class="nav-link">Communauté</a>
+      <a data-nav href="adversaires.html" class="nav-link">Adversaires</a>
+      <a data-nav href="matchs.html" class="nav-link">Mes matchs</a>
+      <a data-nav href="chat.html" class="nav-link">Discussion</a>
+      <a data-nav href="tournois.html" class="nav-link">Tournois</a>
+      <a data-whatsapp href="#" class="nav-link whatsapp">WhatsApp</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="connexion.html" class="btn btn-primary btn-sm">Rejoindre</a>
     </div>
+    <button class="hamburger" data-burger aria-expanded="false" aria-label="Ouvrir le menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
   </div>
-  <div class="liens-nav">
-    <a href="index.html">Accueil</a>
-    <a href="communaute.html">Communauté</a>
-    <a href="chat.html">Discussion</a>
-    <a href="tournois.html" class="actif">Tournois</a>
-  </div>
-</nav>
+  <nav class="mobile-nav wrap" data-mobile-nav>
+    <a data-nav href="index.html">Accueil</a>
+    <a data-nav href="communaute.html">Communauté</a>
+    <a data-nav href="adversaires.html">Adversaires</a>
+    <a data-nav href="matchs.html">Mes matchs</a>
+    <a data-nav href="chat.html">Discussion</a>
+    <a data-nav href="tournois.html">Tournois</a>
+    <a data-whatsapp href="#" class="whatsapp">Groupe WhatsApp</a>
+  </nav>
+</header>
 
-<div class="entete">
-  <h1>Bientôt, ton nom sur le classement.</h1>
-  <p>Crée ou rejoins un tournoi, affronte la communauté, et prépare-toi pour les compétitions avec récompenses.</p>
-</div>
+<main>
+  <section class="wrap" style="padding-block:64px 32px">
+    <p class="label">Tournois</p>
+    <h1 class="page" style="margin-top:12px">Compète à ton niveau.</h1>
+    <p style="margin-top:16px;max-width:640px">
+      Les tournois AfriArena arrivent progressivement. Inscris-toi, suis les tableaux,
+      et prépare-toi pour les premiers tournois payants à venir.
+    </p>
+  </section>
 
-<section>
-  <div class="titre-section">Créer un tournoi</div>
-  <input type="text" id="nom" placeholder="Nom du tournoi">
-  <select id="jeu">
-    <option value="Free Fire">Free Fire</option>
-    <option value="eFootball">eFootball</option>
-    <option value="FC Mobile">FC Mobile</option>
-    <option value="Blood Strike">Blood Strike</option>
-    <option value="PUBG">PUBG</option>
-    <option value="Call of Duty">Call of Duty</option>
-  </select>
-  <select id="format">
-    <option value="1v1">1 v 1</option>
-    <option value="2v2">2 v 2</option>
-    <option value="3v3">3 v 3</option>
-    <option value="4v4">4 v 4</option>
-  </select>
-  <input type="number" id="max" placeholder="Nombre d'inscrits maximum">
-  <input type="number" id="frais" placeholder="Frais d'inscription (FCFA, 0 si gratuit)">
-  <button class="btn-creer" onclick="creerTournoi()">Créer le tournoi</button>
-</section>
+  <section class="wrap">
+    <div class="card" style="border-color:rgba(255,107,53,.25);background:rgba(255,107,53,.04)">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <span class="chip brand">Roadmap</span>
+        <p style="flex:1;min-width:260px;color:var(--ink)">
+          Les tournois payants arriveront progressivement. Avant leur lancement,
+          nous finalisons les règles et les obligations légales dans chaque pays.
+        </p>
+      </div>
+    </div>
+  </section>
 
-<section>
-  <div class="titre-section">Tournois en cours</div>
-  <div id="listeTournois"></div>
-</section>
+  <section class="wrap section-tight">
+    <div class="tabs" data-tabs>
+      <button class="tab active" data-tab="encours">En cours</button>
+      <button class="tab" data-tab="ouverts">Inscriptions ouvertes</button>
+      <button class="tab" data-tab="passes">Terminés</button>
+    </div>
+
+    <div data-tab-panel="encours">
+      <div class="grid grid-2">
+        <article class="tournament">
+          <div class="tournament-head">
+            <div>
+              <h3>Free Fire Togo — Saison 1</h3>
+              <p class="prize">🏆 50 000 FCFA de récompenses</p>
+            </div>
+            <span class="chip positive"><span class="dot live"></span> Live</span>
+          </div>
+          <div class="tournament-meta">
+            <div><p class="k">Jeu</p><p class="v">Free Fire</p></div>
+            <div><p class="k">Format</p><p class="v">1v1 · Solo</p></div>
+            <div><p class="k">Joueurs</p><p class="v">32 / 32</p></div>
+            <div><p class="k">Phase</p><p class="v">Quarts de finale</p></div>
+          </div>
+          <p style="font-size:13px">Les matchs sont en cours. Les joueurs choisissent leur créneau dans la fenêtre autorisée.</p>
+          <div class="match-actions">
+            <a href="chat.html" class="btn btn-primary btn-sm">Voir les matchs</a>
+            <button class="btn btn-outline btn-sm" data-whatsapp>Suivre sur WhatsApp</button>
+          </div>
+        </article>
+
+        <article class="tournament">
+          <div class="tournament-head">
+            <div>
+              <h3>eFootball Lomé Cup</h3>
+              <p class="prize">🏆 Trophée + 25 000 FCFA</p>
+            </div>
+            <span class="chip positive"><span class="dot live"></span> Live</span>
+          </div>
+          <div class="tournament-meta">
+            <div><p class="k">Jeu</p><p class="v">eFootball</p></div>
+            <div><p class="k">Format</p><p class="v">1v1 · Standard</p></div>
+            <div><p class="k">Joueurs</p><p class="v">16 / 16</p></div>
+            <div><p class="k">Phase</p><p class="v">Demi-finales</p></div>
+          </div>
+          <p style="font-size:13px">Deux demi-finales à jouer. Résultats validés automatiquement si les deux scores correspondent.</p>
+          <div class="match-actions">
+            <a href="chat.html" class="btn btn-primary btn-sm">Voir les matchs</a>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div data-tab-panel="ouverts" hidden>
+      <div class="grid grid-2">
+        <article class="tournament">
+          <div class="tournament-head">
+            <div>
+              <h3>PUBG Mobile Africa — Open #1</h3>
+              <p class="prize">🏆 Places offertes pour la Saison 2</p>
+            </div>
+            <span class="chip info">Inscriptions ouvertes</span>
+          </div>
+          <div class="tournament-meta">
+            <div><p class="k">Jeu</p><p class="v">PUBG Mobile</p></div>
+            <div><p class="k">Format</p><p class="v">Squad</p></div>
+            <div><p class="k">Places</p><p class="v">24 / 64</p></div>
+            <div><p class="k">Frais</p><p class="v">Gratuit</p></div>
+          </div>
+          <div class="match-actions">
+            <button class="btn btn-primary btn-sm">S'inscrire</button>
+            <button class="btn btn-outline btn-sm">Règles</button>
+          </div>
+        </article>
+
+        <article class="tournament">
+          <div class="tournament-head">
+            <div>
+              <h3>Call of Duty Mobile — Togo Series</h3>
+              <p class="prize">🏆 30 000 FCFA</p>
+            </div>
+            <span class="chip info">Inscriptions ouvertes</span>
+          </div>
+          <div class="tournament-meta">
+            <div><p class="k">Jeu</p><p class="v">CoD Mobile</p></div>
+            <div><p class="k">Format</p><p class="v">Squad 4v4</p></div>
+            <div><p class="k">Places</p><p class="v">12 / 16</p></div>
+            <div><p class="k">Frais</p><p class="v">Gratuit</p></div>
+          </div>
+          <div class="match-actions">
+            <button class="btn btn-primary btn-sm">S'inscrire</button>
+            <button class="btn btn-outline btn-sm">Règles</button>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div data-tab-panel="passes" hidden>
+      <div class="empty">
+        <strong>Aucun tournoi terminé pour le moment.</strong>
+        Les premiers résultats apparaîtront ici dès la fin des compétitions en cours.
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section-tight">
+    <div class="wa-card">
+      <div class="wa-inner">
+        <div>
+          <span class="label" style="color:var(--positive)">Annonces</span>
+          <h3 class="title">Sois prévenu en premier.</h3>
+          <p class="desc">Les ouvertures d’inscriptions et les annonces importantes sont relayées sur le groupe WhatsApp AfriArena.</p>
+        </div>
+        <a data-whatsapp href="#" class="btn btn-primary">Rejoindre le groupe →</a>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
-  <a href="https://chat.whatsapp.com/I6kGwyWqHCB2cw0ATzcVn5" target="_blank" rel="noopener noreferrer" style="color:#25D366; text-decoration:none; font-weight:600;">📱 Rejoindre le groupe WhatsApp</a>
-  <p style="margin-top:10px;">AfriArena - Lomé - 2026</p>
+  <div class="wrap footer-grid">
+    <div>
+      <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+      <p style="margin-top:16px;max-width:380px;font-size:14px">La plateforme gaming africaine — née au Togo, pensée pour toute l'Afrique.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Plateforme</h4>
+      <ul>
+        <li><a href="communaute.html">Communautés</a></li>
+        <li><a href="adversaires.html">Adversaires</a></li>
+        <li><a href="matchs.html">Mes matchs</a></li>
+        <li><a href="chat.html">Discussion</a></li>
+        <li><a href="tournois.html">Tournois</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Communauté</h4>
+      <ul>
+        <li><a data-whatsapp href="#" class="wa">Groupe WhatsApp</a></li>
+        <li><a href="mailto:contact@afriarena.gg">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>© 2026 AfriArena — Né au Togo, pensé pour l’Afrique.</p>
+    <p class="mono">Les tournois payants arriveront progressivement.</p>
+  </div>
 </footer>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import {
-    getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc
-  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDX1XYwFhSYoloOwEbFWQXTZZoPRltEkec",
-    authDomain: "gaming-togo.firebaseapp.com",
-    projectId: "gaming-togo",
-    storageBucket: "gaming-togo.firebasestorage.app",
-    messagingSenderId: "901018030357",
-    appId: "1:901018030357:web:505a5c7dfe73838009d91c"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  window.creerTournoi = async function () {
-    const nom = document.getElementById("nom").value.trim();
-    const jeu = document.getElementById("jeu").value;
-    const format = document.getElementById("format").value;
-    const max = parseInt(document.getElementById("max").value);
-    const frais = parseInt(document.getElementById("frais").value) || 0;
-
-    if (nom === "" || !max) {
-      alert("Remplis au moins le nom et le nombre max d'inscrits !");
-      return;
-    }
-
-    await addDoc(collection(db, "tournois"), {
-      nom, jeu, format, max, frais,
-      participants: [], matchs: [],
-      statut: "inscription", gagnantFinal: null,
-      timestamp: new Date().toISOString()
-    });
-
-    document.getElementById("nom").value = "";
-    document.getElementById("max").value = "";
-    document.getElementById("frais").value = "";
-  };
-
-  function melanger(liste) {
-    const copie = [...liste];
-    for (let i = copie.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copie[i], copie[j]] = [copie[j], copie[i]];
-    }
-    return copie;
-  }
-
-  function genererMatchs(joueurs, round) {
-    const melanges = melanger(joueurs);
-    const matchs = [];
-    for (let i = 0; i < melanges.length; i += 2) {
-      if (melanges[i + 1] !== undefined) {
-        matchs.push({ round, joueur1: melanges[i], joueur2: melanges[i + 1], gagnant: null, score1: null, score2: null });
-      } else {
-        matchs.push({ round, joueur1: melanges[i], joueur2: null, gagnant: melanges[i], score1: null, score2: null });
-      }
-    }
-    return matchs;
-  }
-
-  window.lancerTournoi = async function (id, participants) {
-    if (participants.length < 2) { alert("Il faut au moins 2 participants !"); return; }
-    const matchs = genererMatchs(participants, 1);
-    await updateDoc(doc(db, "tournois", id), { statut: "en_cours", matchs });
-  };
-
-  window.sInscrire = async function (id, participantsActuels, max) {
-    const pseudo = prompt("Ton pseudo (ou nom d'équipe) :");
-    if (!pseudo) return;
-    if (participantsActuels.length >= max) { alert("Ce tournoi est complet !"); return; }
-    const nouveauxParticipants = [...participantsActuels, pseudo.trim()];
-    await updateDoc(doc(db, "tournois", id), { participants: nouveauxParticipants });
-  };
-
-  window.declarerGagnant = async function (id, matchs, indexMatch, gagnant) {
-    const nouveauxMatchs = [...matchs];
-    nouveauxMatchs[indexMatch] = { ...nouveauxMatchs[indexMatch], gagnant };
-
-    const roundActuel = nouveauxMatchs[indexMatch].round;
-    const matchsDuRound = nouveauxMatchs.filter(m => m.round === roundActuel);
-    const tousTermines = matchsDuRound.every(m => m.gagnant !== null);
-
-    let statut = "en_cours";
-    let gagnantFinal = null;
-
-    if (tousTermines) {
-      const gagnants = matchsDuRound.map(m => m.gagnant);
-      if (gagnants.length === 1) {
-        statut = "termine";
-        gagnantFinal = gagnants[0];
-      } else {
-        const prochainRound = genererMatchs(gagnants, roundActuel + 1);
-        nouveauxMatchs.push(...prochainRound);
-      }
-    }
-
-    await updateDoc(doc(db, "tournois", id), { matchs: nouveauxMatchs, statut, gagnantFinal });
-  };
-
-  window.supprimerTournoi = async function (id) {
-    await deleteDoc(doc(db, "tournois", id));
-  };
-
-  const listeDiv = document.getElementById("listeTournois");
-  onSnapshot(collection(db, "tournois"), (snapshot) => {
-    listeDiv.innerHTML = "";
-    snapshot.forEach((docTournoi) => {
-      const t = docTournoi.data();
-      const id = docTournoi.id;
-
-      const carte = document.createElement("div");
-      carte.className = "carte-tournoi";
-
-      let html = "<h3>" + t.nom + "</h3>" +
-        "<p>" + t.jeu + " - " + t.format + " - " + (t.frais > 0 ? t.frais + " FCFA" : "Gratuit") + "</p>";
-
-      if (t.statut === "inscription") {
-        html += "<p>Inscrits : " + t.participants.length + " / " + t.max + "</p>";
-        html += "<ul class='liste-participants'>" + t.participants.map(p => "<li>" + p + "</li>").join("") + "</ul>";
-        html += "<button class='btn-inscrire' onclick='sInscrire(\"" + id + "\", " + JSON.stringify(t.participants) + ", " + t.max + ")'>S'inscrire</button>";
-        html += "<button class='btn-lancer' onclick='lancerTournoi(\"" + id + "\", " + JSON.stringify(t.participants) + ")'>Lancer maintenant</button>";
-      } else if (t.statut === "en_cours") {
-        const dernierRound = Math.max(...t.matchs.map(m => m.round));
-        html += "<p>Round " + dernierRound + " en cours</p>";
-        t.matchs.filter(m => m.round === dernierRound).forEach((m) => {
-          const indexMatch = t.matchs.indexOf(m);
-          html += "<div class='match'>";
-          if (m.joueur2 === null) {
-            html += m.joueur1 + " passe directement (pas d'adversaire)";
-          } else if (m.gagnant) {
-            html += m.joueur1 + " vs " + m.joueur2 + " → Gagnant : <strong>" + m.gagnant + "</strong>";
-          } else {
-            html += m.joueur1 + " vs " + m.joueur2 + "<br>" +
-              "<button class='btn-gagne' onclick='declarerGagnant(\"" + id + "\", " + JSON.stringify(t.matchs) + ", " + indexMatch + ", \"" + m.joueur1 + "\")'>" + m.joueur1 + " gagne</button>" +
-              "<button class='btn-gagne' onclick='declarerGagnant(\"" + id + "\", " + JSON.stringify(t.matchs) + ", " + indexMatch + ", \"" + m.joueur2 + "\")'>" + m.joueur2 + " gagne</button>";
-          }
-          html += "</div>";
-        });
-      } else if (t.statut === "termine") {
-        html += "<p class='champion'>🏆 Champion : " + t.gagnantFinal + "</p>";
-      }
-
-      html += "<button class='btn-supprimer' onclick='supprimerTournoi(\"" + id + "\")'>Supprimer ce tournoi</button>";
-      carte.innerHTML = html;
-      listeDiv.appendChild(carte);
-    });
-  });
-</script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
-  }
-  </script>
-
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/admin.js"></script>
 </body>
 </html>

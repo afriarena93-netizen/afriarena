@@ -1,0 +1,4 @@
+window.AFRIARENA_CONFIG = {
+  SUPABASE_URL: 'https://vyskbgsujvrbbktwfqfl.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2tiZ3N1anZyYmJrdHdmcWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2MjEwOTcsImV4cCI6MjEwNjE5NzA5N30.O2g2wzwV_golRUyH_X_8gshmsFk8S_PfEDM8vXriuqc'
+};

@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Discussion — AfriArena</title>
+<meta name="theme-color" content="#111217" />
+<title>Connexion — AfriArena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -43,57 +44,71 @@
 </header>
 
 <main>
-  <section class="wrap" style="padding-block:48px 8px">
-    <p class="label">Salons de discussion</p>
-    <h1 class="page" style="margin-top:12px;font-size:clamp(2rem,5vw,3.6rem)">Salons communautaires.</h1>
-    <p style="margin-top:16px;max-width:600px">
-      Échange avec les joueurs, propose des matchs, partage des astuces.
-      Chaque salon est public — reste courtois et respecte les règles.
+  <section class="wrap auth-wrap">
+    <p class="label">Compte AfriArena</p>
+    <h1 style="margin-top:12px;font-size:clamp(1.8rem,4vw,2.6rem)">Rejoins l’arène.</h1>
+    <p style="margin-top:12px">
+      Crée ton profil gratuitement pour trouver des adversaires, rejoindre une communauté
+      et organiser tes matchs.
     </p>
-  </section>
 
-  <div class="wrap chat-layout">
-    <aside class="rooms" aria-label="Liste des salons">
-      <a href="#" class="room-item active">Général <span class="room-count">412</span></a>
-      <a href="#" class="room-item">Free Fire Togo <span class="room-count">186</span></a>
-      <a href="#" class="room-item">eFootball Lomé <span class="room-count">94</span></a>
-      <a href="#" class="room-item">FC Mobile Africa <span class="room-count">72</span></a>
-      <a href="#" class="room-item">PUBG Mobile <span class="room-count">131</span></a>
-      <a href="#" class="room-item">Call of Duty <span class="room-count">88</span></a>
-      <a href="#" class="room-item">Blood Strike <span class="room-count">54</span></a>
-      <a href="#" class="room-item">Je cherche un match <span class="room-count">27</span></a>
-    </aside>
-
-    <section class="chat-main" aria-label="Salon Général">
-      <header class="chat-head">
-        <div>
-          <h2 style="font-size:16px;font-weight:600">Salon Général</h2>
-          <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:2px">412 membres · 12 en ligne</p>
-        </div>
-        <span class="chip positive"><span class="dot live"></span> En direct</span>
-      </header>
-
-      <div class="chat-body">
-        <!-- Messages chargés depuis Supabase -->
+    <div class="card" style="margin-top:28px;padding:28px">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Se connecter</button>
+        <button class="auth-tab" data-tab="register">Créer un compte</button>
       </div>
 
-      <form class="chat-input" data-chat-form>
-        <textarea rows="1" placeholder="Écris un message… (Entrée pour envoyer)"></textarea>
-        <button type="submit" class="btn btn-primary">Envoyer</button>
+      <form data-auth-panel="login">
+        <div class="form-row">
+          <label for="log-email">Email</label>
+          <input id="log-email" type="email" required placeholder="ton@email.com">
+        </div>
+        <div class="form-row">
+          <label for="log-pwd">Mot de passe</label>
+          <input id="log-pwd" type="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:6px">Se connecter</button>
       </form>
-    </section>
-  </div>
 
-  <section class="wrap section-tight">
-    <div class="wa-card">
-      <div class="wa-inner">
-        <div>
-          <span class="label" style="color:var(--positive)">Canal communautaire</span>
-          <h3 class="title">Besoin d’un adversaire tout de suite ?</h3>
-          <p class="desc">Rejoins le groupe WhatsApp AfriArena pour trouver un joueur en quelques secondes.</p>
+      <form data-auth-panel="register" hidden>
+        <div class="form-row">
+          <label for="reg-tag">Pseudo (gamerTag)</label>
+          <input id="reg-tag" required placeholder="Kossi_228">
         </div>
-        <a data-whatsapp href="#" class="btn btn-primary">Rejoindre le groupe →</a>
-      </div>
+        <div class="form-row">
+          <label for="reg-email">Email</label>
+          <input id="reg-email" type="email" required placeholder="ton@email.com">
+        </div>
+        <div class="form-row">
+          <label for="reg-pwd">Mot de passe</label>
+          <input id="reg-pwd" type="password" required placeholder="••••••••">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label for="reg-country">Pays</label>
+            <select id="reg-country">
+              <option>Togo</option><option>Ghana</option><option>Bénin</option>
+              <option>Côte d’Ivoire</option><option>Nigeria</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="reg-city">Ville</label>
+            <input id="reg-city" placeholder="Lomé">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="reg-game">Jeu préféré</label>
+          <select id="reg-game">
+            <option>Free Fire</option>
+            <option>eFootball</option>
+            <option>FC Mobile</option>
+            <option>PUBG Mobile</option>
+            <option>Call of Duty</option>
+            <option>Blood Strike</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:6px">Créer mon profil gratuitement</button>
+      </form>
     </div>
   </section>
 </main>
@@ -131,6 +146,18 @@
 <script src="assets/js/supabase.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/admin.js"></script>
-<script src="assets/js/chat-supabase.js"></script>
+<script src="assets/js/inscription.js"></script>
+<script>
+  document.querySelectorAll('.auth-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('[data-auth-panel]').forEach((p) => {
+        p.hidden = p.getAttribute('data-auth-panel') !== target;
+      });
+    });
+  });
+</script>
 </body>
 </html>

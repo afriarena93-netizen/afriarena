@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Discussion — AfriArena</title>
+<meta name="theme-color" content="#111217" />
+<title>Trouver un adversaire — AfriArena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -39,58 +40,59 @@
     <a data-nav href="chat.html">Discussion</a>
     <a data-nav href="tournois.html">Tournois</a>
     <a data-whatsapp href="#" class="whatsapp">Groupe WhatsApp</a>
+    <div class="actions">
+      <a href="connexion.html" class="btn btn-outline btn-block">Se connecter</a>
+      <a href="connexion.html" class="btn btn-primary btn-block">Rejoindre la communauté</a>
+    </div>
   </nav>
 </header>
 
 <main>
-  <section class="wrap" style="padding-block:48px 8px">
-    <p class="label">Salons de discussion</p>
-    <h1 class="page" style="margin-top:12px;font-size:clamp(2rem,5vw,3.6rem)">Salons communautaires.</h1>
+  <section class="wrap" style="padding-block:48px 24px">
+    <p class="label">Matchmaking</p>
+    <h1 class="page" style="margin-top:12px;font-size:clamp(2rem,5vw,3.6rem)">Trouve quelqu’un à ton niveau.</h1>
     <p style="margin-top:16px;max-width:600px">
-      Échange avec les joueurs, propose des matchs, partage des astuces.
-      Chaque salon est public — reste courtois et respecte les règles.
+      Filtre par jeu, ville, mode et disponibilité. Propose un match en un clic.
     </p>
   </section>
 
-  <div class="wrap chat-layout">
-    <aside class="rooms" aria-label="Liste des salons">
-      <a href="#" class="room-item active">Général <span class="room-count">412</span></a>
-      <a href="#" class="room-item">Free Fire Togo <span class="room-count">186</span></a>
-      <a href="#" class="room-item">eFootball Lomé <span class="room-count">94</span></a>
-      <a href="#" class="room-item">FC Mobile Africa <span class="room-count">72</span></a>
-      <a href="#" class="room-item">PUBG Mobile <span class="room-count">131</span></a>
-      <a href="#" class="room-item">Call of Duty <span class="room-count">88</span></a>
-      <a href="#" class="room-item">Blood Strike <span class="room-count">54</span></a>
-      <a href="#" class="room-item">Je cherche un match <span class="room-count">27</span></a>
-    </aside>
-
-    <section class="chat-main" aria-label="Salon Général">
-      <header class="chat-head">
-        <div>
-          <h2 style="font-size:16px;font-weight:600">Salon Général</h2>
-          <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:2px">412 membres · 12 en ligne</p>
-        </div>
-        <span class="chip positive"><span class="dot live"></span> En direct</span>
-      </header>
-
-      <div class="chat-body">
-        <!-- Messages chargés depuis Supabase -->
+  <section class="wrap">
+    <div class="filters">
+      <div class="field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="search" placeholder="Rechercher un pseudo, une ville…" data-filter-search />
       </div>
+      <div class="field"><select><option>Tous les jeux</option><option>Free Fire</option><option>eFootball</option><option>FC Mobile</option><option>PUBG Mobile</option><option>Call of Duty</option><option>Blood Strike</option></select></div>
+      <div class="field"><select><option>Tous les modes</option><option>1v1</option><option>2v2</option><option>Squad</option></select></div>
+      <div class="field"><select><option>Tous les niveaux</option><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option><option>Pro</option></select></div>
+      <button class="btn btn-outline btn-sm" style="height:48px">Disponibles maintenant</button>
+    </div>
+  </section>
 
-      <form class="chat-input" data-chat-form>
-        <textarea rows="1" placeholder="Écris un message… (Entrée pour envoyer)"></textarea>
-        <button type="submit" class="btn btn-primary">Envoyer</button>
-      </form>
-    </section>
-  </div>
+  <section class="wrap section-tight">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <p class="label">Joueurs disponibles</p>
+      <div style="display:flex;gap:8px">
+        <button class="chip positive"><span class="dot live"></span> Disponibles maintenant</button>
+        <button class="chip">Tous les pays</button>
+      </div>
+    </div>
+
+    <div class="players">
+      <!-- Les joueurs sont chargés automatiquement depuis Supabase -->
+      <div class="empty">
+        <strong>Chargement des joueurs…</strong>
+      </div>
+    </div>
+  </section>
 
   <section class="wrap section-tight">
     <div class="wa-card">
       <div class="wa-inner">
         <div>
           <span class="label" style="color:var(--positive)">Canal communautaire</span>
-          <h3 class="title">Besoin d’un adversaire tout de suite ?</h3>
-          <p class="desc">Rejoins le groupe WhatsApp AfriArena pour trouver un joueur en quelques secondes.</p>
+          <h3 class="title">Tu ne trouves personne ?</h3>
+          <p class="desc">Rejoins le groupe WhatsApp AfriArena pour trouver un adversaire en quelques secondes.</p>
         </div>
         <a data-whatsapp href="#" class="btn btn-primary">Rejoindre le groupe →</a>
       </div>
@@ -130,7 +132,7 @@
 
 <script src="assets/js/supabase.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/players-loader.js"></script>
 <script src="assets/js/admin.js"></script>
-<script src="assets/js/chat-supabase.js"></script>
 </body>
 </html>

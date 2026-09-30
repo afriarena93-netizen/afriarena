@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Profil — AfriArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+    <nav class="nav-links">
+      <a data-nav href="index.html" class="nav-link">Accueil</a>
+      <a data-nav href="communaute.html" class="nav-link">Communauté</a>
+      <a data-nav href="adversaires.html" class="nav-link">Adversaires</a>
+      <a data-nav href="matchs.html" class="nav-link">Mes matchs</a>
+      <a data-nav href="chat.html" class="nav-link">Discussion</a>
+      <a data-nav href="tournois.html" class="nav-link">Tournois</a>
+      <a data-whatsapp href="#" class="nav-link whatsapp">WhatsApp</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="connexion.html" class="btn btn-primary btn-sm">Rejoindre</a>
+    </div>
+    <button class="hamburger" data-burger aria-expanded="false" aria-label="Ouvrir le menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav wrap" data-mobile-nav>
+    <a data-nav href="index.html">Accueil</a>
+    <a data-nav href="communaute.html">Communauté</a>
+    <a data-nav href="adversaires.html">Adversaires</a>
+    <a data-nav href="matchs.html">Mes matchs</a>
+    <a data-nav href="chat.html">Discussion</a>
+    <a data-nav href="tournois.html">Tournois</a>
+    <a data-whatsapp href="#" class="whatsapp">Groupe WhatsApp</a>
+  </nav>
+</header>
+
+<main>
+  <section class="wrap" style="padding-block:48px 24px">
+    <div class="card" style="padding:14px">
+      <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+        <div class="avatar-wrap">
+          <div class="avatar-lg" id="avatar-preview">K</div>
+          <label class="avatar-edit" aria-label="Changer la photo de profil">
+            📷
+            <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp">
+          </label>
+        </div>
+
+        <div style="flex:1;min-width:220px">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <h1 style="font-size:clamp(1.4rem,3vw,2rem)">Kossi_228</h1>
+            <span class="chip positive"><span class="dot live"></span> Disponible</span>
+          </div>
+          <p class="mono" style="font-size:12px;color:var(--ink-faint);margin-top:6px">
+            Lomé · Togo · Inscrit en mars 2026
+          </p>
+          <p style="margin-top:8px;max-width:560px">
+            Joueur Free Fire et eFootball. Je cherche des adversaires sérieux pour progresser.
+          </p>
+          <div class="player-tags" style="margin-top:10px">
+            <span class="tag">Free Fire</span>
+            <span class="tag">eFootball</span>
+            <span class="tag">PUBG Mobile</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm">Modifier mon profil</button>
+            <a href="matchs.html" class="btn btn-outline btn-sm">Voir mes matchs</a>
+          </div>
+        </div>
+
+        <div style="text-align:center">
+          <p class="label">Réputation</p>
+          <p style="font-size:32px;font-weight:600;margin-top:6px">4,8 <span style="color:#FFC15E;font-size:20px">★</span></p>
+          <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:4px">12 matchs · 11 avis</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section-tight">
+    <p class="label">Réputation détaillée</p>
+    <h2 class="section" style="margin-top:12px;font-size:clamp(1.4rem,3vw,2rem)">Basée sur de vrais matchs.</h2>
+
+    <div class="rep-grid" style="margin-top:20px">
+      <div class="rep-item"><p class="label">Fair-play</p><p class="v">96%</p><div class="bar"><i style="width:96%"></i></div></div>
+      <div class="rep-item"><p class="label">Ponctualité</p><p class="v">91%</p><div class="bar"><i style="width:91%"></i></div></div>
+      <div class="rep-item"><p class="label">Respect</p><p class="v">98%</p><div class="bar"><i style="width:98%"></i></div></div>
+      <div class="rep-item"><p class="label">Communication</p><p class="v">94%</p><div class="bar"><i style="width:94%"></i></div></div>
+      <div class="rep-item"><p class="label">Règles</p><p class="v">97%</p><div class="bar"><i style="width:97%"></i></div></div>
+    </div>
+  </section>
+
+  <section class="wrap section-tight">
+    <p class="label">Mes jeux</p>
+    <h2 class="section" style="margin-top:12px;font-size:clamp(1.4rem,3vw,2rem)">Identifiants et rangs.</h2>
+
+    <div class="grid grid-2" style="margin-top:20px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:700;color:#0b0c10;background:linear-gradient(135deg,#FF6B35,#FF8457)">FF</div>
+            <div>
+              <p style="font-weight:600">Free Fire</p>
+              <p class="mono" style="font-size:11px;color:var(--ink-faint)">#KOSSI228</p>
+            </div>
+          </div>
+          <span class="chip brand">Diamant III</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:700;color:#0b0c10;background:linear-gradient(135deg,#78B7FF,#CC8CFF)">eF</div>
+            <div>
+              <p style="font-weight:600">eFootball</p>
+              <p class="mono" style="font-size:11px;color:var(--ink-faint)">KOSSI-TOGO</p>
+            </div>
+          </div>
+          <span class="chip info">Division 2</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section-tight">
+    <p class="label">Avis récents</p>
+    <h2 class="section" style="margin-top:12px;font-size:clamp(1.4rem,3vw,2rem)">Souvent décrit comme fair-play.</h2>
+
+    <div class="grid grid-2" style="margin-top:20px">
+      <article class="review">
+        <div class="review-head">
+          <div class="player-avatar" style="width:36px;height:36px;font-size:14px">Y</div>
+          <span class="review-author">YaoX_gh</span>
+          <span class="review-date">Il y a 3 jours</span>
+        </div>
+        <div class="stars"><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span></div>
+        <p style="margin-top:10px;font-size:14px">Très bon adversaire, match propre et agréable.</p>
+        <div class="review-tags">
+          <span class="review-tag">Fair-play</span>
+          <span class="review-tag">Ponctuel</span>
+        </div>
+      </article>
+
+      <article class="review">
+        <div class="review-head">
+          <div class="player-avatar" style="width:36px;height:36px;font-size:14px;background:linear-gradient(135deg,#B8F27C,#78B7FF)">A</div>
+          <span class="review-author">Ayo_BJ</span>
+          <span class="review-date">Il y a 1 semaine</span>
+        </div>
+        <div class="stars"><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="on">★</span><span class="off">★</span></div>
+        <p style="margin-top:10px;font-size:14px">Bonne communication, match équilibré.</p>
+        <div class="review-tags">
+          <span class="review-tag">Communication</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap section-tight">
+    <div class="wa-card">
+      <div class="wa-inner">
+        <div>
+          <span class="label" style="color:var(--positive)">Canal communautaire</span>
+          <h3 class="title">Rejoins la communauté.</h3>
+          <p class="desc">Retrouve les autres joueurs AfriArena sur WhatsApp pour organiser plus de matchs.</p>
+        </div>
+        <a data-whatsapp href="#" class="btn btn-primary">Rejoindre le groupe →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+      <p style="margin-top:16px;max-width:380px;font-size:14px">La plateforme gaming africaine — née au Togo, pensée pour toute l'Afrique.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Plateforme</h4>
+      <ul>
+        <li><a href="communaute.html">Communautés</a></li>
+        <li><a href="adversaires.html">Adversaires</a></li>
+        <li><a href="matchs.html">Mes matchs</a></li>
+        <li><a href="chat.html">Discussion</a></li>
+        <li><a href="tournois.html">Tournois</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Communauté</h4>
+      <ul>
+        <li><a data-whatsapp href="#" class="wa">Groupe WhatsApp</a></li>
+        <li><a href="mailto:contact@afriarena.gg">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>© 2026 AfriArena — Né au Togo, pensé pour l’Afrique.</p>
+    <p class="mono">Les tournois payants arriveront progressivement.</p>
+  </div>
+</footer>
+
+<script src="assets/js/supabase.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/admin.js"></script>
+<script src="assets/js/profil.js"></script>
+</body>
+</html>
