@@ -40,19 +40,11 @@
         }
       });
 
-      if (!res.ok) return;
-      const rooms = await res.json();
-
-      if (!rooms || rooms.length === 0) {
-        container.innerHTML = `
-          <div class="empty">
-            <strong>Aucune room active pour le moment.</strong>
-            Sois le premier à en créer une !
-          </div>
-        `;
+      if (!res.ok) {
+        container.innerHTML = '<div class="empty"><strong>Erreur : ' + res.status + '</strong></div>';
         return;
+        
       }
-
       container.innerHTML = rooms.map(room => renderRoomCard(room)).join('');
 
     } catch (e) {
