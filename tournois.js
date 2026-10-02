@@ -16,44 +16,15 @@
   }
 
   // ===== Charge la liste des tournois =====
-  async function loadTournaments() {
-    const cfg = getCfg();
-    if (!cfg) return;
-    const container = document.getElementById('tournaments-list');
-    if (!container) return;
+  async function joinTournament(tournamentId) {
+  const cfg = getCfg();
+  const tag = getMyTag();
+  if (!cfg || !tag) return false;
 
-    try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?select=*&order=created_at.desc&limit=30', {
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-        }
-      });
-
-      if (!res.ok) {
-        container.innerHTML = '<div class="empty"><strong>Erreur ' + res.status + '</strong></div>';
-        return;
-      }
-
-      const tournaments = await res.json();
-
-      if (!tournaments || tournaments.length === 0) {
-        container.innerHTML = `
-          <div class="empty">
-            <strong>Aucun tournoi pour le moment.</strong>
-            Sois le premier à en créer un !
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = tournaments.map(t => renderTournamentCard(t)).join('');
-
-    } catch (e) {
-      console.warn('Erreur:', e);
-    }
-  }
-
+  try {
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players', {
+      method: 'POST',
+      ...
   // ===== Affiche une carte tournoi =====
   function renderTournamentCard(t) {
     const isMine = t.created_by === getMyTag();
