@@ -87,7 +87,7 @@
     }
 
     return `
-      <article class="tournament" style="position:relative">
+      <article class="tournament" style="position:relative;cursor:pointer" data-tournament-id="${t.id}">
         <div class="tournament-head">
           <div>
             <h3>${t.name}</h3>
