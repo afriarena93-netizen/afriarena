@@ -44,7 +44,6 @@
   ruturn;
   }
       const rooms = await res.json();
-  }
     
   // ===== Affiche une carte room =====
   function renderRoomCard(room) {
