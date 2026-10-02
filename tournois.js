@@ -302,6 +302,17 @@
       openCreateTournamentModal();
       return;
     }
+    // Ouvre/ferme les détails d'un tournoi
+const card = e.target.closest('[data-tournament-id]');
+if (card && !e.target.closest('button')) {
+  const id = card.getAttribute('data-tournament-id');
+  const details = document.getElementById('details-' + id);
+  if (details) {
+    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+  }
+  return;
+}
+    
 
     const joinBtn = e.target.closest('[data-join-tournament]');
     if (joinBtn) {
