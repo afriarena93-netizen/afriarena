@@ -65,109 +65,20 @@
   </section>
 
   <section class="wrap section-tight">
-    <div class="tabs" data-tabs>
-      <button class="tab active" data-tab="encours">En cours</button>
-      <button class="tab" data-tab="ouverts">Inscriptions ouvertes</button>
-      <button class="tab" data-tab="passes">Terminés</button>
+  <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div>
+      <p class="label">Tournois actifs</p>
+      <h2 class="section" style="margin-top:12px;font-size:clamp(1.4rem,3vw,2rem)">Rejoins un tournoi.</h2>
     </div>
+    <button class="btn btn-primary" data-open-create-tournament>+ Créer un tournoi</button>
+  </div>
 
-    <div data-tab-panel="encours">
-      <div class="grid grid-2">
-        <article class="tournament">
-          <div class="tournament-head">
-            <div>
-              <h3>Free Fire Togo — Saison 1</h3>
-              <p class="prize">🏆 50 000 FCFA de récompenses</p>
-            </div>
-            <span class="chip positive"><span class="dot live"></span> Live</span>
-          </div>
-          <div class="tournament-meta">
-            <div><p class="k">Jeu</p><p class="v">Free Fire</p></div>
-            <div><p class="k">Format</p><p class="v">1v1 · Solo</p></div>
-            <div><p class="k">Joueurs</p><p class="v">32 / 32</p></div>
-            <div><p class="k">Phase</p><p class="v">Quarts de finale</p></div>
-          </div>
-          <p style="font-size:13px">Les matchs sont en cours. Les joueurs choisissent leur créneau dans la fenêtre autorisée.</p>
-          <div class="match-actions">
-            <a href="chat.html" class="btn btn-primary btn-sm">Voir les matchs</a>
-            <button class="btn btn-outline btn-sm" data-whatsapp>Suivre sur WhatsApp</button>
-          </div>
-        </article>
-
-        <article class="tournament">
-          <div class="tournament-head">
-            <div>
-              <h3>eFootball Lomé Cup</h3>
-              <p class="prize">🏆 Trophée + 25 000 FCFA</p>
-            </div>
-            <span class="chip positive"><span class="dot live"></span> Live</span>
-          </div>
-          <div class="tournament-meta">
-            <div><p class="k">Jeu</p><p class="v">eFootball</p></div>
-            <div><p class="k">Format</p><p class="v">1v1 · Standard</p></div>
-            <div><p class="k">Joueurs</p><p class="v">16 / 16</p></div>
-            <div><p class="k">Phase</p><p class="v">Demi-finales</p></div>
-          </div>
-          <p style="font-size:13px">Deux demi-finales à jouer. Résultats validés automatiquement si les deux scores correspondent.</p>
-          <div class="match-actions">
-            <a href="chat.html" class="btn btn-primary btn-sm">Voir les matchs</a>
-          </div>
-        </article>
-      </div>
+  <div id="tournaments-list" class="grid grid-2">
+    <div class="empty">
+      <strong>Chargement des tournois…</strong>
     </div>
-
-    <div data-tab-panel="ouverts" hidden>
-      <div class="grid grid-2">
-        <article class="tournament">
-          <div class="tournament-head">
-            <div>
-              <h3>PUBG Mobile Africa — Open #1</h3>
-              <p class="prize">🏆 Places offertes pour la Saison 2</p>
-            </div>
-            <span class="chip info">Inscriptions ouvertes</span>
-          </div>
-          <div class="tournament-meta">
-            <div><p class="k">Jeu</p><p class="v">PUBG Mobile</p></div>
-            <div><p class="k">Format</p><p class="v">Squad</p></div>
-            <div><p class="k">Places</p><p class="v">24 / 64</p></div>
-            <div><p class="k">Frais</p><p class="v">Gratuit</p></div>
-          </div>
-          <div class="match-actions">
-            <button class="btn btn-primary btn-sm">S'inscrire</button>
-            <button class="btn btn-outline btn-sm">Règles</button>
-          </div>
-        </article>
-
-        <article class="tournament">
-          <div class="tournament-head">
-            <div>
-              <h3>Call of Duty Mobile — Togo Series</h3>
-              <p class="prize">🏆 30 000 FCFA</p>
-            </div>
-            <span class="chip info">Inscriptions ouvertes</span>
-          </div>
-          <div class="tournament-meta">
-            <div><p class="k">Jeu</p><p class="v">CoD Mobile</p></div>
-            <div><p class="k">Format</p><p class="v">Squad 4v4</p></div>
-            <div><p class="k">Places</p><p class="v">12 / 16</p></div>
-            <div><p class="k">Frais</p><p class="v">Gratuit</p></div>
-          </div>
-          <div class="match-actions">
-            <button class="btn btn-primary btn-sm">S'inscrire</button>
-            <button class="btn btn-outline btn-sm">Règles</button>
-          </div>
-        </article>
-      </div>
-    </div>
-
-    <div data-tab-panel="passes" hidden>
-      <div class="empty">
-        <strong>Aucun tournoi terminé pour le moment.</strong>
-        Les premiers résultats apparaîtront ici dès la fin des compétitions en cours.
-      </div>
-    </div>
+  </div>
   </section>
-
   <section class="wrap section-tight">
     <div class="wa-card">
       <div class="wa-inner">
@@ -215,5 +126,6 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script src="admin.js"></script>
+  <script src="tournois.js"></script>
 </body>
 </html>
