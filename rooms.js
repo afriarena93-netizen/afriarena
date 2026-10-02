@@ -5,6 +5,7 @@
   let currentGameFilter = '';
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
+
   function getMyTag() {
     let tag = localStorage.getItem('afriarena:myTag');
     if (!tag || tag.trim() === '' || tag === 'Anonyme') {
@@ -22,7 +23,10 @@
   // ===== Charge la liste des rooms =====
   async function loadRooms() {
     const cfg = getCfg();
-    if (!cfg) return;
+    if (!cfg) {
+      console.warn('⚠ Config Supabase manquante');
+      return;
+    }
 
     const container = document.getElementById('rooms-list');
     if (!container) return;
@@ -38,213 +42,246 @@
           'apikey': cfg.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
         }
-      })   
-  if (!res.ok) {
-     container.innerHTML = '<div class="empty"><strong>Erreur : ' + res.status + '</strong></div>';      return;
-  ruturn;
-  }
+      });
+
+      if (!res.ok) {
+        console.warn('⚠ Erreur Supabase:', res.status);
+        container.innerHTML = `
+          <div class="empty">
+            <strong>Erreur de chargement (${res.status})</strong>
+            Réessaie dans un instant.
+          </div>
+        `;
+        return;
+      }
+
       const rooms = await res.json();
-    
+
+      if (!rooms || rooms.length === 0) {
+        container.innerHTML = `
+          <div class="empty">
+            <strong>Aucune room active pour le moment.</strong>
+            Sois le premier à en créer une !
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = rooms.map(room => renderRoomCard(room)).join('');
+
+    } catch (e) {
+      console.warn('⚠ Erreur chargement rooms:', e);
+      const c = document.getElementById('rooms-list');
+      if (c) c.innerHTML = '<div class="empty"><strong>Erreur réseau</strong>Vérifie ta connexion.</div>';
+    }
+  }
+
   // ===== Affiche une carte room =====
   function renderRoomCard(room) {
-  const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
-    hour: '2-digit', minute: '2-digit'
-  });
-  const gameName = room.game || 'Free Fire';
-  const format = room.format || '1v1';
-  const isMine = room.created_by === getMyTag();
-  const players = room.players || '';
-  const playerList = players ? players.split(',').filter(Boolean) : [];
-  const maxPlayers = format === 'Squad' ? 4 : (format === '2v2' ? 4 : 2);
-  const isFull = playerList.length >= maxPlayers;
-  const iAlreadyJoined = playerList.includes(getMyTag());
+    const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
+      hour: '2-digit', minute: '2-digit'
+    });
+    const gameName = room.game || 'Free Fire';
+    const format = room.format || '1v1';
+    const isMine = room.created_by === getMyTag();
+    const players = room.players || '';
+    const playerList = players ? players.split(',').filter(Boolean) : [];
+    const maxPlayers = format === 'Squad' ? 4 : (format === '2v2' ? 4 : 2);
+    const isFull = playerList.length >= maxPlayers;
+    const iAlreadyJoined = playerList.includes(getMyTag());
 
-  return `
-    <article class="match" style="position:relative" data-room-id="${room.id}">
-      <div class="match-head">
-        <span class="match-id">ROOM · ${room.id}</span>
-        <span class="chip ${isFull ? 'brand' : 'positive'}">
-          <span class="dot ${isFull ? '' : 'live'}"></span>
-          ${isFull ? 'COMPLÈTE' : 'ACTIVE'}
-        </span>
-      </div>
-      <div style="padding:16px 0">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div>
-            <p style="font-weight:600;color:var(--ink)">${gameName} · ${format}</p>
-            <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:4px">
-              Créée par ${room.created_by} · ${time}
-            </p>
-          </div>
-          ${isMine ? `
-            <button class="btn btn-ghost btn-sm" data-delete-room="${room.id}" title="Supprimer"
-              style="color:#FF5050;font-size:18px;padding:6px 12px">🗑</button>
-          ` : ''}
+    return `
+      <article class="match" style="position:relative" data-room-id="${room.id}">
+        <div class="match-head">
+          <span class="match-id">ROOM · ${room.id}</span>
+          <span class="chip ${isFull ? 'brand' : 'positive'}">
+            <span class="dot ${isFull ? '' : 'live'}"></span>
+            ${isFull ? 'COMPLÈTE' : 'ACTIVE'}
+          </span>
         </div>
-
-        <div class="room" style="margin-top:0">
-          <div class="room-row">
+        <div style="padding:16px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
             <div>
-              <p class="room-key">ID de la room</p>
-              <p class="room-val">${room.room_code}</p>
-            </div>
-            <button class="copy-btn" data-copy="${room.room_code}">Copier</button>
-          </div>
-          <div class="room-row">
-            <div>
-              <p class="room-key">Mot de passe</p>
-              <p class="room-val">${room.room_password}</p>
-            </div>
-            <button class="copy-btn" data-copy="${room.room_password}">Copier</button>
-          </div>
-        </div>
-
-        <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-          <div style="flex:1;min-width:120px">
-            <p class="mono" style="font-size:11px;color:var(--ink-faint)">
-              ${playerList.length} / ${maxPlayers} joueurs
-            </p>
-            ${playerList.length > 0 ? `
-              <p class="mono" style="font-size:11px;color:var(--ink-muted);margin-top:4px">
-                ${playerList.join(', ')}
+              <p style="font-weight:600;color:var(--ink)">${gameName} · ${format}</p>
+              <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:4px">
+                Créée par ${room.created_by} · ${time}
               </p>
+            </div>
+            ${isMine ? `
+              <button class="btn btn-ghost btn-sm" data-delete-room="${room.id}" title="Supprimer"
+                style="color:#FF5050;font-size:18px;padding:6px 12px">🗑</button>
             ` : ''}
           </div>
-          ${iAlreadyJoined ? `
-  <button class="btn btn-outline btn-sm" data-leave-room="${room.id}">
-    🚪 Quitter
-  </button>
-` : isFull ? `
-  <button class="btn btn-outline btn-sm" disabled>🔒 Complète</button>
-` : `
-  <button class="btn btn-primary btn-sm" data-join-room="${room.id}">
-    ➕ Rejoindre
-  </button>
-`}
+
+          <div class="room" style="margin-top:0">
+            <div class="room-row">
+              <div>
+                <p class="room-key">ID de la room</p>
+                <p class="room-val">${room.room_code}</p>
+              </div>
+              <button class="copy-btn" data-copy="${room.room_code}">Copier</button>
+            </div>
+            <div class="room-row">
+              <div>
+                <p class="room-key">Mot de passe</p>
+                <p class="room-val">${room.room_password}</p>
+              </div>
+              <button class="copy-btn" data-copy="${room.room_password}">Copier</button>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:120px">
+              <p class="mono" style="font-size:11px;color:var(--ink-faint)">
+                ${playerList.length} / ${maxPlayers} joueurs
+              </p>
+              ${playerList.length > 0 ? `
+                <p class="mono" style="font-size:11px;color:var(--ink-muted);margin-top:4px">
+                  ${playerList.join(', ')}
+                </p>
+              ` : ''}
+            </div>
+            ${iAlreadyJoined ? `
+              <button class="btn btn-outline btn-sm" data-leave-room="${room.id}">
+                🚪 Quitter
+              </button>
+            ` : isFull ? `
+              <button class="btn btn-outline btn-sm" disabled>🔒 Complète</button>
+            ` : `
+              <button class="btn btn-primary btn-sm" data-join-room="${room.id}">
+                ➕ Rejoindre
+              </button>
+            `}
+          </div>
         </div>
-      </div>
-    </article>
-  `;
+      </article>
+    `;
   }
-  
-// ===== Rejoindre une room =====
-async function joinRoom(roomId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
 
-  try {
-    // Récupère la room actuelle
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-      }
-    });
-    const rooms = await res.json();
-    if (!rooms || !rooms.length) return false;
+  // ===== Rejoindre une room =====
+  async function joinRoom(roomId) {
+    const cfg = getCfg();
+    const tag = getMyTag();
+    if (!cfg || !tag) return false;
 
-    const room = rooms[0];
-    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
-
-    if (currentPlayers.includes(tag)) return true;
-
-    currentPlayers.push(tag);
-    const newPlayers = currentPlayers.join(',');
-
-    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      method: 'PATCH',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ players: newPlayers })
-    });
-    return updateRes.ok;
-  } catch (e) {
-    return false;
-  }
-}
-  
-// ===== Quitter une room =====
-async function leaveRoom(roomId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
-
-  try {
-    // Récupère la room actuelle
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-      }
-    });
-    const rooms = await res.json();
-    if (!rooms || !rooms.length) return false;
-
-    const room = rooms[0];
-    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
-    const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
-
-    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      method: 'PATCH',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ players: newPlayers })
-    });
-    return updateRes.ok;
-  } catch (e) {
-    return false;
-  }
-}
-  
-  // Quitter une room
-const leaveBtn = e.target.closest('[data-leave-room]');
-if (leaveBtn) {
-  e.preventDefault();
-  const roomId = leaveBtn.getAttribute('data-leave-room');
-  leaveBtn.textContent = '⏳…';
-  leaveBtn.disabled = true;
-  const ok = await leaveRoom(roomId);
-  if (ok) {
-    if (window.afriToast) window.afriToast('🚪 Tu as quitté la room');
-    loadRooms();
-  } else {
-    leaveBtn.textContent = '❌ Erreur';
-    setTimeout(() => { leaveBtn.textContent = '🚪 Quitter'; leaveBtn.disabled = false; }, 2000);
-  }
-  return;
-}
-  
-// ===== Supprimer une room =====
-async function deleteRoom(roomId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
-
-  try {
-    const res = await fetch(
-      cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId + '&created_by=eq.' + encodeURIComponent(tag),
-      {
-        method: 'DELETE',
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
         headers: {
           'apikey': cfg.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
         }
-      }
-    );
-    return res.ok;
-  } catch (e) {
-    return false;
+      });
+      const rooms = await res.json();
+      if (!rooms || !rooms.length) return false;
+
+      const room = rooms[0];
+      const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+      if (currentPlayers.includes(tag)) return true;
+
+      currentPlayers.push(tag);
+      const newPlayers = currentPlayers.join(',');
+
+      const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ players: newPlayers })
+      });
+      return updateRes.ok;
+    } catch (e) {
+      return false;
+    }
   }
-}
-  
-  // ===== Ouvre la modale de création =====
+
+  // ===== Quitter une room =====
+  async function leaveRoom(roomId) {
+    const cfg = getCfg();
+    const tag = getMyTag();
+    if (!cfg || !tag) return false;
+
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      });
+      const rooms = await res.json();
+      if (!rooms || !rooms.length) return false;
+
+      const room = rooms[0];
+      const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+      const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
+
+      const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ players: newPlayers })
+      });
+      return updateRes.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ===== Supprimer une room =====
+  async function deleteRoom(roomId) {
+    const cfg = getCfg();
+    const tag = getMyTag();
+    if (!cfg || !tag) return false;
+
+    try {
+      const res = await fetch(
+        cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId + '&created_by=eq.' + encodeURIComponent(tag),
+        {
+          method: 'DELETE',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+          }
+        }
+      );
+      return res.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ===== Créer une room dans Supabase =====
+  async function createRoom(game, format, code, pwd, tag) {
+    const cfg = getCfg();
+    if (!cfg) return false;
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms', {
+        method: 'POST',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+          room_code: code,
+          room_password: pwd,
+          created_by: tag,
+          game: game,
+          format: format
+        })
+      });
+      return res.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ===== Modale de création =====
   function openCreateRoomModal() {
     const tag = getMyTag();
     if (!tag) return;
@@ -337,79 +374,70 @@ async function deleteRoom(roomId) {
     });
   }
 
-  // ===== Crée la room dans Supabase =====
-  async function createRoom(game, format, code, pwd, tag) {
-    const cfg = getCfg();
-    if (!cfg) return false;
-    try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms', {
-        method: 'POST',
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
-          room_code: code,
-          room_password: pwd,
-          created_by: tag,
-          game: game,
-          format: format
-        })
-      });
-      return res.ok;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // ===== Bouton "Créer ma room" =====
+  // ===== Handlers de clic =====
   document.addEventListener('click', async (e) => {
-  // Créer une room
-  if (e.target.closest('[data-open-create-room]')) {
-    e.preventDefault();
-    openCreateRoomModal();
-    return;
-  }
-
-  // Rejoindre une room
-  const joinBtn = e.target.closest('[data-join-room]');
-  if (joinBtn) {
-    e.preventDefault();
-    const roomId = joinBtn.getAttribute('data-join-room');
-    joinBtn.textContent = '⏳…';
-    joinBtn.disabled = true;
-    const ok = await joinRoom(roomId);
-    if (ok) {
-      if (window.afriToast) window.afriToast('✅ Tu as rejoint la room');
-      loadRooms();
-    } else {
-      joinBtn.textContent = '❌ Erreur';
-      setTimeout(() => { joinBtn.textContent = '➕ Rejoindre'; joinBtn.disabled = false; }, 2000);
+    // Créer une room
+    if (e.target.closest('[data-open-create-room]')) {
+      e.preventDefault();
+      openCreateRoomModal();
+      return;
     }
-    return;
-  }
 
-  // Supprimer une room
-  const delBtn = e.target.closest('[data-delete-room]');
-  if (delBtn) {
-    e.preventDefault();
-    const roomId = delBtn.getAttribute('data-delete-room');
-    if (!confirm('Supprimer cette room ?')) return;
-    delBtn.textContent = '⏳';
-    const ok = await deleteRoom(roomId);
-    if (ok) {
-      if (window.afriToast) window.afriToast('🗑 Room supprimée');
-      loadRooms();
-    } else {
-      delBtn.textContent = '❌';
+    // Rejoindre
+    const joinBtn = e.target.closest('[data-join-room]');
+    if (joinBtn) {
+      e.preventDefault();
+      const roomId = joinBtn.getAttribute('data-join-room');
+      joinBtn.textContent = '⏳…';
+      joinBtn.disabled = true;
+      const ok = await joinRoom(roomId);
+      if (ok) {
+        if (window.afriToast) window.afriToast('✅ Tu as rejoint la room');
+        loadRooms();
+      } else {
+        joinBtn.textContent = '❌ Erreur';
+        setTimeout(() => { joinBtn.textContent = '➕ Rejoindre'; joinBtn.disabled = false; }, 2000);
+      }
+      return;
     }
-    return;
-  }
-});
 
-  // ===== Filtres =====
+    // Quitter
+    const leaveBtn = e.target.closest('[data-leave-room]');
+    if (leaveBtn) {
+      e.preventDefault();
+      const roomId = leaveBtn.getAttribute('data-leave-room');
+      leaveBtn.textContent = '⏳…';
+      leaveBtn.disabled = true;
+      const ok = await leaveRoom(roomId);
+      if (ok) {
+        if (window.afriToast) window.afriToast('🚪 Tu as quitté la room');
+        loadRooms();
+      } else {
+        leaveBtn.textContent = '❌ Erreur';
+        setTimeout(() => { leaveBtn.textContent = '🚪 Quitter'; leaveBtn.disabled = false; }, 2000);
+      }
+      return;
+    }
+
+    // Supprimer
+    const delBtn = e.target.closest('[data-delete-room]');
+    if (delBtn) {
+      e.preventDefault();
+      const roomId = delBtn.getAttribute('data-delete-room');
+      if (!confirm('Supprimer cette room ?')) return;
+      delBtn.textContent = '⏳';
+      const ok = await deleteRoom(roomId);
+      if (ok) {
+        if (window.afriToast) window.afriToast('🗑 Room supprimée');
+        loadRooms();
+      } else {
+        delBtn.textContent = '❌';
+      }
+      return;
+    }
+  });
+
+  // ===== Filtre =====
   document.addEventListener('change', (e) => {
     if (e.target.id === 'filter-game') {
       currentGameFilter = e.target.value;
