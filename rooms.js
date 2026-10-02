@@ -38,20 +38,14 @@
           'apikey': cfg.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
         }
-      });
-
-      if (!res.ok) {
-        container.innerHTML = '<div class="empty"><strong>Erreur : ' + res.status + '</strong></div>';
-        return;
-        
-      }
-      container.innerHTML = rooms.map(room => renderRoomCard(room)).join('');
-
-    } catch (e) {
-      console.warn('Erreur chargement rooms:', e);
-    }
+      })   
+  if (!res.ok) {
+     container.innerHTML = '<div class="empty"><strong>Erreur : ' + res.status + '</strong></div>';      return;
+  ruturn;
   }
-
+      const rooms = await res.json();
+  }
+    
   // ===== Affiche une carte room =====
   function renderRoomCard(room) {
   const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
