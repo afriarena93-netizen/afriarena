@@ -1,8 +1,9 @@
-/* AfriArena — Tournois : liste et création */
+/* AfriArena — Tournois : liste, création, inscription */
 (function () {
   'use strict';
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
+
   function getMyTag() {
     let tag = localStorage.getItem('afriarena:myTag');
     if (!tag || tag.trim() === '' || tag === 'Anonyme') {
@@ -16,50 +17,74 @@
   }
 
   // ===== Charge la liste des tournois =====
-  async function joinTournament(tournamentId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
+  async function loadTournaments() {
+    const cfg = getCfg();
+    if (!cfg) return;
+    const container = document.getElementById('tournaments-list');
+    if (!container) return;
 
-  try {
-    const checkRes = await fetch(
-      cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + tournamentId + '&gamertag=eq.' + encodeURIComponent(tag) + '&select=id',
-      {
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?select=*&order=created_at.desc&limit=30', {
         headers: {
           'apikey': cfg.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
         }
-      }
-    );
-    const existing = checkRes.ok ? await checkRes.json() : [];
-    if (existing && existing.length > 0) {
-      if (window.afriToast) window.afriToast('⚠ Tu es déjà inscrit');
-      return false;
-    }
+      });
 
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players', {
-      method: 'POST',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        tournament_id: tournamentId,
-        gamertag: tag
-      })
-    });
-    return res.ok;
-  } catch (e) {
-    return false;
+      if (!res.ok) {
+        container.innerHTML = '<div class="empty"><strong>Erreur ' + res.status + '</strong></div>';
+        return;
+      }
+
+      const tournaments = await res.json();
+
+      if (!tournaments || tournaments.length === 0) {
+        container.innerHTML = `
+          <div class="empty">
+            <strong>Aucun tournoi pour le moment.</strong>
+            Sois le premier à en créer un !
+          </div>
+        `;
+        return;
+      }
+
+      // Récupère les inscriptions pour le compteur
+      const playersRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?select=tournament_id,gamertag', {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      });
+      const allPlayers = playersRes.ok ? await playersRes.json() : [];
+
+      container.innerHTML = tournaments.map(t => renderTournamentCard(t, allPlayers)).join('');
+
+    } catch (e) {
+      console.warn('Erreur:', e);
+    }
   }
-  }
+
   // ===== Affiche une carte tournoi =====
-  function renderTournamentCard(t) {
-    const isMine = t.created_by === getMyTag();
-    const statusLabel = t.status === 'registration' ? 'Inscriptions ouvertes'
-                       : t.status === 'started' ? 'En cours'
-                       : t.status === 'finished' ? 'Terminé' : t.status;
+  function renderTournamentCard(t, allPlayers) {
+    const myTag = getMyTag();
+    const isMine = t.created_by === myTag;
+    const registered = allPlayers.filter(p => p.tournament_id === t.id);
+    const count = registered.length;
+    const iAmRegistered = registered.some(p => p.gamertag === myTag);
+    const isFull = count >= t.max_players;
+
+    const statusLabel = t.status === 'registration' ? 'INSCRIPTIONS OUVERTES'
+                       : t.status === 'started' ? 'EN COURS'
+                       : t.status === 'finished' ? 'TERMINÉ' : t.status;
+
+    let actionBtn = '';
+    if (iAmRegistered) {
+      actionBtn = '<button class="btn btn-outline btn-sm" disabled>✅ Inscrit</button>';
+    } else if (isFull) {
+      actionBtn = '<button class="btn btn-outline btn-sm" disabled>🔒 Complet</button>';
+    } else {
+      actionBtn = '<button class="btn btn-primary btn-sm" data-join-tournament="' + t.id + '">🎯 S\'inscrire</button>';
+    }
 
     return `
       <article class="tournament" style="position:relative">
@@ -73,21 +98,12 @@
         <div class="tournament-meta">
           <div><p class="k">Jeu</p><p class="v">${t.game}</p></div>
           <div><p class="k">Format</p><p class="v">${t.format}</p></div>
-          <div><p class="k">Places</p><p class="v">${t.max_players}</p></div>
+          <div><p class="k">Joueurs</p><p class="v">${count} / ${t.max_players}</p></div>
           <div><p class="k">Créé par</p><p class="v">${t.created_by}</p></div>
         </div>
         <div class="match-actions">
-          ${isMine ? `
-            <button class="btn btn-ghost btn-sm" data-delete-tournament="${t.id}" style="color:#FF5050">
-              🗑 Supprimer
-            </button>
-          ` : ''}
-          <button class="btn btn-primary btn-sm" data-join-tournament="${t.id}">
-            🎯 S'inscrire
-          </button>
-          <button class="btn btn-outline btn-sm" data-view-tournament="${t.id}">
-            Voir les détails
-          </button>
+          ${isMine ? '<button class="btn btn-ghost btn-sm" data-delete-tournament="' + t.id + '" style="color:#FF5050">🗑 Supprimer</button>' : ''}
+          ${actionBtn}
         </div>
       </article>
     `;
@@ -218,13 +234,31 @@
     }
   }
 
-  // ===== S'inscrire à un tournoi =====
+  // ===== S'inscrire à un tournoi (avec anti-doublon) =====
   async function joinTournament(tournamentId) {
     const cfg = getCfg();
     const tag = getMyTag();
     if (!cfg || !tag) return false;
 
     try {
+      // Vérifie si déjà inscrit
+      const checkRes = await fetch(
+        cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + tournamentId + '&gamertag=eq.' + encodeURIComponent(tag) + '&select=id',
+        {
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+          }
+        }
+      );
+      const existing = checkRes.ok ? await checkRes.json() : [];
+
+      if (existing && existing.length > 0) {
+        if (window.afriToast) window.afriToast('⚠ Déjà inscrit');
+        return 'already';
+      }
+
+      // Crée l'inscription
       const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players', {
         method: 'POST',
         headers: {
@@ -261,7 +295,7 @@
     }
   }
 
-  // ===== Handlers =====
+  // ===== Handlers de clic =====
   document.addEventListener('click', async (e) => {
     if (e.target.closest('[data-open-create-tournament]')) {
       e.preventDefault();
@@ -275,10 +309,13 @@
       const id = joinBtn.getAttribute('data-join-tournament');
       joinBtn.textContent = '⏳…';
       joinBtn.disabled = true;
-      const ok = await joinTournament(id);
-      if (ok) {
+      const result = await joinTournament(id);
+
+      if (result === true) {
         if (window.afriToast) window.afriToast('🎯 Inscrit au tournoi');
-        joinBtn.textContent = '✅ Inscrit';
+        loadTournaments();
+      } else if (result === 'already') {
+        loadTournaments();
       } else {
         joinBtn.textContent = '❌ Erreur';
         setTimeout(() => { joinBtn.textContent = '🎯 S\'inscrire'; joinBtn.disabled = false; }, 2000);
@@ -313,3 +350,5 @@
     init();
   }
 })();
+
+    
