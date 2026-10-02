@@ -105,6 +105,15 @@
           ${isMine ? '<button class="btn btn-ghost btn-sm" data-delete-tournament="' + t.id + '" style="color:#FF5050">🗑 Supprimer</button>' : ''}
           ${actionBtn}
         </div>
+        <div id="details-${t.id}" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
+  <p class="label" style="margin-bottom:12px">Joueurs inscrits (${count}/${t.max_players})</p>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    ${registered.length === 0 
+      ? '<p class="mono" style="font-size:12px;color:var(--ink-faint)">Aucun joueur</p>'
+      : registered.map(p => '<p class="mono" style="font-size:13px;color:var(--ink)">👤 ' + p.gamertag + '</p>').join('')
+    }
+  </div>
+</div>
       </article>
     `;
   }
