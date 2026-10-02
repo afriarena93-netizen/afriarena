@@ -22,9 +22,38 @@
   if (!cfg || !tag) return false;
 
   try {
+    const checkRes = await fetch(
+      cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + tournamentId + '&gamertag=eq.' + encodeURIComponent(tag) + '&select=id',
+      {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      }
+    );
+    const existing = checkRes.ok ? await checkRes.json() : [];
+    if (existing && existing.length > 0) {
+      if (window.afriToast) window.afriToast('⚠ Tu es déjà inscrit');
+      return false;
+    }
+
     const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players', {
       method: 'POST',
-      ...
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        tournament_id: tournamentId,
+        gamertag: tag
+      })
+    });
+    return res.ok;
+  } catch (e) {
+    return false;
+  }
+  }
   // ===== Affiche une carte tournoi =====
   function renderTournamentCard(t) {
     const isMine = t.created_by === getMyTag();
