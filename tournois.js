@@ -137,10 +137,17 @@
 }
 
 function generateBracket(players) {
-  const shuffled = [...players].sort(() => Math.random() - 0.5);
+  const unique = [...new Set(players)];
+  const shuffled = unique.sort(() => Math.random() - 0.5);
   const matches = [];
   for (let i = 0; i < shuffled.length; i += 2) {
-    matches.push({ p1: shuffled[i], p2: shuffled[i + 1] || null, winner: null });
+    const p1 = shuffled[i];
+    const p2 = shuffled[i + 1] || null;
+    matches.push({
+      p1: p1,
+      p2: p2,
+      winner: p2 ? null : p1
+    });
   }
   return [{ round: 1, matches }];
 }
