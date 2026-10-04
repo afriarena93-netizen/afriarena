@@ -1,6 +1,29 @@
 /* AfriArena — Tournois : liste, création, inscription, bracket, champion */
 (function () {
   'use strict';
+  // ==== Fonction pour afficher le badge du pays ====
+function getBadgeHTML(pays) {
+  const badges = {
+    "Togo": { surnom: "Éperviers", emoji: "🦅" },
+    "Côte d'Ivoire": { surnom: "Éléphants", emoji: "🐘" },
+    "Sénégal": { surnom: "Lions", emoji: "🦁" },
+    "Cameroun": { surnom: "Lions Indomptables", emoji: "🦁" },
+    "Ghana": { surnom: "Black Stars", emoji: "⭐" },
+    "Nigeria": { surnom: "Super Eagles", emoji: "🦅" },
+    "Mali": { surnom: "Aigles", emoji: "🦅" },
+    "Burkina Faso": { surnom: "Étalons", emoji: "🐎" },
+    "Algérie": { surnom: "Fennecs", emoji: "🦊" },
+    "Maroc": { surnom: "Lions de l'Atlas", emoji: "🦁" },
+    "Tunisie": { surnom: "Aigles de Carthage", emoji: "🦅" },
+    "RD Congo": { surnom: "Léopards", emoji: "🐆" },
+    "Gabon": { surnom: "Panthères", emoji: "🐆" },
+    "Bénin": { surnom: "Écureuils", emoji: "🐿️" }
+  };
+  if (pays && badges[pays]) {
+    return `<span class="badge-pays" title="${badges[pays].surnom}" style="font-size:0.8em; margin-left:5px;">${badges[pays].emoji} ${badges[pays].surnom}</span>`;
+  }
+  return "";
+}
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
 
@@ -58,7 +81,7 @@
     }
     let bracketHTML = '';
     if (t.bracket && Array.isArray(t.bracket) && t.bracket.length > 0) {
-      bracketHTML = renderBracket(t.bracket, isMine, t.status);
+      bracketHTML = renderBracket(t.bracket, isMine, allPlayers);
     }
     return `
       <article class="tournament" style="position:relative;cursor:pointer" data-tournament-id="${t.id}">
@@ -95,35 +118,49 @@
   }
 
   // ▼▼▼ SECTION 2 commence ici ▼▼▼
- function renderBracket(bracket, isMine, status) {
-  let html = '<p class="label" style="margin-top:24px;margin-bottom:12px">🏆 Bracket</p>';
+ function renderBracket(bracket, isMine, allPlayers) {
+  let html = '<p class="label" style="margin-top:20px;">Bracket</p>';
   bracket.forEach((round, roundIndex) => {
-    html += '<p class="mono" style="font-size:11px;color:var(--ink-faint);margin:14px 0 6px;letter-spacing:.1em">TOUR ' + (roundIndex + 1) + '</p>';
+    html += '<p class="mono" style="font-size:11px; margin-top:10px;">TOUR ' + (roundIndex + 1) + '</p>';
     round.matches.forEach((m, matchIndex) => {
       const p1 = m.p1 || 'En attente';
       const p2 = m.p2 || 'En attente';
+      
+      // Fonction pour trouver le pays d'un joueur
+      const getPaysJoueur = (pseudo) => {
+        const joueur = allPlayers.find(p => p.gamertag === pseudo);
+        return joueur ? joueur.pays : null;
+      };
+
       const done = m.winner !== null && m.winner !== undefined;
       const canClick = !done && m.p1 && m.p2 && isMine;
-      const p1Class = m.winner === m.p1 ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)';
-      const p2Class = m.winner === m.p2 ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)';
-      html += '<div style="padding:10px 12px;background:var(--panel);border-radius:10px;border:1px solid var(--line);margin-bottom:6px">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">';
+      const p1Class = m.winner === m.p1 ? 'color:var(--green)' : '';
+      const p2Class = m.winner === m.p2 ? 'color:var(--green)' : '';
+      
+      html += '<div style="padding:10px 12px;background:var(--card);border-radius:8px;margin-bottom:8px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">';
+      
       if (canClick) {
-        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|1" class="mono" style="flex:1;text-align:left;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;' + p1Class + '">' + p1 + '</button>';
-        html += '<span class="mono" style="font-size:11px;color:var(--ink-faint)">vs</span>';
-        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|2" class="mono" style="flex:1;text-align:right;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;' + p2Class + '">' + p2 + '</button>';
+        // Joueur 1 cliquable
+        html += '<button data-declare-winner="' + roundIndex + ',' + matchIndex + ',1" class="btn btn-sm btn-ghost" style="flex:1;text-align:left;' + p1Class + '">' + p1 + getBadgeHTML(getPaysJoueur(p1)) + '</button>';
+        html += '<span class="mono" style="font-size:11px;color:var(--muted)">VS</span>';
+        // Joueur 2 cliquable
+        html += '<button data-declare-winner="' + roundIndex + ',' + matchIndex + ',2" class="btn btn-sm btn-ghost" style="flex:1;text-align:right;' + p2Class + '">' + p2 + getBadgeHTML(getPaysJoueur(p2)) + '</button>';
       } else {
-        html += '<span class="mono" style="flex:1;font-size:13px;' + p1Class + '">' + p1 + (m.winner === m.p1 ? ' 🏆' : '') + '</span>';
-        html += '<span class="mono" style="font-size:11px;color:var(--ink-faint)">vs</span>';
-        html += '<span class="mono" style="flex:1;text-align:right;font-size:13px;' + p2Class + '">' + p2 + (m.winner === m.p2 ? ' 🏆' : '') + '</span>';
+        // Affichage simple (non cliquable)
+        html += '<span class="mono" style="flex:1;' + p1Class + '">' + p1 + getBadgeHTML(getPaysJoueur(p1)) + '</span>';
+        html += '<span class="mono" style="font-size:11px;color:var(--muted)">VS</span>';
+        html += '<span class="mono" style="flex:1;text-align:right;' + p2Class + '">' + p2 + getBadgeHTML(getPaysJoueur(p2)) + '</span>';
       }
+      
       html += '</div>';
       if (!done && m.p1 && m.p2 && isMine) {
-        html += '<p class="mono" style="font-size:10px;color:var(--ink-faint);text-align:center;margin-top:6px">Clique sur le gagnant</p>';
+        html += '<p class="mono" style="font-size:10px;color:var(--muted);margin-top:5px;text-align:center;">Clique sur le gagnant</p>';
       }
       html += '</div>';
     });
   });
+  // ... le reste de la fonction (champion) reste inchangé
   if (bracket.length >= 1) {
     const lastRound = bracket[bracket.length - 1];
     if (lastRound.matches.length === 1 && lastRound.matches[0].winner) {
