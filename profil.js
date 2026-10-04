@@ -1,6 +1,54 @@
 /* AfriArena — Profil : avatar + upload Supabase Storage */
 (function () {
   'use strict';
+  // ==== NOUVEAU : Dictionnaire des pays et badges ====
+const BADGES_PAYS = {
+  "Togo": { surnom: "Éperviers", emoji: "🦅" },
+  "Côte d'Ivoire": { surnom: "Éléphants", emoji: "🐘" },
+  "Sénégal": { surnom: "Lions", emoji: "🦁" },
+  "Cameroun": { surnom: "Lions Indomptables", emoji: "🦁" },
+  "Ghana": { surnom: "Black Stars", emoji: "⭐" },
+  "Nigeria": { surnom: "Super Eagles", emoji: "🦅" },
+  "Mali": { surnom: "Aigles", emoji: "🦅" },
+  "Burkina Faso": { surnom: "Étalons", emoji: "🐎" },
+  "Algérie": { surnom: "Fennecs", emoji: "🦊" },
+  "Maroc": { surnom: "Lions de l'Atlas", emoji: "🦁" },
+  "Tunisie": { surnom: "Aigles de Carthage", emoji: "🦅" },
+  "RD Congo": { surnom: "Léopards", emoji: "🐆" },
+  "Gabon": { surnom: "Panthères", emoji: "🐆" },
+  "Bénin": { surnom: "Écureuils", emoji: "🐿️" }
+  // Ajoute d'autres pays ici...
+};
+
+// ==== NOUVEAU : Fonction pour sauvegarder le pays du joueur ====
+async function savePays(pays) {
+  const cfg = getCfg();
+  if (!cfg || !cfg.SUPABASE_URL) return;
+  
+  const tag = getMyTag();
+  if (!tag) return;
+
+  try {
+    const res = await fetch(
+      cfg.SUPABASE_URL + '/rest/v1/players?tag=eq.' + encodeURIComponent(tag),
+      {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ pays: pays })
+      }
+    );
+    if (res.ok) {
+       if (window.afriToast) window.afriToast('Pays mis à jour ! ' + (BADGES_PAYS[pays] ? BADGES_PAYS[pays].emoji : ''));
+    }
+  } catch (e) {
+    console.warn('Save pays failed:', e);
+  }
+}
 
   const BUCKET = 'avatars';
 
