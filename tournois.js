@@ -395,6 +395,7 @@ async function deleteTournament(id) {
 
     const winBtn = e.target.closest('[data-declare-winner]');
     if (winBtn) {
+      alert('CLIC DÉTECTÉ');
       e.preventDefault();
       e.stopPropagation();
       const parts = winBtn.getAttribute('data-declare-winner').split('|');
