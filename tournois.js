@@ -409,16 +409,14 @@ async function deleteTournament(id) {
       const r = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + tid + '&select=bracket', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
-      const data = await r.json();
-      if (!data || !data.length) return;
-      const bracket = data[0].bracket;
-      if (!bracket) return;
       const ok = await declareWinner(tid, bracket, roundIndex, matchIndex, side);
-      if (ok) {
-        if (window.afriToast) window.afriToast('🏆 Gagnant déclaré');
-        loadTournaments();
-      }
-      return;
+if (ok) {
+  if (window.afriToast) window.afriToast('🏆 Gagnant déclaré');
+  loadTournaments();
+} else {
+  alert('❌ Erreur lors de la déclaration du gagnant. Regarde la console.');
+}
+return;
     }
 
     const card = e.target.closest('[data-tournament-id]');
