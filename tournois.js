@@ -72,7 +72,8 @@
         return {
           tournament_id: p.tournament_id,
           gamertag: p.gamertag,
-          pays: prof ? prof.country : null
+          pays: prof ? prof.country : null,
+level: prof ? prof.level : null
         };
       });
 
@@ -269,7 +270,7 @@ async function startTournament(id) {
   const cfg = getCfg();
   if (!cfg) return false;
   try {
-    const pRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&select=gamertag', {
+    const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country,level', {
       headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
     });
     if (!pRes.ok) return false;
