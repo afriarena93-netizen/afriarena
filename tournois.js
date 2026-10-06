@@ -23,7 +23,7 @@
   function getBadgeHTML(pays) {
     if (!pays || !BADGES_PAYS[pays]) return '';
     const b = BADGES_PAYS[pays];
-    return ' <span class="badge-pays" title="' + b.surnom + '" style="font-size:.75em;opacity:.85">' + b.emoji + ' ' + b.surnom + '</span>';
+    return ' <span class="badge-pays" title="' + b.surnom + '" style="font-size:.9em;margin-left:4px">' + b.emoji + '</span>';
   }
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
