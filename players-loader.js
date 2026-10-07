@@ -31,10 +31,7 @@
                     : dispo.includes('soir') ? 'info' : 'violet';
 
     card.innerHTML = `
-      <div class="player-avatar">
-        ${initial}
-        ${dispo.includes('maintenant') ? '<span class="presence"></span>' : ''}
-      </div>
+      <div
       <div class="player-body">
         <div class="player-head">
           <span class="player-name">${p.gamertag}</span>
