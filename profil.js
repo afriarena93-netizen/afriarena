@@ -102,16 +102,8 @@
     });
   }
 function cacherBoutonSiPasProprietaire() {
-  const myTag = localStorage.getItem('afriarena:myTag');
-  // Cherche le nom affiché sur la page (ex: "Kossi_228")
-  const nameEl = document.querySelector('h1');
-  const profileName = nameEl ? nameEl.textContent.trim() : null;
-
-  // Si pas de pseudo OU pseudo différent → cacher le bouton
-  if (!myTag || !profileName || myTag !== profileName) {
-    const editBtn = document.querySelector('.avatar-edit');
-    if (editBtn) editBtn.style.display = 'none';
-  }
+  // TEMPORAIRE : on cache pas le bouton, pour pouvoir tester
+  return;
 }
 
 function init() {
