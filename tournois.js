@@ -1,6 +1,6 @@
 /* AfriArena — Tournois v3 : badges pays + bracket Supabase */
 (function () {
-  'use strict';
+  'use strict',;
 
   // ===== Badges pays africains =====
   const BADGES_PAYS = {
