@@ -78,86 +78,95 @@
 
   // ===== Affiche une carte room =====
   function renderRoomCard(room) {
-    const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
-      hour: '2-digit', minute: '2-digit'
-    });
-    const gameName = room.game || 'Free Fire';
-    const format = room.format || '1v1';
-    const isMine = room.created_by === getMyTag();
-    const players = room.players || '';
-    const playerList = players ? players.split(',').filter(Boolean) : [];
-    const maxPlayers = format === 'Squad' ? 4 : (format === '2v2' ? 4 : 2);
-    const isFull = playerList.length >= maxPlayers;
-    const iAlreadyJoined = playerList.includes(getMyTag());
+  const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
+    hour: '2-digit', minute: '2-digit'
+  });
+  const gameName = room.game || 'Free Fire';
+  const format = room.format || '1v1';
+  const isMine = room.created_by === getMyTag();
+  const players = room.players || '';
+  const playerList = players ? players.split(',').filter(Boolean) : [];
+  const maxPlayers = format === 'Squad' ? 4 : (format === '2v2' ? 4 : 2);
+  const isFull = playerList.length >= maxPlayers;
+  const iAlreadyJoined = playerList.includes(getMyTag());
+  const gameLinks = {
+    'Free Fire': 'https://ff.garena.com/',
+    'eFootball': 'https://www.konami.com/efootball/',
+    'FC Mobile': 'https://www.ea.com/games/fc/fc-mobile',
+    'PUBG Mobile': 'https://www.pubgmobile.com/',
+    'Call of Duty': 'https://www.callofduty.com/mobile',
+    'Blood Strike': 'https://blood-strike.com/'
+  };
 
-    return `
-      <article class="match" style="position:relative" data-room-id="${room.id}">
-        <div class="match-head">
-          <span class="match-id">ROOM · ${room.id}</span>
-          <span class="chip ${isFull ? 'brand' : 'positive'}">
-            <span class="dot ${isFull ? '' : 'live'}"></span>
-            ${isFull ? 'COMPLÈTE' : 'ACTIVE'}
-          </span>
+  return `
+    <article class="match" style="position:relative" data-room-id="${room.id}">
+      <div class="match-head">
+        <span class="match-id">ROOM · ${room.id}</span>
+        <span class="chip ${isFull ? 'brand' : 'positive'}">
+          <span class="dot ${isFull ? '' : 'live'}"></span>
+          ${isFull ? 'COMPLÈTE' : 'ACTIVE'}
+        </span>
+      </div>
+
+      <div style="padding:16px 0">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+          <div>
+            <p style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px">${gameName} · ${format}</p>
+            <p class="mono" style="font-size:11px;color:var(--ink-faint)">
+              ${isMine ? '👑 Ta room · créée à ' + time : 'Créée par ' + room.created_by + ' · ' + time}
+            </p>
+          </div>
+          ${isMine ? `
+            <button class="btn btn-ghost btn-sm" data-delete-room="${room.id}" title="Supprimer"
+              style="color:#FF5050;font-size:18px;padding:6px 12px">🗑</button>
+          ` : ''}
         </div>
-        <div style="padding:16px 0">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-            <div>
-              <p style="font-weight:600;color:var(--ink)">${gameName} · ${format}</p>
-              <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:4px">
-                Créée par ${room.created_by} · ${time}
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div style="background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.25);border-radius:12px;padding:12px">
+            <p class="mono" style="font-size:10px;color:var(--brand);letter-spacing:.12em;margin-bottom:6px">ID ROOM</p>
+            <p class="mono" style="font-size:15px;color:var(--ink);word-break:break-all">${room.room_code}</p>
+          </div>
+          <div style="background:rgba(184,242,124,.08);border:1px solid rgba(184,242,124,.25);border-radius:12px;padding:12px">
+            <p class="mono" style="font-size:10px;color:var(--positive);letter-spacing:.12em;margin-bottom:6px">MOT DE PASSE</p>
+            <p class="mono" style="font-size:15px;color:var(--ink);word-break:break-all">${room.room_password}</p>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          <button class="btn btn-primary btn-sm" data-copy-all="${room.room_code}|${room.room_password}" style="flex:1">📋 Copier ID + MDP</button>
+          ${gameLinks[gameName] ? `
+            <a href="${gameLinks[gameName]}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="flex:1">🎮 Ouvrir ${gameName}</a>
+          ` : ''}
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1px dashed var(--line)">
+          <div style="flex:1;min-width:120px">
+            <p class="mono" style="font-size:11px;color:var(--ink-faint)">
+              ${playerList.length} / ${maxPlayers} joueurs
+            </p>
+            ${playerList.length > 0 ? `
+              <p class="mono" style="font-size:11px;color:var(--ink-muted);margin-top:4px">
+                ${playerList.map(n => n === room.created_by ? '👑 ' + n : '👤 ' + n).join(' · ')}
               </p>
-            </div>
-            ${isMine ? `
-              <button class="btn btn-ghost btn-sm" data-delete-room="${room.id}" title="Supprimer"
-                style="color:#FF5050;font-size:18px;padding:6px 12px">🗑</button>
             ` : ''}
           </div>
-
-          <div class="room" style="margin-top:0">
-            <div class="room-row">
-              <div>
-                <p class="room-key">ID de la room</p>
-                <p class="room-val">${room.room_code}</p>
-              </div>
-              <button class="copy-btn" data-copy="${room.room_code}">Copier</button>
-            </div>
-            <div class="room-row">
-              <div>
-                <p class="room-key">Mot de passe</p>
-                <p class="room-val">${room.room_password}</p>
-              </div>
-              <button class="copy-btn" data-copy="${room.room_password}">Copier</button>
-            </div>
-          </div>
-
-          <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-            <div style="flex:1;min-width:120px">
-              <p class="mono" style="font-size:11px;color:var(--ink-faint)">
-                ${playerList.length} / ${maxPlayers} joueurs
-              </p>
-              ${playerList.length > 0 ? `
-                <p class="mono" style="font-size:11px;color:var(--ink-muted);margin-top:4px">
-                  ${playerList.join(', ')}
-                </p>
-              ` : ''}
-            </div>
-            ${iAlreadyJoined ? `
-              <button class="btn btn-outline btn-sm" data-leave-room="${room.id}">
-                🚪 Quitter
-              </button>
-            ` : isFull ? `
-              <button class="btn btn-outline btn-sm" disabled>🔒 Complète</button>
-            ` : `
-              <button class="btn btn-primary btn-sm" data-join-room="${room.id}">
-                ➕ Rejoindre
-              </button>
-            `}
-          </div>
+          ${iAlreadyJoined ? `
+            <button class="btn btn-outline btn-sm" data-leave-room="${room.id}">
+              🚪 Quitter
+            </button>
+          ` : isFull ? `
+            <button class="btn btn-outline btn-sm" disabled>🔒 Complète</button>
+          ` : `
+            <button class="btn btn-primary btn-sm" data-join-room="${room.id}">
+              ➕ Rejoindre
+            </button>
+          `}
         </div>
-      </article>
-    `;
+      </div>
+    </article>
+  `;
   }
-
   // ===== Rejoindre une room =====
   async function joinRoom(roomId) {
     const cfg = getCfg();
