@@ -61,7 +61,7 @@
       const tp = tpRes.ok ? await tpRes.json() : [];
 
       // Profils joueurs (pour récupérer le pays)
-      const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country', {
+      const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country,level,avatar_url', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
       const profiles = profRes.ok ? await profRes.json() : [];
@@ -73,7 +73,8 @@
           tournament_id: p.tournament_id,
           gamertag: p.gamertag,
           pays: prof ? prof.country : null,
-level: prof ? prof.level : null
+level: prof ? prof.level : null,
+avatar: prof ? prof.avatar_url : null
         };
       });
 
@@ -136,7 +137,12 @@ level: prof ? prof.level : null
           <div style="display:flex;flex-direction:column;gap:6px">
             ${registered.length === 0
               ? '<p class="mono" style="font-size:12px;color:var(--ink-faint)">Aucun joueur</p>'
-              : registered.map(p => '<p class="mono" style="font-size:13px;color:var(--ink)">👤 ' + p.gamertag + getBadgeHTML(p.pays) + '</p>').join('')
+              : registered.map(p => {
+    const av = p.avatar
+      ? '<img src="' + p.avatar + '" style="width:24px;height:24px;border-radius:8px;object-fit:cover;vertical-align:middle;margin-right:6px">'
+      : '<span style="display:inline-block;width:24px;height:24px;border-radius:8px;background:var(--brand);color:#0b0c10;text-align:center;line-height:24px;font-weight:700;font-size:11px;vertical-align:middle;margin-right:6px">' + p.gamertag.charAt(0).toUpperCase() + '</span>';
+    return '<p class="mono" style="font-size:13px;color:var(--ink);display:flex;align-items:center">' + av + p.gamertag + getBadgeHTML(p.pays) + '</p>';
+  }).join('')
             }
           </div>
           ${bracketHTML}
