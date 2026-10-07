@@ -136,7 +136,7 @@ level: prof ? prof.level : null
           <div style="display:flex;flex-direction:column;gap:6px">
             ${registered.length === 0
               ? '<p class="mono" style="font-size:12px;color:var(--ink-faint)">Aucun joueur</p>'
-              : registered.map(p => '<p class="mono" style="font-size:13px;color:var(--ink)">👤 ' + p.gamertag + getBadgeHTML(p.pays) + (p.level ? ' <span style="color:var(--ink-faint);font-size:11px">· ' + p.level + '</span>' : '') + '</p>').join('')
+              : registered.map(p => '<p class="mono" style="font-size:13px;color:var(--ink)">👤 ' + p.gamertag + getBadgeHTML(p.pays) + '</p>').join('')
             }
           </div>
           ${bracketHTML}
