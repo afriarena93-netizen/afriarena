@@ -126,6 +126,16 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script src="admin.js"></script>
+  <script>
+  window.addEventListener('error', function (e) {
+    if (e.filename && e.filename.indexOf('tournois.js') !== -1) {
+      var div = document.createElement('div');
+      div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#FF5050;color:white;padding:14px;font-family:monospace;font-size:12px;line-height:1.5';
+      div.textContent = 'ERREUR tournois.js (ligne ' + e.lineno + '): ' + e.message;
+      document.body.appendChild(div);
+    }
+  });
+  </script>
   <script src="tournois.js?v=2"></script>
 </body>
 </html>
