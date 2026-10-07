@@ -101,9 +101,23 @@
       if (window.afriToast) window.afriToast('✅ Photo mise à jour');
     });
   }
+function cacherBoutonSiPasProprietaire() {
+  const myTag = localStorage.getItem('afriarena:myTag');
+  // Cherche le nom affiché sur la page (ex: "Kossi_228")
+  const nameEl = document.querySelector('h1');
+  const profileName = nameEl ? nameEl.textContent.trim() : null;
 
-  function init() {
-    bindAvatar();
+  // Si pas de pseudo OU pseudo différent → cacher le bouton
+  if (!myTag || !profileName || myTag !== profileName) {
+    const editBtn = document.querySelector('.avatar-edit');
+    if (editBtn) editBtn.style.display = 'none';
+  }
+}
+
+function init() {
+  bindAvatar();
+  cacherBoutonSiPasProprietaire();
+  
   }
 
   if (document.readyState === 'loading') {
