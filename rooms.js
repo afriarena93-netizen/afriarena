@@ -385,6 +385,19 @@
 
   // ===== Handlers de clic =====
   document.addEventListener('click', async (e) => {
+    // Copier ID + MDP d'un coup
+const copyAll = e.target.closest('[data-copy-all]');
+if (copyAll) {
+  e.preventDefault();
+  const [code, pwd] = copyAll.getAttribute('data-copy-all').split('|');
+  const text = 'ID Room: ' + code + '\\nMot de passe: ' + pwd;
+  navigator.clipboard.writeText(text).then(
+    () => { if (window.afriToast) window.afriToast('📋 Copié !'); },
+    () => { if (window.afriToast) window.afriToast('❌ Erreur copie'); }
+  );
+  return;
+}
+    
     // Créer une room
     if (e.target.closest('[data-open-create-room]')) {
       e.preventDefault();
