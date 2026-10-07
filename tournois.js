@@ -1,29 +1,36 @@
-/* AfriArena — Tournois v3 : badges pays + bracket Supabase */
+/* AfriArena — Tournois v4 : badges + avatars + bracket */
 (function () {
-  'use strict',;
+  'use strict';
 
-  // ===== Badges pays africains =====
   const BADGES_PAYS = {
-    'Togo':          { surnom: 'Éperviers',           emoji: '🦅' },
-    'Côte d\'Ivoire':{ surnom: 'Éléphants',           emoji: '🐘' },
-    'Sénégal':       { surnom: 'Lions',               emoji: '🦁' },
-    'Cameroun':      { surnom: 'Lions Indomptables',  emoji: '🦁' },
-    'Ghana':         { surnom: 'Black Stars',         emoji: '⭐' },
-    'Nigeria':       { surnom: 'Super Eagles',        emoji: '🦅' },
-    'Mali':          { surnom: 'Aigles',              emoji: '🦅' },
-    'Burkina Faso':  { surnom: 'Étalons',             emoji: '🐎' },
-    'Algérie':       { surnom: 'Fennecs',             emoji: '🦊' },
-    'Maroc':         { surnom: 'Lions de l\'Atlas',   emoji: '🦁' },
-    'Tunisie':       { surnom: 'Aigles de Carthage',  emoji: '🦅' },
-    'RD Congo':      { surnom: 'Léopards',            emoji: '🐆' },
-    'Gabon':         { surnom: 'Panthères',           emoji: '🐆' },
-    'Bénin':         { surnom: 'Écureuils',           emoji: '🐿️' }
+    'Togo':           { surnom: 'Éperviers',          emoji: '🦅' },
+    'Côte d\'Ivoire': { surnom: 'Éléphants',          emoji: '🐘' },
+    'Sénégal':        { surnom: 'Lions',              emoji: '🦁' },
+    'Cameroun':       { surnom: 'Lions Indomptables', emoji: '🦁' },
+    'Ghana':          { surnom: 'Black Stars',        emoji: '⭐' },
+    'Nigeria':        { surnom: 'Super Eagles',       emoji: '🦅' },
+    'Mali':           { surnom: 'Aigles',             emoji: '🦅' },
+    'Burkina Faso':   { surnom: 'Étalons',            emoji: '🐎' },
+    'Algérie':        { surnom: 'Fennecs',            emoji: '🦊' },
+    'Maroc':          { surnom: 'Lions de l\'Atlas',  emoji: '🦁' },
+    'Tunisie':        { surnom: 'Aigles de Carthage', emoji: '🦅' },
+    'RD Congo':       { surnom: 'Léopards',           emoji: '🐆' },
+    'Gabon':          { surnom: 'Panthères',          emoji: '🐆' },
+    'Bénin':          { surnom: 'Écureuils',          emoji: '🐿️' }
   };
 
   function getBadgeHTML(pays) {
     if (!pays || !BADGES_PAYS[pays]) return '';
     const b = BADGES_PAYS[pays];
-    return ' <span class="badge-pays" title="' + b.surnom + '" style="font-size:.9em;margin-left:4px">' + b.emoji + '</span>';
+    return ' <span title="' + b.surnom + '" style="font-size:.9em;margin-left:4px">' + b.emoji + '</span>';
+  }
+
+  function avatarHTML(p) {
+    const pseudo = p.gamertag || '?';
+    if (p.avatar) {
+      return '<img src="' + p.avatar + '" alt="' + pseudo + '" style="width:26px;height:26px;border-radius:8px;object-fit:cover;margin-right:8px;vertical-align:middle;flex-shrink:0">';
+    }
+    return '<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-light));color:#0b0c10;font-weight:700;font-size:12px;margin-right:8px;flex-shrink:0">' + pseudo.charAt(0).toUpperCase() + '</span>';
   }
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
@@ -40,7 +47,6 @@
     return tag;
   }
 
-  // ===== Charge les tournois + pays des joueurs =====
   async function loadTournaments() {
     const cfg = getCfg();
     if (!cfg) return;
@@ -54,27 +60,23 @@
       if (!res.ok) { container.innerHTML = '<div class="empty"><strong>Erreur ' + res.status + '</strong></div>'; return; }
       const tournaments = await res.json();
 
-      // Inscriptions aux tournois
       const tpRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?select=tournament_id,gamertag', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
       const tp = tpRes.ok ? await tpRes.json() : [];
 
-      // Profils joueurs (pour récupérer le pays)
-      const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country,level,avatar_url', {
+      const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country,avatar_url', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
       const profiles = profRes.ok ? await profRes.json() : [];
 
-      // Enrichit les inscriptions avec le pays
       const allPlayers = tp.map(p => {
         const prof = profiles.find(x => x.gamertag === p.gamertag);
         return {
           tournament_id: p.tournament_id,
           gamertag: p.gamertag,
           pays: prof ? prof.country : null,
-level: prof ? prof.level : null,
-avatar: prof ? prof.avatar_url : null
+          avatar: prof ? prof.avatar_url : null
         };
       });
 
@@ -84,10 +86,12 @@ avatar: prof ? prof.avatar_url : null
       }
 
       container.innerHTML = tournaments.map(t => renderTournamentCard(t, allPlayers)).join('');
-    } catch (e) { console.warn('Erreur:', e); }
+    } catch (e) {
+      console.warn('Erreur:', e);
+      container.innerHTML = '<div class="empty"><strong>Erreur de chargement</strong>Réessaie dans un instant.</div>';
+    }
   }
 
-  // ===== Carte tournoi =====
   function renderTournamentCard(t, allPlayers) {
     const myTag = getMyTag();
     const isMine = t.created_by === myTag;
@@ -96,6 +100,7 @@ avatar: prof ? prof.avatar_url : null
     const iAmRegistered = registered.some(p => p.gamertag === myTag);
     const isFull = count >= t.max_players;
     const canStart = isMine && t.status === 'registration' && count >= 2;
+
     const statusLabel = t.status === 'registration' ? 'INSCRIPTIONS OUVERTES'
                        : t.status === 'started' ? 'EN COURS'
                        : t.status === 'finished' ? 'TERMINÉ' : t.status;
@@ -111,6 +116,10 @@ avatar: prof ? prof.avatar_url : null
     if (t.bracket && Array.isArray(t.bracket) && t.bracket.length > 0) {
       bracketHTML = renderBracket(t.bracket, isMine, allPlayers);
     }
+
+    const playersHTML = registered.length === 0
+      ? '<p class="mono" style="font-size:12px;color:var(--ink-faint)">Aucun joueur</p>'
+      : registered.map(p => '<p class="mono" style="font-size:13px;color:var(--ink);display:flex;align-items:center">' + avatarHTML(p) + p.gamertag + getBadgeHTML(p.pays) + '</p>').join('');
 
     return `
       <article class="tournament" style="position:relative;cursor:pointer" data-tournament-id="${t.id}">
@@ -134,17 +143,7 @@ avatar: prof ? prof.avatar_url : null
         </div>
         <div id="details-${t.id}" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
           <p class="label" style="margin-bottom:12px">Joueurs inscrits (${count}/${t.max_players})</p>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            ${registered.length === 0
-              ? '<p class="mono" style="font-size:12px;color:var(--ink-faint)">Aucun joueur</p>'
-              : registered.map(p => {
-    const av = p.avatar
-      ? '<img src="' + p.avatar + '" style="width:24px;height:24px;border-radius:8px;object-fit:cover;vertical-align:middle;margin-right:6px">'
-      : '<span style="display:inline-block;width:24px;height:24px;border-radius:8px;background:var(--brand);color:#0b0c10;text-align:center;line-height:24px;font-weight:700;font-size:11px;vertical-align:middle;margin-right:6px">' + p.gamertag.charAt(0).toUpperCase() + '</span>';
-    return '<p class="mono" style="font-size:13px;color:var(--ink);display:flex;align-items:center">' + av + p.gamertag + getBadgeHTML(p.pays) + '</p>';
-  }).join('')
-            }
-          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">${playersHTML}</div>
           ${bracketHTML}
         </div>
       </article>
@@ -152,12 +151,16 @@ avatar: prof ? prof.avatar_url : null
   }
 
   // ▼ SECTION 2 arrive ▼
- // ===== Affiche le bracket =====
-function renderBracket(bracket, isMine, allPlayers) {
+ function renderBracket(bracket, isMine, allPlayers) {
   function paysOf(pseudo) {
     if (!pseudo) return null;
     const j = allPlayers.find(p => p.gamertag === pseudo);
     return j ? j.pays : null;
+  }
+  function avatarOf(pseudo) {
+    if (!pseudo) return null;
+    const j = allPlayers.find(p => p.gamertag === pseudo);
+    return j ? j.avatar : null;
   }
 
   let html = '<p class="label" style="margin-top:20px;margin-bottom:12px">🏆 Bracket</p>';
@@ -170,20 +173,23 @@ function renderBracket(bracket, isMine, allPlayers) {
       const p2 = m.p2 || 'En attente';
       const done = m.winner !== null && m.winner !== undefined;
       const canClick = !done && m.p1 && m.p2 && isMine;
-      const p1Class = m.winner === m.p1 ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)';
-      const p2Class = m.winner === m.p2 ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)';
+      const p1Won = m.winner === m.p1;
+      const p2Won = m.winner === m.p2;
+
+      const p1HTML = avatarHTML({ gamertag: m.p1 || '?', avatar: avatarOf(m.p1) }) + '<span style="' + (p1Won ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)') + '">' + p1 + getBadgeHTML(paysOf(m.p1)) + (p1Won ? ' 🏆' : '') + '</span>';
+      const p2HTML = avatarHTML({ gamertag: m.p2 || '?', avatar: avatarOf(m.p2) }) + '<span style="' + (p2Won ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)') + '">' + p2 + getBadgeHTML(paysOf(m.p2)) + (p2Won ? ' 🏆' : '') + '</span>';
 
       html += '<div style="padding:10px 12px;background:var(--panel);border-radius:10px;border:1px solid var(--line);margin-bottom:6px">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">';
 
       if (canClick) {
-        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|1" class="mono" style="flex:1;text-align:left;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;' + p1Class + '">' + p1 + getBadgeHTML(paysOf(m.p1)) + '</button>';
+        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|1" class="mono" style="flex:1;text-align:left;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;display:flex;align-items:center">' + p1HTML + '</button>';
         html += '<span class="mono" style="font-size:11px;color:var(--ink-faint)">vs</span>';
-        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|2" class="mono" style="flex:1;text-align:right;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;' + p2Class + '">' + p2 + getBadgeHTML(paysOf(m.p2)) + '</button>';
+        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|2" class="mono" style="flex:1;text-align:right;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;display:flex;align-items:center;justify-content:flex-end">' + p2HTML + '</button>';
       } else {
-        html += '<span class="mono" style="flex:1;font-size:13px;' + p1Class + '">' + p1 + getBadgeHTML(paysOf(m.p1)) + (m.winner === m.p1 ? ' 🏆' : '') + '</span>';
+        html += '<span class="mono" style="flex:1;font-size:13px;display:flex;align-items:center">' + p1HTML + '</span>';
         html += '<span class="mono" style="font-size:11px;color:var(--ink-faint)">vs</span>';
-        html += '<span class="mono" style="flex:1;text-align:right;font-size:13px;' + p2Class + '">' + p2 + getBadgeHTML(paysOf(m.p2)) + (m.winner === m.p2 ? ' 🏆' : '') + '</span>';
+        html += '<span class="mono" style="flex:1;text-align:right;font-size:13px;display:flex;align-items:center;justify-content:flex-end">' + p2HTML + '</span>';
       }
 
       html += '</div>';
@@ -196,14 +202,13 @@ function renderBracket(bracket, isMine, allPlayers) {
     });
   });
 
-  // Champion ?
   if (bracket.length >= 1) {
     const lastRound = bracket[bracket.length - 1];
     if (lastRound.matches.length === 1 && lastRound.matches[0].winner) {
       const champ = lastRound.matches[0].winner;
       html += '<div style="margin-top:16px;padding:16px;background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(255,107,53,.05));border:1px solid rgba(255,107,53,.35);border-radius:14px;text-align:center">';
       html += '<p class="label" style="color:var(--brand)">CHAMPION 🏆</p>';
-      html += '<p style="font-size:22px;font-weight:700;color:var(--ink);margin-top:8px">' + champ + getBadgeHTML(paysOf(champ)) + '</p>';
+      html += '<p style="font-size:22px;font-weight:700;color:var(--ink);margin-top:8px;display:flex;align-items:center;justify-content:center">' + avatarHTML({ gamertag: champ, avatar: avatarOf(champ) }) + champ + getBadgeHTML(paysOf(champ)) + '</p>';
       html += '</div>';
     }
   }
@@ -211,7 +216,6 @@ function renderBracket(bracket, isMine, allPlayers) {
   return html;
 }
 
-// ===== Génère le 1er tour =====
 function generateBracket(players) {
   const shuffled = [...players].sort(() => Math.random() - 0.5);
   const matches = [];
@@ -221,7 +225,6 @@ function generateBracket(players) {
   return [{ round: 1, matches }];
 }
 
-// ===== Déclare un gagnant + avance au tour suivant =====
 async function declareWinner(tournamentId, bracket, roundIndex, matchIndex, winnerSide) {
   const cfg = getCfg();
   if (!cfg) return false;
@@ -271,12 +274,11 @@ async function declareWinner(tournamentId, bracket, roundIndex, matchIndex, winn
   } catch (e) { return false; }
 }
 
-// ===== Démarre le tournoi =====
 async function startTournament(id) {
   const cfg = getCfg();
   if (!cfg) return false;
   try {
-    const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country,level', {
+    const pRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&select=gamertag', {
       headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
     });
     if (!pRes.ok) return false;
@@ -300,8 +302,7 @@ async function startTournament(id) {
 }
 
 // ▼ SECTION 3 arrive ▼
-   // ===== Crée un tournoi =====
-  async function createTournament(name, game, format, maxPlayers, tag) {
+   async function createTournament(name, game, format, maxPlayers, tag) {
     const cfg = getCfg();
     if (!cfg) return false;
     try {
@@ -326,7 +327,6 @@ async function startTournament(id) {
     } catch (e) { return false; }
   }
 
-  // ===== Inscription (anti-doublon) =====
   async function joinTournament(tournamentId) {
     const cfg = getCfg();
     const tag = getMyTag();
@@ -354,7 +354,6 @@ async function startTournament(id) {
     } catch (e) { return false; }
   }
 
-  // ===== Supprimer =====
   async function deleteTournament(id) {
     const cfg = getCfg();
     if (!cfg) return false;
@@ -367,7 +366,6 @@ async function startTournament(id) {
     } catch (e) { return false; }
   }
 
-  // ===== Modale création =====
   function openCreateTournamentModal() {
     const tag = getMyTag();
     if (!tag) return;
@@ -443,16 +441,13 @@ async function startTournament(id) {
     });
   }
 
-  // ===== Handlers de clic =====
   document.addEventListener('click', async (e) => {
-    // Créer
     if (e.target.closest('[data-open-create-tournament]')) {
       e.preventDefault();
       openCreateTournamentModal();
       return;
     }
 
-    // Déclarer le gagnant
     const winBtn = e.target.closest('[data-declare-winner]');
     if (winBtn) {
       e.preventDefault();
@@ -488,7 +483,6 @@ async function startTournament(id) {
       return;
     }
 
-    // Ouvrir/fermer les détails
     const card = e.target.closest('[data-tournament-id]');
     if (card && !e.target.closest('button')) {
       const id = card.getAttribute('data-tournament-id');
@@ -497,7 +491,6 @@ async function startTournament(id) {
       return;
     }
 
-    // Inscription
     const joinBtn = e.target.closest('[data-join-tournament]');
     if (joinBtn) {
       e.preventDefault();
@@ -517,7 +510,6 @@ async function startTournament(id) {
       return;
     }
 
-    // Démarrer
     const startBtn = e.target.closest('[data-start-tournament]');
     if (startBtn) {
       e.preventDefault();
@@ -536,7 +528,6 @@ async function startTournament(id) {
       return;
     }
 
-    // Supprimer
     const delBtn = e.target.closest('[data-delete-tournament]');
     if (delBtn) {
       e.preventDefault();
@@ -551,7 +542,6 @@ async function startTournament(id) {
     }
   });
 
-  // ===== Init =====
   function init() {
     if (!document.getElementById('tournaments-list')) return;
     loadTournaments();
