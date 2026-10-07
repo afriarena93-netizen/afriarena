@@ -1,76 +1,25 @@
-/* AfriArena — Profil : avatar + upload Supabase Storage */
+/* AfriArena — Profil : upload avatar */
 (function () {
   'use strict';
-  // ==== NOUVEAU : Dictionnaire des pays et badges ====
-const BADGES_PAYS = {
-  "Togo": { surnom: "Éperviers", emoji: "🦅" },
-  "Côte d'Ivoire": { surnom: "Éléphants", emoji: "🐘" },
-  "Sénégal": { surnom: "Lions", emoji: "🦁" },
-  "Cameroun": { surnom: "Lions Indomptables", emoji: "🦁" },
-  "Ghana": { surnom: "Black Stars", emoji: "⭐" },
-  "Nigeria": { surnom: "Super Eagles", emoji: "🦅" },
-  "Mali": { surnom: "Aigles", emoji: "🦅" },
-  "Burkina Faso": { surnom: "Étalons", emoji: "🐎" },
-  "Algérie": { surnom: "Fennecs", emoji: "🦊" },
-  "Maroc": { surnom: "Lions de l'Atlas", emoji: "🦁" },
-  "Tunisie": { surnom: "Aigles de Carthage", emoji: "🦅" },
-  "RD Congo": { surnom: "Léopards", emoji: "🐆" },
-  "Gabon": { surnom: "Panthères", emoji: "🐆" },
-  "Bénin": { surnom: "Écureuils", emoji: "🐿️" }
-  // Ajoute d'autres pays ici...
-};
-
-// ==== NOUVEAU : Fonction pour sauvegarder le pays du joueur ====
-async function savePays(pays) {
-  const cfg = getCfg();
-  if (!cfg || !cfg.SUPABASE_URL) return;
-  
-  const tag = getMyTag();
-  if (!tag) return;
-
-  try {
-    const res = await fetch(
-      cfg.SUPABASE_URL + '/rest/v1/players?tag=eq.' + encodeURIComponent(tag),
-      {
-        method: 'PATCH',
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ pays: pays })
-      }
-    );
-    if (res.ok) {
-       if (window.afriToast) window.afriToast('Pays mis à jour ! ' + (BADGES_PAYS[pays] ? BADGES_PAYS[pays].emoji : ''));
-    }
-  } catch (e) {
-    console.warn('Save pays failed:', e);
-  }
-}
 
   const BUCKET = 'avatars';
 
-  function getCfg() {
-    return window.AFRIARENA_CONFIG || null;
-  }
+  function getCfg() { return window.AFRIARENA_CONFIG || null; }
 
   function getMyTag() {
     return localStorage.getItem('afriarena:myTag') || 'maz';
   }
 
-  // ===== Upload vers Supabase Storage =====
   async function uploadAvatar(file) {
     const cfg = getCfg();
     if (!cfg || !cfg.SUPABASE_URL) {
-      if (window.afriToast) window.afriToast('❌ Config Supabase manquante');
+      alert('Config Supabase manquante');
       return null;
     }
 
     const tag = getMyTag();
-    const ext = file.name.split('.').pop() || 'jpg';
-    const filename = `${tag}-${Date.now()}.${ext}`;
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const filename = tag + '-' + Date.now() + '.' + ext;
     const url = cfg.SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + filename;
 
     try {
@@ -86,21 +35,17 @@ async function savePays(pays) {
       });
 
       if (!res.ok) {
-        const err = await res.text();
-        console.warn('Upload error:', err);
+        console.warn('Upload error:', res.status, await res.text());
         return null;
       }
 
-      // URL publique
-      const publicUrl = cfg.SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + filename;
-      return publicUrl;
+      return cfg.SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + filename;
     } catch (e) {
       console.warn('Upload failed:', e);
       return null;
     }
   }
 
-  // ===== Mise à jour dans la table players =====
   async function saveAvatarUrl(url) {
     const cfg = getCfg();
     if (!cfg) return;
@@ -118,12 +63,9 @@ async function savePays(pays) {
           body: JSON.stringify({ avatar_url: url })
         }
       );
-    } catch (e) {
-      console.warn('Save avatar failed:', e);
-    }
+    } catch (e) {}
   }
 
-  // ===== Handler du bouton caméra =====
   function bindAvatar() {
     const input = document.getElementById('avatar-input');
     const preview = document.getElementById('avatar-preview');
@@ -134,22 +76,24 @@ async function savePays(pays) {
       if (!file) return;
 
       if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
-        if (window.afriToast) window.afriToast('Format non supporté (JPG, PNG, WebP)');
+        alert('Format non supporté. Utilise JPG, PNG ou WebP.');
         return;
       }
 
-      // Aperçu immédiat
+      if (file.size > 3 * 1024 * 1024) {
+        alert('Image trop lourde. Maximum 3 Mo.');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
-        preview.innerHTML = `<img src="${reader.result}" alt="Aperçu">`;
+        preview.innerHTML = '<img src="' + reader.result + '" alt="Aperçu">';
       };
       reader.readAsDataURL(file);
 
-      if (window.afriToast) window.afriToast('⏳ Envoi de la photo…');
-
       const url = await uploadAvatar(file);
       if (!url) {
-        if (window.afriToast) window.afriToast('❌ Erreur upload');
+        alert('Erreur lors de l\'envoi');
         return;
       }
 
@@ -158,7 +102,6 @@ async function savePays(pays) {
     });
   }
 
-  // ===== Init =====
   function init() {
     bindAvatar();
   }
