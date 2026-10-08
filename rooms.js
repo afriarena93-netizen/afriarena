@@ -3,6 +3,8 @@
   'use strict';
 
   let currentGameFilter = '';
+  // Mémoire pour savoir qui était dans la room au dernier chargement
+  let lastKnownPlayers = {};
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
 
@@ -57,6 +59,34 @@
 
       const rooms = await res.json();
 
+      // === NOTIFICATIONS DE ROOM ===
+      const myTag = getMyTag();
+      if (myTag) {
+        rooms.forEach(room => {
+          // On vérifie seulement les rooms que J'AI créées
+          if (room.created_by === myTag) {
+            const players = room.players ? room.players.split(',').filter(Boolean) : [];
+            
+            // Si on a déjà une mémoire de cette room, on compare
+            if (lastKnownPlayers[room.id]) {
+              const oldPlayers = lastKnownPlayers[room.id];
+              const newPlayers = players.filter(p => !oldPlayers.includes(p));
+              
+              if (newPlayers.length > 0) {
+                newPlayers.forEach(p => {
+                  if (window.afriToast) {
+                    window.afriToast('🔔 ' + p + ' a rejoint ta room !');
+                  }
+                });
+              }
+            }
+            // On met à jour la mémoire
+            lastKnownPlayers[room.id] = players;
+          }
+        });
+      }
+      // === FIN NOTIFICATIONS ===
+
       if (!rooms || rooms.length === 0) {
         container.innerHTML = `
           <div class="empty">
@@ -75,9 +105,8 @@
       if (c) c.innerHTML = '<div class="empty"><strong>Erreur réseau</strong>Vérifie ta connexion.</div>';
     }
   }
-
   // ===== Affiche une carte room =====
-  function renderRoomCard(room) {
+function renderRoomCard(room) {
   const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
     hour: '2-digit', minute: '2-digit'
   });
@@ -166,104 +195,104 @@
       </div>
     </article>
   `;
-  }
-  // ===== Rejoindre une room =====
-  async function joinRoom(roomId) {
-    const cfg = getCfg();
-    const tag = getMyTag();
-    if (!cfg || !tag) return false;
+}
 
-    try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+// ===== Rejoindre une room =====
+async function joinRoom(roomId) {
+  const cfg = getCfg();
+  const tag = getMyTag();
+  if (!cfg || !tag) return false;
+
+  try {
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    });
+    const rooms = await res.json();
+    if (!rooms || !rooms.length) return false;
+
+    const room = rooms[0];
+    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+    if (currentPlayers.includes(tag)) return true;
+
+    currentPlayers.push(tag);
+    const newPlayers = currentPlayers.join(',');
+
+    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+      method: 'PATCH',
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ players: newPlayers })
+    });
+    return updateRes.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// ===== Quitter une room =====
+async function leaveRoom(roomId) {
+  const cfg = getCfg();
+  const tag = getMyTag();
+  if (!cfg || !tag) return false;
+
+  try {
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    });
+    const rooms = await res.json();
+    if (!rooms || !rooms.length) return false;
+
+    const room = rooms[0];
+    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+    const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
+
+    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+      method: 'PATCH',
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ players: newPlayers })
+    });
+    return updateRes.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// ===== Supprimer une room =====
+async function deleteRoom(roomId) {
+  const cfg = getCfg();
+  const tag = getMyTag();
+  if (!cfg || !tag) return false;
+
+  try {
+    const res = await fetch(
+      cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId + '&created_by=eq.' + encodeURIComponent(tag),
+      {
+        method: 'DELETE',
         headers: {
           'apikey': cfg.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
         }
-      });
-      const rooms = await res.json();
-      if (!rooms || !rooms.length) return false;
-
-      const room = rooms[0];
-      const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
-      if (currentPlayers.includes(tag)) return true;
-
-      currentPlayers.push(tag);
-      const newPlayers = currentPlayers.join(',');
-
-      const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-        method: 'PATCH',
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ players: newPlayers })
-      });
-      return updateRes.ok;
-    } catch (e) {
-      return false;
-    }
+      }
+    );
+    return res.ok;
+  } catch (e) {
+    return false;
   }
-
-  // ===== Quitter une room =====
-  async function leaveRoom(roomId) {
-    const cfg = getCfg();
-    const tag = getMyTag();
-    if (!cfg || !tag) return false;
-
-    try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-        }
-      });
-      const rooms = await res.json();
-      if (!rooms || !rooms.length) return false;
-
-      const room = rooms[0];
-      const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
-      const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
-
-      const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-        method: 'PATCH',
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ players: newPlayers })
-      });
-      return updateRes.ok;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // ===== Supprimer une room =====
-  async function deleteRoom(roomId) {
-    const cfg = getCfg();
-    const tag = getMyTag();
-    if (!cfg || !tag) return false;
-
-    try {
-      const res = await fetch(
-        cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId + '&created_by=eq.' + encodeURIComponent(tag),
-        {
-          method: 'DELETE',
-          headers: {
-            'apikey': cfg.SUPABASE_ANON_KEY,
-            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-          }
-        }
-      );
-      return res.ok;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // ===== Créer une room dans Supabase =====
+}
+    // ===== Créer une room dans Supabase =====
   async function createRoom(game, format, code, pwd, tag) {
     const cfg = getCfg();
     if (!cfg) return false;
@@ -386,17 +415,17 @@
   // ===== Handlers de clic =====
   document.addEventListener('click', async (e) => {
     // Copier ID + MDP d'un coup
-const copyAll = e.target.closest('[data-copy-all]');
-if (copyAll) {
-  e.preventDefault();
-  const [code, pwd] = copyAll.getAttribute('data-copy-all').split('|');
-  const text = 'ID Room: ' + code + '\\nMot de passe: ' + pwd;
-  navigator.clipboard.writeText(text).then(
-    () => { if (window.afriToast) window.afriToast('📋 Copié !'); },
-    () => { if (window.afriToast) window.afriToast('❌ Erreur copie'); }
-  );
-  return;
-}
+    const copyAll = e.target.closest('[data-copy-all]');
+    if (copyAll) {
+      e.preventDefault();
+      const [code, pwd] = copyAll.getAttribute('data-copy-all').split('|');
+      const text = 'ID Room: ' + code + '\\nMot de passe: ' + pwd;
+      navigator.clipboard.writeText(text).then(
+        () => { if (window.afriToast) window.afriToast('📋 Copié !'); },
+        () => { if (window.afriToast) window.afriToast('❌ Erreur copie'); }
+      );
+      return;
+    }
     
     // Créer une room
     if (e.target.closest('[data-open-create-room]')) {
