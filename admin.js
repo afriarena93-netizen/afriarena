@@ -34,6 +34,12 @@
 
   // ===== Bouton rond discret =====
   function injectFab() {
+    // AJOUT : On vérifie si l'admin est connecté OU si l'URL contient ?admin=1
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') !== '1' && !isUnlocked()) {
+      return; // On arrête là, le bouton ne s'affiche pas pour les visiteurs
+    }
+
     if (document.getElementById('admin-fab')) return;
     const btn = document.createElement('button');
     btn.id = 'admin-fab';
@@ -225,13 +231,13 @@
       e.preventDefault(); e.stopPropagation();
       const reason = prompt(`Bannir ${name} ?\n\nRaison (facultatif) :`, '');
       if (reason === null) return;
-      await supaFetch('bans', {
-        method: 'POST',
-        body: JSON.stringify({ gamertag: name, reason })
-      });
       await supaFetch(`players?gamertag=eq.${encodeURIComponent(name)}`, {
         method: 'PATCH',
         body: JSON.stringify({ is_banned: true, ban_reason: reason })
+      });
+      await supaFetch('bans', {
+        method: 'POST',
+        body: JSON.stringify({ gamertag: name, reason })
       });
       if (window.afriToast) window.afriToast(`⛔ ${name} banni`);
       card.remove();
