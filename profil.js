@@ -101,15 +101,60 @@
       if (window.afriToast) window.afriToast('✅ Photo mise à jour');
     });
   }
-function cacherBoutonSiPasProprietaire() {
-  // TEMPORAIRE : on cache pas le bouton, pour pouvoir tester
-  return;
-}
 
-function init() {
-  bindAvatar();
-  cacherBoutonSiPasProprietaire();
-  
+  function cacherBoutonSiPasProprietaire() {
+    // TEMPORAIRE : on cache pas le bouton, pour pouvoir tester
+    return;
+  }
+
+  // === AJOUT : TOTEMS AFRICAINS ===
+  async function chargerTotems() {
+    const cfg = getCfg();
+    if (!cfg || !cfg.SUPABASE_URL) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const tag = urlParams.get('gamertag') || urlParams.get('tag') || getMyTag();
+
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag) + '&select=rating,matches_count', {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      });
+
+      const data = await res.json();
+      if (!data || data.length === 0) return;
+
+      const player = data[0];
+      const rating = parseFloat(player.rating) || 0;
+      const matches = parseInt(player.matches_count) || 0;
+
+      let totems = [];
+
+      // Attribution automatique
+      if (rating >= 4.8 && matches > 30) totems.push('🦅 Aigle (Stratège)');
+      if (matches > 20) totems.push('🐆 Panthère (Rapide)');
+      if (matches > 10) totems.push('🐘 Éléphant (Régulier)');
+      if (rating >= 4.5) totems.push('🦁 Lion (Fair-play)');
+
+      const container = document.getElementById('totems-container');
+      if (container) {
+        if (totems.length === 0) {
+          container.innerHTML = '<span style="color: #888; font-size: 0.9rem;">Aucun totem pour le moment (Jouez plus de matchs !)</span>';
+        } else {
+          container.innerHTML = totems.map(t => `<span style="background: #191A21; padding: 6px 12px; border-radius: 20px; margin-right: 8px; margin-bottom: 8px; display: inline-block; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); color: #FF6B35;">${t}</span>`).join('');
+        }
+      }
+    } catch (e) {
+      console.warn('Erreur chargement totems:', e);
+    }
+  }
+
+  function init() {
+    bindAvatar();
+    cacherBoutonSiPasProprietaire();
+    chargerTotems(); // On lance les totems ici
   }
 
   if (document.readyState === 'loading') {
