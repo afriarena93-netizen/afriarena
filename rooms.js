@@ -1,9 +1,8 @@
-/* AfriArena — Liste des rooms actives */
+/* AfriArena — Liste des rooms actives + Enregistrement des matchs */
 (function () {
   'use strict';
 
   let currentGameFilter = '';
-  // Mémoire pour savoir qui était dans la room au dernier chargement
   let lastKnownPlayers = {};
 
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
@@ -22,13 +21,9 @@
     return tag;
   }
 
-  // ===== Charge la liste des rooms =====
   async function loadRooms() {
     const cfg = getCfg();
-    if (!cfg) {
-      console.warn('⚠ Config Supabase manquante');
-      return;
-    }
+    if (!cfg) return;
 
     const container = document.getElementById('rooms-list');
     if (!container) return;
@@ -47,65 +42,43 @@
       });
 
       if (!res.ok) {
-        console.warn('⚠ Erreur Supabase:', res.status);
-        container.innerHTML = `
-          <div class="empty">
-            <strong>Erreur de chargement (${res.status})</strong>
-            Réessaie dans un instant.
-          </div>
-        `;
+        container.innerHTML = '<div class="empty"><strong>Erreur de chargement (' + res.status + ')</strong>Réessaie dans un instant.</div>';
         return;
       }
 
       const rooms = await res.json();
 
-      // === NOTIFICATIONS DE ROOM ===
       const myTag = getMyTag();
       if (myTag) {
         rooms.forEach(room => {
-          // On vérifie seulement les rooms que J'AI créées
           if (room.created_by === myTag) {
             const players = room.players ? room.players.split(',').filter(Boolean) : [];
-            
-            // Si on a déjà une mémoire de cette room, on compare
             if (lastKnownPlayers[room.id]) {
               const oldPlayers = lastKnownPlayers[room.id];
               const newPlayers = players.filter(p => !oldPlayers.includes(p));
-              
               if (newPlayers.length > 0) {
                 newPlayers.forEach(p => {
-                  if (window.afriToast) {
-                    window.afriToast('🔔 ' + p + ' a rejoint ta room !');
-                  }
+                  if (window.afriToast) window.afriToast('🔔 ' + p + ' a rejoint ta room !');
                 });
               }
             }
-            // On met à jour la mémoire
             lastKnownPlayers[room.id] = players;
           }
         });
       }
-      // === FIN NOTIFICATIONS ===
 
       if (!rooms || rooms.length === 0) {
-        container.innerHTML = `
-          <div class="empty">
-            <strong>Aucune room active pour le moment.</strong>
-            Sois le premier à en créer une !
-          </div>
-        `;
+        container.innerHTML = '<div class="empty"><strong>Aucune room active pour le moment.</strong>Sois le premier à en créer une !</div>';
         return;
       }
 
       container.innerHTML = rooms.map(room => renderRoomCard(room)).join('');
 
     } catch (e) {
-      console.warn('⚠ Erreur chargement rooms:', e);
-      const c = document.getElementById('rooms-list');
-      if (c) c.innerHTML = '<div class="empty"><strong>Erreur réseau</strong>Vérifie ta connexion.</div>';
+      console.warn('Erreur chargement rooms:', e);
     }
   }
-  // ===== Affiche une carte room =====
+  // ===== Affiche une carte room (avec bouton Enregistrer) =====
 function renderRoomCard(room) {
   const time = new Date(room.created_at).toLocaleTimeString('fr-FR', {
     hour: '2-digit', minute: '2-digit'
@@ -126,6 +99,9 @@ function renderRoomCard(room) {
     'Call of Duty': 'https://www.callofduty.com/mobile',
     'Blood Strike': 'https://blood-strike.com/'
   };
+
+  // On peut enregistrer un match si on est le créateur ET qu'il y a au moins 2 joueurs
+  const canReportMatch = isMine && playerList.length >= 2;
 
   return `
     <article class="match" style="position:relative" data-room-id="${room.id}">
@@ -192,107 +168,228 @@ function renderRoomCard(room) {
             </button>
           `}
         </div>
+
+        ${canReportMatch ? `
+          <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.05);">
+            <button class="btn btn-outline btn-sm" data-report-match="${room.id}" style="width:100%; border-color: #FFC15E; color: #FFC15E;">
+              🏆 Enregistrer le résultat du match
+            </button>
+          </div>
+        ` : ''}
       </div>
     </article>
   `;
 }
+    // ===== Enregistrer le résultat d'un match =====
+  function openReportMatchModal(roomId) {
+    const cfg = getCfg();
+    const myTag = getMyTag();
+    if (!cfg || !myTag) return;
 
-// ===== Rejoindre une room =====
-async function joinRoom(roomId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
-
-  try {
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+    // On récupère la room pour lister les adversaires possibles
+    fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
       headers: {
         'apikey': cfg.SUPABASE_ANON_KEY,
         'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
       }
-    });
-    const rooms = await res.json();
-    if (!rooms || !rooms.length) return false;
+    })
+    .then(res => res.json())
+    .then(rooms => {
+      if (!rooms || !rooms.length) return;
+      const room = rooms[0];
+      const players = room.players ? room.players.split(',').filter(Boolean) : [];
+      const opponents = players.filter(p => p !== myTag);
 
-    const room = rooms[0];
-    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
-    if (currentPlayers.includes(tag)) return true;
-
-    currentPlayers.push(tag);
-    const newPlayers = currentPlayers.join(',');
-
-    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      method: 'PATCH',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ players: newPlayers })
-    });
-    return updateRes.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
-// ===== Quitter une room =====
-async function leaveRoom(roomId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
-
-  try {
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      if (opponents.length === 0) {
+        if (window.afriToast) window.afriToast('❌ Aucun adversaire dans la room');
+        return;
       }
-    });
-    const rooms = await res.json();
-    if (!rooms || !rooms.length) return false;
 
-    const room = rooms[0];
-    const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
-    const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
+      const existing = document.getElementById('report-match-backdrop');
+      if (existing) existing.remove();
 
-    const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
-      method: 'PATCH',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ players: newPlayers })
+      const backdrop = document.createElement('div');
+      backdrop.id = 'report-match-backdrop';
+      backdrop.className = 'modal-backdrop open';
+      backdrop.innerHTML = `
+        <div class="modal">
+          <div class="modal-head">
+            <div>
+              <h3>🏆 Enregistrer le match</h3>
+              <p>Dis-nous qui a gagné. Ton adversaire devra confirmer.</p>
+            </div>
+            <button type="button" class="modal-close" data-close-modal>✕</button>
+          </div>
+          <form id="report-match-form">
+            <div class="form-row">
+              <label for="rm-opponent">Adversaire</label>
+              <select id="rm-opponent" required>
+                ${opponents.map(o => '<option value="' + o + '">' + o + '</option>').join('')}
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="rm-winner">Qui a gagné ?</label>
+              <select id="rm-winner" required>
+                <option value="${myTag}">🏆 Moi (${myTag})</option>
+                ${opponents.map(o => '<option value="' + o + '">' + o + '</option>').join('')}
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn btn-ghost" data-close-modal>Annuler</button>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      const form = document.getElementById('report-match-form');
+
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop || e.target.closest('[data-close-modal]')) {
+          backdrop.remove();
+        }
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const opponent = document.getElementById('rm-opponent').value;
+        const winner = document.getElementById('rm-winner').value;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.textContent = '⏳ Enregistrement…';
+        submitBtn.disabled = true;
+
+        try {
+          const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/matches', {
+            method: 'POST',
+            headers: {
+              'apikey': cfg.SUPABASE_ANON_KEY,
+              'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=representation'
+            },
+            body: JSON.stringify({
+              player1: myTag,
+              player2: opponent,
+              winner: winner,
+              game: room.game || 'Free Fire',
+              status: 'pending',
+              reported_by: myTag
+            })
+          });
+
+          if (res.ok) {
+            backdrop.remove();
+            if (window.afriToast) window.afriToast('✅ Match enregistré, en attente de confirmation');
+          } else {
+            submitBtn.textContent = '❌ Erreur';
+            submitBtn.disabled = false;
+          }
+        } catch (err) {
+          submitBtn.textContent = '❌ Erreur';
+          submitBtn.disabled = false;
+        }
+      });
     });
-    return updateRes.ok;
-  } catch (e) {
-    return false;
   }
-}
 
-// ===== Supprimer une room =====
-async function deleteRoom(roomId) {
-  const cfg = getCfg();
-  const tag = getMyTag();
-  if (!cfg || !tag) return false;
+  // ===== Rejoindre une room =====
+  async function joinRoom(roomId) {
+    const cfg = getCfg();
+    const tag = getMyTag();
+    if (!cfg || !tag) return false;
 
-  try {
-    const res = await fetch(
-      cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId + '&created_by=eq.' + encodeURIComponent(tag),
-      {
-        method: 'DELETE',
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
         headers: {
           'apikey': cfg.SUPABASE_ANON_KEY,
           'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
         }
-      }
-    );
-    return res.ok;
-  } catch (e) {
-    return false;
+      });
+      const rooms = await res.json();
+      if (!rooms || !rooms.length) return false;
+
+      const room = rooms[0];
+      const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+      if (currentPlayers.includes(tag)) return true;
+
+      currentPlayers.push(tag);
+      const newPlayers = currentPlayers.join(',');
+
+      const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ players: newPlayers })
+      });
+      return updateRes.ok;
+    } catch (e) {
+      return false;
+    }
   }
-}
-    // ===== Créer une room dans Supabase =====
+
+  // ===== Quitter une room =====
+  async function leaveRoom(roomId) {
+    const cfg = getCfg();
+    const tag = getMyTag();
+    if (!cfg || !tag) return false;
+
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      });
+      const rooms = await res.json();
+      if (!rooms || !rooms.length) return false;
+
+      const room = rooms[0];
+      const currentPlayers = room.players ? room.players.split(',').filter(Boolean) : [];
+      const newPlayers = currentPlayers.filter(p => p !== tag).join(',');
+
+      const updateRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId, {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ players: newPlayers })
+      });
+      return updateRes.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ===== Supprimer une room =====
+  async function deleteRoom(roomId) {
+    const cfg = getCfg();
+    const tag = getMyTag();
+    if (!cfg || !tag) return false;
+
+    try {
+      const res = await fetch(
+        cfg.SUPABASE_URL + '/rest/v1/rooms?id=eq.' + roomId + '&created_by=eq.' + encodeURIComponent(tag),
+        {
+          method: 'DELETE',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+          }
+        }
+      );
+      return res.ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ===== Créer une room =====
   async function createRoom(game, format, code, pwd, tag) {
     const cfg = getCfg();
     if (!cfg) return false;
@@ -414,7 +511,6 @@ async function deleteRoom(roomId) {
 
   // ===== Handlers de clic =====
   document.addEventListener('click', async (e) => {
-    // Copier ID + MDP d'un coup
     const copyAll = e.target.closest('[data-copy-all]');
     if (copyAll) {
       e.preventDefault();
@@ -426,15 +522,21 @@ async function deleteRoom(roomId) {
       );
       return;
     }
-    
-    // Créer une room
+
     if (e.target.closest('[data-open-create-room]')) {
       e.preventDefault();
       openCreateRoomModal();
       return;
     }
 
-    // Rejoindre
+    const reportBtn = e.target.closest('[data-report-match]');
+    if (reportBtn) {
+      e.preventDefault();
+      const roomId = reportBtn.getAttribute('data-report-match');
+      openReportMatchModal(roomId);
+      return;
+    }
+
     const joinBtn = e.target.closest('[data-join-room]');
     if (joinBtn) {
       e.preventDefault();
@@ -452,7 +554,6 @@ async function deleteRoom(roomId) {
       return;
     }
 
-    // Quitter
     const leaveBtn = e.target.closest('[data-leave-room]');
     if (leaveBtn) {
       e.preventDefault();
@@ -470,7 +571,6 @@ async function deleteRoom(roomId) {
       return;
     }
 
-    // Supprimer
     const delBtn = e.target.closest('[data-delete-room]');
     if (delBtn) {
       e.preventDefault();
