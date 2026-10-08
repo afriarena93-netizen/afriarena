@@ -1,4 +1,4 @@
-/* AfriArena — Profil : upload avatar + totems + historique */
+/* AfriArena — Profil : upload avatar + totems + historique + confirmation matchs */
 (function () {
   'use strict';
 
@@ -103,9 +103,8 @@
   }
 
   function cacherBoutonSiPasProprietaire() {
-    // TEMPORAIRE : on cache pas le bouton, pour pouvoir tester
     return;
-  }
+      }
   // === TOTEMS AFRICAINS ===
 async function chargerTotems() {
   const cfg = getCfg();
@@ -131,7 +130,6 @@ async function chargerTotems() {
 
     let totems = [];
 
-    // Attribution automatique
     if (rating >= 4.8 && matches > 30) totems.push('🦅 Aigle (Stratège)');
     if (matches > 20) totems.push('🐆 Panthère (Rapide)');
     if (matches > 10) totems.push('🐘 Éléphant (Régulier)');
@@ -150,7 +148,7 @@ async function chargerTotems() {
   }
 }
 
-// === HISTORIQUE DES MATCHS ===
+// === HISTORIQUE DES MATCHS (avec confirmation) ===
 async function chargerHistorique() {
   const cfg = getCfg();
   if (!cfg || !cfg.SUPABASE_URL) return;
@@ -161,7 +159,6 @@ async function chargerHistorique() {
   if (!container) return;
 
   try {
-    // On cherche les matchs où le joueur est soit player1, soit player2
     const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/matches?or=(player1.eq.' + encodeURIComponent(tag) + ',player2.eq.' + encodeURIComponent(tag) + ')&order=created_at.desc&limit=10', {
       headers: {
         'apikey': cfg.SUPABASE_ANON_KEY,
@@ -181,14 +178,30 @@ async function chargerHistorique() {
       const opponent = isPlayer1 ? m.player2 : m.player1;
       const isWin = m.winner === tag;
       const date = new Date(m.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-      
+      const isPending = m.status === 'pending';
+      const iReported = m.reported_by === tag;
+
+      // Si le match est en attente, j'affiche les boutons si je suis l'adversaire
+      let actionHTML = '';
+      if (isPending && !iReported) {
+        actionHTML = `
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <button class="btn btn-primary btn-sm" data-confirm-match="${m.id}" style="background:#B8F27C;color:#0b0c10;border:none;font-size:11px;padding:4px 10px">✅ Confirmer</button>
+            <button class="btn btn-outline btn-sm" data-contest-match="${m.id}" style="border-color:#FF5050;color:#FF5050;font-size:11px;padding:4px 10px">❌ Contester</button>
+          </div>
+        `;
+      } else if (isPending && iReported) {
+        actionHTML = '<p style="font-size:10px;color:#FFC15E;margin-top:4px">⏳ En attente de confirmation</p>';
+      }
+
       return `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-          <div>
-            <p style="font-weight: 600; color: ${isWin ? '#B8F27C' : '#FF5050'};">
-              ${isWin ? '🏆 Victoire' : '❌ Défaite'}
+          <div style="flex:1">
+            <p style="font-weight: 600; color: ${isPending ? '#FFC15E' : (isWin ? '#B8F27C' : '#FF5050')};">
+              ${isPending ? '⏳ En attente' : (isWin ? '🏆 Victoire' : '❌ Défaite')}
             </p>
             <p style="font-size: 12px; color: #888;">vs ${opponent} · ${m.game} · ${date}</p>
+            ${actionHTML}
           </div>
           <span style="font-size: 12px; color: #666;">#${m.id}</span>
         </div>
@@ -200,11 +213,78 @@ async function chargerHistorique() {
     container.innerHTML = '<p style="color: #888; font-size: 0.9rem;">Erreur de chargement.</p>';
   }
 }
-    function init() {
+    // === CONFIRMER / CONTESTER UN MATCH ===
+  document.addEventListener('click', async (e) => {
+    const cfg = getCfg();
+    if (!cfg) return;
+
+    // Bouton Confirmer
+    const confirmBtn = e.target.closest('[data-confirm-match]');
+    if (confirmBtn) {
+      e.preventDefault();
+      const matchId = confirmBtn.getAttribute('data-confirm-match');
+      confirmBtn.textContent = '⏳…';
+      confirmBtn.disabled = true;
+
+      try {
+        const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/matches?id=eq.' + matchId, {
+          method: 'PATCH',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: 'confirmed' })
+        });
+        if (res.ok) {
+          if (window.afriToast) window.afriToast('✅ Match confirmé !');
+          chargerHistorique();
+        } else {
+          confirmBtn.textContent = '❌';
+        }
+      } catch (err) {
+        confirmBtn.textContent = '❌';
+      }
+      return;
+    }
+
+    // Bouton Contester
+    const contestBtn = e.target.closest('[data-contest-match]');
+    if (contestBtn) {
+      e.preventDefault();
+      const matchId = contestBtn.getAttribute('data-contest-match');
+      if (!confirm('Contester ce match ? Le résultat sera annulé.')) return;
+      contestBtn.textContent = '⏳…';
+      contestBtn.disabled = true;
+
+      try {
+        const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/matches?id=eq.' + matchId, {
+          method: 'PATCH',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: 'contested', winner: null })
+        });
+        if (res.ok) {
+          if (window.afriToast) window.afriToast('❌ Match contesté');
+          chargerHistorique();
+        } else {
+          contestBtn.textContent = '❌';
+        }
+      } catch (err) {
+        contestBtn.textContent = '❌';
+      }
+      return;
+    }
+  });
+
+  function init() {
     bindAvatar();
     cacherBoutonSiPasProprietaire();
-    chargerTotems();      // On lance les totems
-    chargerHistorique();  // On lance l'historique des matchs
+    chargerTotems();
+    chargerHistorique();
   }
 
   if (document.readyState === 'loading') {
