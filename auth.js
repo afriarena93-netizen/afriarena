@@ -51,12 +51,13 @@
     // 2. Menu mobile (les 3 lignes)
     const mobileNav = document.querySelector('[data-mobile-nav]');
     if (mobileNav && tag) {
-      // Cacher les anciens boutons "Se connecter" et "Rejoindre"
-      const oldBtns = mobileNav.querySelectorAll('a[href="connexion.html"]');
-      oldBtns.forEach(function (btn) {
-        btn.style.display = 'none';
-      });
+      // Cacher le bloc .actions (Se connecter / Rejoindre la communauté)
+      const actionsBlock = mobileNav.querySelector('.actions');
+      if (actionsBlock) {
+        actionsBlock.style.display = 'none';
+      }
 
+      // Ajouter le bloc utilisateur en bas
       const userBlock = document.createElement('div');
       userBlock.style.padding = '12px 0';
       userBlock.style.borderTop = '1px solid rgba(255,255,255,0.1)';
