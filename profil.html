@@ -47,48 +47,40 @@
     <div class="card" style="padding:14px">
       <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
         <div class="avatar-wrap">
-          <div class="avatar-lg" id="avatar-preview">K</div>
-          <label class="avatar-edit" aria-label="Ajouter une photo">
-  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
-    <path d="M12 5v14M5 12h14"/>
-  </svg>
-  <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp">
-          </label>
-        </div>
-
-        <div style="flex:1;min-width:220px">
-          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-            <h1 id="profile-name" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Kossi_228</h1>
-            <span class="chip positive"><span class="dot live"></span> Disponible</span>
-          </div>
-          <p class="mono" style="font-size:12px;color:var(--ink-faint);margin-top:6px">
-            Lomé · Togo · Inscrit en mars 2026
-          </p>
-          <p style="margin-top:8px;max-width:560px">
-            Joueur Free Fire et eFootball. Je cherche des adversaires sérieux pour progresser.
-          </p>
-          <div class="player-tags" style="margin-top:10px">
-            <span class="tag">Free Fire</span>
-            <span class="tag">eFootball</span>
-            <span class="tag">PUBG Mobile</span>
-          </div>
-          <!-- ==== TOTEMS AFRICAINS ==== -->
-<div style="margin-top:15px; margin-bottom:15px;">
-  <p class="label" style="font-size: 11px; color: var(--ink-faint); margin-bottom: 8px;">TOTEMS</p>
-  <div id="totems-container" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+  <div class="avatar-lg" id="avatar-preview">?</div>
+  <label class="avatar-edit" id="avatar-edit-label" aria-label="Ajouter une photo">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp">
+  </label>
 </div>
 
-<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
-  <button class="btn btn-primary btn-sm">Modifier mon profil</button>
-  <a href="matchs.html" class="btn btn-outline btn-sm">Voir mes matchs</a>
+<div style="flex:1;min-width:220px">
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <h1 id="profile-name" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Chargement…</h1>
+    <span class="chip positive" id="profile-status"><span class="dot live"></span> Disponible</span>
+  </div>
+  <p class="mono" id="profile-meta" style="font-size:12px;color:var(--ink-faint);margin-top:6px"></p>
+  <p id="profile-bio" style="margin-top:8px;max-width:560px"></p>
+  <div class="player-tags" id="profile-tags" style="margin-top:10px"></div>
+
+  <div style="margin-top:15px; margin-bottom:15px;">
+    <p class="label" style="font-size: 11px; color: var(--ink-faint); margin-bottom: 8px;">TOTEMS</p>
+    <div id="totems-container" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+  </div>
+
+  <div id="profile-actions" style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm">Modifier mon profil</button>
+    <a href="matchs.html" class="btn btn-outline btn-sm">Voir mes matchs</a>
+  </div>
 </div>
 
-        <div style="text-align:center">
-          <p style="font-size:32px;font-weight:600;margin-top:6px">4,8 <span style="color:#FFC15E;font-size:20px">★</span></p>
-          <p class="mono" style="font-size:11px;color:var(--ink-faint);margin-top:4px">12 matchs · 11 avis</p>
-        </div>
-      </div>
-    </div>
+<div style="text-align:center">
+  <p class="label">Réputation</p>
+  <p id="profile-rating" style="font-size:32px;font-weight:600;margin-top:6px">— <span style="color:#FFC15E;font-size:20px">★</span></p>
+  <p class="mono" id="profile-match-count" style="font-size:11px;color:var(--ink-faint);margin-top:4px">0 matchs</p>
+</div>
   </section>
 
   <section class="wrap section-tight">
