@@ -1,4 +1,4 @@
-/* AfriArena — Charge les joueurs depuis Supabase */
+/* AfriArena — Charge les joueurs depuis Supabase + profils cliquables */
 (function () {
   'use strict';
 
@@ -30,29 +30,35 @@
     const dispoTone = dispo.includes('maintenant') ? 'positive'
                     : dispo.includes('soir') ? 'info' : 'violet';
 
-    card.innerHTML = `
-      <div
-      <div class="player-body">
-        <div class="player-head">
-          <span class="player-name">${p.gamertag}</span>
-          <span class="player-meta">${p.city || ''} · ${p.country || ''}</span>
-        </div>
-        <div class="player-tags">
-          <span class="chip ${dispoTone}">${dispo}</span>
-          <span class="tag">${p.game || 'Jeu'}</span>
-          <span class="tag">${p.level || 'Niveau ?'}</span>
-          <span class="tag">★ ${p.rating || '5'}</span>
-        </div>
+    // Lien vers le profil public du joueur
+    const profileUrl = 'profil.html?gamertag=' + encodeURIComponent(p.gamertag);
+      card.innerHTML = `
+    <div class="player-avatar">
+      ${initial}
+      ${dispo.includes('maintenant') ? '<span class="presence"></span>' : ''}
+    </div>
+    <div class="player-body">
+      <div class="player-head">
+        <a href="${profileUrl}" class="player-name" style="text-decoration:none;color:inherit;cursor:pointer;">
+          ${p.gamertag}
+        </a>
+        <span class="player-meta">${p.city || ''} · ${p.country || ''}</span>
       </div>
-      <div class="player-actions">
-        <button class="btn btn-primary btn-sm" data-invite="${p.gamertag}">Proposer un match</button>
-        <a href="chat.html" class="btn btn-outline btn-sm">Message</a>
+      <div class="player-tags">
+        <span class="chip ${dispoTone}">${dispo}</span>
+        <span class="tag">${p.game || 'Jeu'}</span>
+        <span class="tag">${p.level || 'Niveau ?'}</span>
+        <span class="tag">★ ${p.rating || '5'}</span>
       </div>
-    `;
-    return card;
+    </div>
+    <div class="player-actions">
+      <button class="btn btn-primary btn-sm" data-invite="${p.gamertag}">Proposer un match</button>
+      <a href="chat.html" class="btn btn-outline btn-sm">Message</a>
+    </div>
+  `;
+  return card;
   }
-
-  async function loadPlayers() {
+    async function loadPlayers() {
     const container = document.querySelector('.players') || document.querySelector('[data-game-players]');
     if (!container) return;
 
