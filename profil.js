@@ -105,6 +105,95 @@
   function cacherBoutonSiPasProprietaire() {
     return;
       }
+  // === CHARGER LES INFOS DU JOUEUR (profil dynamique) ===
+async function chargerInfosJoueur() {
+  const cfg = getCfg();
+  if (!cfg || !cfg.SUPABASE_URL) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const tag = urlParams.get('gamertag') || urlParams.get('tag') || getMyTag();
+  const myTag = getMyTag();
+  const isMyProfile = (tag === myTag);
+
+  try {
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag) + '&select=*', {
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    });
+    const data = await res.json();
+    if (!data || data.length === 0) return;
+
+    const p = data[0];
+
+    // 1. Avatar
+    const avatarPreview = document.getElementById('avatar-preview');
+    if (avatarPreview) {
+      if (p.avatar_url) {
+        avatarPreview.innerHTML = '<img src="' + p.avatar_url + '" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      } else {
+        avatarPreview.textContent = (p.gamertag || '?').charAt(0).toUpperCase();
+      }
+    }
+
+    // 2. Nom (gamertag)
+    const nameEl = document.getElementById('profile-name');
+    if (nameEl) nameEl.textContent = p.gamertag || 'Joueur';
+
+    // 3. Meta (ville · pays · date)
+    const metaEl = document.getElementById('profile-meta');
+    if (metaEl) {
+      const city = p.city || '';
+      const country = p.country || '';
+      const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '';
+      metaEl.textContent = [city, country, date ? 'Inscrit en ' + date : ''].filter(Boolean).join(' · ');
+    }
+
+    // 4. Bio
+    const bioEl = document.getElementById('profile-bio');
+    if (bioEl) {
+      bioEl.textContent = p.bio || 'Aucune description pour le moment.';
+    }
+
+    // 5. Tags (jeu, niveau)
+    const tagsEl = document.getElementById('profile-tags');
+    if (tagsEl) {
+      let tagsHTML = '';
+      if (p.game) tagsHTML += '<span class="tag">' + p.game + '</span>';
+      if (p.level) tagsHTML += '<span class="tag">' + p.level + '</span>';
+      tagsEl.innerHTML = tagsHTML || '<span class="tag">Aucun jeu renseigné</span>';
+    }
+
+    // 6. Réputation
+    const ratingEl = document.getElementById('profile-rating');
+    if (ratingEl) {
+      const rating = parseFloat(p.rating) || 0;
+      ratingEl.innerHTML = rating.toFixed(1).replace('.', ',') + ' <span style="color:#FFC15E;font-size:20px">★</span>';
+    }
+
+    const matchCountEl = document.getElementById('profile-match-count');
+    if (matchCountEl) {
+      const count = parseInt(p.matches_count) || 0;
+      matchCountEl.textContent = count + ' match' + (count > 1 ? 's' : '');
+    }
+
+    // 7. Cacher le bouton "Modifier mon profil" si ce n'est pas mon profil
+    const actionsEl = document.getElementById('profile-actions');
+    if (actionsEl && !isMyProfile) {
+      actionsEl.innerHTML = ''; // On supprime les boutons "Modifier" et "Voir mes matchs"
+    }
+
+    // 8. Cacher la croix "+" de l'avatar si ce n'est pas mon profil
+    const editLabel = document.getElementById('avatar-edit-label');
+    if (editLabel && !isMyProfile) {
+      editLabel.style.display = 'none';
+    }
+
+  } catch (e) {
+    console.warn('Erreur chargement infos joueur:', e);
+  }
+}
   // === TOTEMS AFRICAINS ===
 async function chargerTotems() {
   const cfg = getCfg();
@@ -283,6 +372,7 @@ async function chargerHistorique() {
   function init() {
     bindAvatar();
     cacherBoutonSiPasProprietaire();
+    chargerInfosJoueur();
     chargerTotems();
     chargerHistorique();
   }
