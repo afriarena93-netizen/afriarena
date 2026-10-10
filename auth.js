@@ -51,9 +51,12 @@
     // 2. Menu mobile (les 3 lignes)
     const mobileNav = document.querySelector('[data-mobile-nav]');
     if (mobileNav && tag) {
-      // On remplace les liens de connexion par le pseudo et la déconnexion
-      const oldLinks = mobileNav.querySelectorAll('.whatsapp, a[href="connexion.html"]');
-      // On ajoute un bloc en bas du menu mobile
+      // Cacher les anciens boutons "Se connecter" et "Rejoindre"
+      const oldBtns = mobileNav.querySelectorAll('a[href="connexion.html"]');
+      oldBtns.forEach(function (btn) {
+        btn.style.display = 'none';
+      });
+
       const userBlock = document.createElement('div');
       userBlock.style.padding = '12px 0';
       userBlock.style.borderTop = '1px solid rgba(255,255,255,0.1)';
