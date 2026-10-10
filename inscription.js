@@ -1,4 +1,4 @@
-/* AfriArena — Inscription à Supabase */
+/* AfriArena — Inscription avec compte sécurisé */
 (function () {
   'use strict';
 
@@ -14,13 +14,19 @@
 
     const tag = document.getElementById('reg-tag')?.value.trim();
     const email = document.getElementById('reg-email')?.value.trim();
+    const password = document.getElementById('reg-pwd')?.value;
     const country = document.getElementById('reg-country')?.value;
     const city = document.getElementById('reg-city')?.value.trim();
     const game = document.getElementById('reg-game')?.value;
     const gameId = document.getElementById('reg-game-id')?.value.trim();
 
-    if (!tag || !city) {
-      alert('Le pseudo et la ville sont obligatoires');
+    if (!tag || !city || !email || !password) {
+      alert('Pseudo, email, mot de passe et ville sont obligatoires');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Le mot de passe doit faire au moins 6 caractères');
       return;
     }
 
@@ -36,7 +42,28 @@
     submitBtn.disabled = true;
 
     try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players', {
+      // 1. On crée d'abord le compte sécurisé (email + mot de passe)
+      const authRes = await fetch(cfg.SUPABASE_URL + '/auth/v1/signup', {
+        method: 'POST',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const authData = await authRes.json();
+
+      if (!authRes.ok) {
+        alert('Erreur : ' + (authData.msg || authData.error_description || 'Impossible de créer le compte'));
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const userId = authData.user ? authData.user.id : authData.id;
+            // 2. On enregistre le profil du joueur dans la table "players"
+      const profileRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players', {
         method: 'POST',
         headers: {
           'apikey': cfg.SUPABASE_ANON_KEY,
@@ -45,6 +72,7 @@
           'Prefer': 'return=representation'
         },
         body: JSON.stringify({
+          user_id: userId,
           gamertag: tag,
           city: city,
           country: country || 'Togo',
@@ -56,21 +84,22 @@
         })
       });
 
-      if (!res.ok) {
-        if (res.status === 409) {
+      if (!profileRes.ok) {
+        if (profileRes.status === 409) {
           alert('Ce pseudo est déjà pris. Choisis-en un autre.');
         } else {
-          alert('Erreur lors de l\'inscription : ' + res.status);
+          alert('Erreur lors de la création du profil : ' + profileRes.status);
         }
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
       }
 
-      // Sauvegarde le pseudo localement
+      // 3. On sauvegarde le pseudo et l'ID du compte localement
       localStorage.setItem('afriarena:myTag', tag);
+      localStorage.setItem('afriarena:userId', userId);
 
-      alert('✅ Bienvenue ' + tag + ' !\n\nTon profil est enregistré.');
+      alert('✅ Bienvenue ' + tag + ' !\n\nTon compte est créé. Tu vas être redirigé.');
       submitBtn.textContent = '✅ Inscrit !';
 
       setTimeout(() => {
@@ -78,6 +107,7 @@
       }, 1500);
 
     } catch (err) {
+      console.error('Erreur inscription:', err);
       alert('Erreur réseau : vérifie ta connexion');
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
