@@ -163,5 +163,65 @@
     });
   });
 </script>
+  <script>
+  // Gestion de la connexion
+  const loginForm = document.querySelector('form[data-auth-panel="login"]');
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const cfg = window.AFRIARENA_CONFIG;
+      if (!cfg) { alert('Config manquante'); return; }
+
+      const email = document.getElementById('log-email').value.trim();
+      const password = document.getElementById('log-pwd').value;
+      const btn = loginForm.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.textContent = '⏳ Connexion…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(cfg.SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+          method: 'POST',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert('Email ou mot de passe incorrect');
+          btn.textContent = originalText;
+          btn.disabled = false;
+          return;
+        }
+
+        localStorage.setItem('afriarena:accessToken', data.access_token);
+        localStorage.setItem('afriarena:userId', data.user.id);
+
+        const profileRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?user_id=eq.' + data.user.id + '&select=gamertag', {
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+          }
+        });
+        const profiles = await profileRes.json();
+        if (profiles && profiles.length > 0) {
+          localStorage.setItem('afriarena:myTag', profiles[0].gamertag);
+        }
+
+        alert('✅ Connecté !');
+        window.location.href = 'adversaires.html';
+
+      } catch (err) {
+        alert('Erreur réseau');
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+  }
+  </script>
 </body>
 </html>
