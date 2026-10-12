@@ -88,6 +88,27 @@ function estSpam(texte) {
   
   return false;
 }
+  // === RÉPONSE : Mémoriser le message auquel on répond ===
+function setReply(message) {
+  replyingTo = message;
+  let bar = document.getElementById('reply-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'reply-bar';
+    bar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#191A21;border-left:3px solid #FF6B35;border-radius:8px;margin-bottom:8px;font-size:12px;color:#aaa;';
+    const form = document.querySelector('[data-chat-form]');
+    if (form) form.parentNode.insertBefore(bar, form);
+  }
+  bar.innerHTML = `
+    <span>↩ Réponse à <strong style="color:#FF6B35;">${escapeHtml(message.gamertag)}</strong> : ${escapeHtml(message.content.substring(0, 40))}${message.content.length > 40 ? '...' : ''}</span>
+    <button type="button" id="cancel-reply" style="background:none;border:none;color:#FF5050;cursor:pointer;font-size:16px;">✕</button>
+  `;
+  bar.style.display = 'flex';
+  document.getElementById('cancel-reply').onclick = function () {
+    replyingTo = null;
+    bar.style.display = 'none';
+  };
+}
 
   // === Charge les avatars de tous les joueurs ===
   async function loadAvatars() {
@@ -129,11 +150,36 @@ function estSpam(texte) {
     });
     const initial = (m.gamertag || '?').charAt(0).toUpperCase();
 
-    // Avatar : si le joueur a une photo, on l'affiche, sinon on met l'initiale
     const avatarUrl = avatarsMap[m.gamertag];
     const avatarHTML = avatarUrl
       ? `<img src="${avatarUrl}" alt="${m.gamertag}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
       : initial;
+
+    let replyHTML = '';
+    if (m.reply_to_tag) {
+      replyHTML = `
+        <div style="background:rgba(255,107,53,0.08);border-left:3px solid #FF6B35;padding:6px 10px;border-radius:6px;margin-bottom:6px;font-size:12px;color:#aaa;">
+          ↩ <strong style="color:#FF6B35;">${escapeHtml(m.reply_to_tag)}</strong>
+          <p style="margin-top:2px;color:#888;">${escapeHtml(m.reply_to_content || '')}</p>
+        </div>
+      `;
+    }
+
+    let actionsHTML = '';
+    if (isSelf) {
+      actionsHTML = `
+        <div class="msg-actions">
+          <button data-reply-msg="${m.id}" type="button">↩ Répondre</button>
+          <button data-delete-msg-supa="${m.id}" type="button">Supprimer</button>
+        </div>
+      `;
+    } else {
+      actionsHTML = `
+        <div class="msg-actions">
+          <button data-reply-msg="${m.id}" type="button">↩ Répondre</button>
+        </div>
+      `;
+    }
 
     msg.innerHTML = `
       <div class="msg-avatar">${avatarHTML}</div>
@@ -142,19 +188,16 @@ function estSpam(texte) {
           <span class="msg-name">${escapeHtml(m.gamertag)}</span>
           <span class="msg-time">${time}</span>
         </div>
+        ${replyHTML}
         <div class="msg-body">${escapeHtml(m.content)}</div>
-        ${isSelf ? `
-          <div class="msg-actions">
-            <button data-delete-msg-supa="${m.id}" type="button">Supprimer</button>
-          </div>
-        ` : ''}
+        ${actionsHTML}
       </div>
     `;
     body.appendChild(msg);
   });
 
   body.scrollTop = body.scrollHeight;
-}
+  }
 
 async function sendMessage(content) {
   // === MODÉRATION : On vérifie les mots interdits ===
