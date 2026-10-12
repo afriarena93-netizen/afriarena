@@ -1,4 +1,3 @@
-/* AfriArena — Chat connecté à Supabase */
 (function () {
   'use strict';
 
@@ -7,6 +6,7 @@
 
   let currentRoom = ROOM_DEFAULT;
   let lastMessageCount = 0;
+  let avatarsMap = {}; // Annuaire des avatars : { gamertag: avatar_url }
 
   function getCfg() {
     return window.AFRIARENA_CONFIG || null;
@@ -53,6 +53,18 @@
     }[c]));
   }
 
+  // === Charge les avatars de tous les joueurs ===
+  async function loadAvatars() {
+    const players = await supaFetch('players?select=gamertag,avatar_url');
+    if (!players) return;
+    avatarsMap = {};
+    players.forEach(p => {
+      if (p.avatar_url) {
+        avatarsMap[p.gamertag] = p.avatar_url;
+      }
+    });
+  }
+
   async function loadMessages() {
     const messages = await supaFetch(
       `messages?room=eq.${encodeURIComponent(currentRoom)}&deleted_at=is.null&order=created_at.asc&limit=100`
@@ -60,81 +72,85 @@
     if (!messages) return;
     renderMessages(messages);
   }
-
   function renderMessages(messages) {
-    const body = document.querySelector('.chat-body');
-    if (!body) return;
+  const body = document.querySelector('.chat-body');
+  if (!body) return;
 
-    if (messages.length === lastMessageCount) return;
-    lastMessageCount = messages.length;
+  if (messages.length === lastMessageCount) return;
+  lastMessageCount = messages.length;
 
-    body.innerHTML = '';
-    const myTag = getMyTag();
+  body.innerHTML = '';
+  const myTag = getMyTag();
 
-    messages.forEach((m) => {
-      const isSelf = m.gamertag === myTag;
-      const msg = document.createElement('div');
-      msg.className = 'msg' + (isSelf ? ' self' : '');
-      msg.dataset.msgId = m.id;
+  messages.forEach((m) => {
+    const isSelf = m.gamertag === myTag;
+    const msg = document.createElement('div');
+    msg.className = 'msg' + (isSelf ? ' self' : '');
+    msg.dataset.msgId = m.id;
 
-      const time = new Date(m.created_at).toLocaleTimeString('fr-FR', {
-        hour: '2-digit', minute: '2-digit'
-      });
-      const initial = (m.gamertag || '?').charAt(0).toUpperCase();
+    const time = new Date(m.created_at).toLocaleTimeString('fr-FR', {
+      hour: '2-digit', minute: '2-digit'
+    });
+    const initial = (m.gamertag || '?').charAt(0).toUpperCase();
 
-      msg.innerHTML = `
-        <div class="msg-avatar">${initial}</div>
-        <div>
-          <div class="msg-head">
-            <span class="msg-name">${escapeHtml(m.gamertag)}</span>
-            <span class="msg-time">${time}</span>
-          </div>
-          <div class="msg-body">${escapeHtml(m.content)}</div>
-          ${isSelf ? `
-            <div class="msg-actions">
-              <button data-delete-msg-supa="${m.id}" type="button">Supprimer</button>
-            </div>
-          ` : ''}
+    // Avatar : si le joueur a une photo, on l'affiche, sinon on met l'initiale
+    const avatarUrl = avatarsMap[m.gamertag];
+    const avatarHTML = avatarUrl
+      ? `<img src="${avatarUrl}" alt="${m.gamertag}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+      : initial;
+
+    msg.innerHTML = `
+      <div class="msg-avatar">${avatarHTML}</div>
+      <div>
+        <div class="msg-head">
+          <span class="msg-name">${escapeHtml(m.gamertag)}</span>
+          <span class="msg-time">${time}</span>
         </div>
-      `;
-      body.appendChild(msg);
-    });
+        <div class="msg-body">${escapeHtml(m.content)}</div>
+        ${isSelf ? `
+          <div class="msg-actions">
+            <button data-delete-msg-supa="${m.id}" type="button">Supprimer</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+    body.appendChild(msg);
+  });
 
-    body.scrollTop = body.scrollHeight;
+  body.scrollTop = body.scrollHeight;
+}
+
+async function sendMessage(content) {
+  const tag = getMyTag();
+  const res = await supaFetch('messages', {
+    method: 'POST',
+    body: JSON.stringify({
+      room: currentRoom,
+      gamertag: tag,
+      content: content
+    })
+  });
+  return !!res;
+}
+
+async function deleteMessage(id) {
+  const myTag = getMyTag();
+  const result = await supaFetch(`messages?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      deleted_at: new Date().toISOString(),
+      deleted_by: myTag
+    })
+  });
+  if (!result) {
+    if (window.afriToast) window.afriToast('❌ Erreur suppression');
+    return;
   }
-
-  async function sendMessage(content) {
-    const tag = getMyTag();
-    const res = await supaFetch('messages', {
-      method: 'POST',
-      body: JSON.stringify({
-        room: currentRoom,
-        gamertag: tag,
-        content: content
-      })
-    });
-    return !!res;
-  }
-
-  async function deleteMessage(id) {
-    const myTag = getMyTag();
-    const result = await supaFetch(`messages?id=eq.${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        deleted_at: new Date().toISOString(),
-        deleted_by: myTag
-      })
-    });
-    if (!result) {
-      if (window.afriToast) window.afriToast('❌ Erreur suppression');
-      return;
-    }
-    if (window.afriToast) window.afriToast('🗑 Message supprimé');
-    lastMessageCount = -1;
-    await loadMessages();
-  }
-
-  function bindRoomSwitcher() {
+  if (window.afriToast) window.afriToast('🗑 Message supprimé');
+  lastMessageCount = -1;
+  await loadMessages();
+}
+    function bindRoomSwitcher() {
     document.querySelectorAll('.room-item').forEach((el) => {
       el.addEventListener('click', (e) => {
         e.preventDefault();
@@ -188,6 +204,7 @@
 
   function init() {
     if (!document.querySelector('.chat-body')) return;
+    loadAvatars(); // <-- On charge les avatars au démarrage
     bindRoomSwitcher();
     bindForm();
     loadMessages();
