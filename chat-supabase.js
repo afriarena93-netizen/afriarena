@@ -302,12 +302,33 @@ async function deleteMessage(id) {
   }
 
   document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-delete-msg-supa]');
-    if (!btn) return;
-    const id = btn.getAttribute('data-delete-msg-supa');
+  // Bouton Répondre
+  const replyBtn = e.target.closest('[data-reply-msg]');
+  if (replyBtn) {
+    const id = replyBtn.getAttribute('data-reply-msg');
+    const msgEl = document.querySelector(`[data-msg-id="${id}"]`);
+    if (msgEl) {
+      const nameEl = msgEl.querySelector('.msg-name');
+      const bodyEl = msgEl.querySelector('.msg-body');
+      if (nameEl && bodyEl) {
+        setReply({
+          id: id,
+          gamertag: nameEl.textContent,
+          content: bodyEl.textContent
+        });
+      }
+    }
+    return;
+  }
+
+  // Bouton Supprimer
+  const delBtn = e.target.closest('[data-delete-msg-supa]');
+  if (delBtn) {
+    const id = delBtn.getAttribute('data-delete-msg-supa');
     if (!confirm('Supprimer ce message ?')) return;
     deleteMessage(id);
-  });
+  }
+});
 
   function init() {
     if (!document.querySelector('.chat-body')) return;
