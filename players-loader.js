@@ -32,9 +32,13 @@
 
     // Lien vers le profil public du joueur
     const profileUrl = 'profil.html?gamertag=' + encodeURIComponent(p.gamertag);
+    // Avatar : si le joueur a une photo, on l'affiche, sinon on met l'initiale
+const avatarHTML = p.avatar_url
+  ? `<img src="${p.avatar_url}" alt="${p.gamertag}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+  : initial;
       card.innerHTML = `
     <div class="player-avatar">
-      ${initial}
+      ${avatarHTML}
       ${dispo.includes('maintenant') ? '<span class="presence"></span>' : ''}
     </div>
     <div class="player-body">
