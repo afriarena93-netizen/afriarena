@@ -52,6 +52,41 @@
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[c]));
   }
+  // === MODÉRATION : Liste de mots interdits (modifiable) ===
+const MOTS_INTERDITS = [
+  'connard', 'connasse', 'salaud', 'salope', 'pute', 'putain',
+  'enculé', 'encule', 'nique', 'niquer', 'ntm', 'fdp', 'pd',
+  'bâtard', 'batard', 'abruti', 'débile', 'debile', 'idiot',
+  'imbécile', 'imbecile', 'crétin', 'cretin', 'merde', 'chier',
+  'fils de pute', 'ta gueule', 'ferme ta gueule', 'va te faire'
+];
+
+function contientInsulte(texte) {
+  const t = texte.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Enlève les accents
+  return MOTS_INTERDITS.some(mot => {
+    const m = mot.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return t.includes(m);
+  });
+}
+
+// === ANTI-SPAM : Mémoire des derniers messages envoyés ===
+let derniersMessages = []; // { contenu, timestamp }
+
+function estSpam(texte) {
+  const maintenant = Date.now();
+  // On garde seulement les messages des 10 dernières secondes
+  derniersMessages = derniersMessages.filter(m => maintenant - m.timestamp < 10000);
+  
+  // Règle 1 : Plus de 5 messages en 10 secondes = spam
+  if (derniersMessages.length >= 5) return true;
+  
+  // Règle 2 : Le même message répété 3 fois = spam
+  const memeContenu = derniersMessages.filter(m => m.contenu === texte).length;
+  if (memeContenu >= 2) return true;
+  
+  return false;
+}
 
   // === Charge les avatars de tous les joueurs ===
   async function loadAvatars() {
@@ -121,6 +156,18 @@
 }
 
 async function sendMessage(content) {
+  // === MODÉRATION : On vérifie les mots interdits ===
+  if (contientInsulte(content)) {
+    if (window.afriToast) window.afriToast('🚫 Message bloqué : langage inapproprié');
+    return false;
+  }
+
+  // === ANTI-SPAM ===
+  if (estSpam(content)) {
+    if (window.afriToast) window.afriToast('⏳ Doucement ! Tu envoies trop de messages.');
+    return false;
+  }
+
   const tag = getMyTag();
   const res = await supaFetch('messages', {
     method: 'POST',
@@ -130,6 +177,12 @@ async function sendMessage(content) {
       content: content
     })
   });
+
+  // On enregistre ce message dans la mémoire anti-spam
+  if (res) {
+    derniersMessages.push({ contenu: content, timestamp: Date.now() });
+  }
+
   return !!res;
 }
 
