@@ -200,31 +200,41 @@ function setReply(message) {
   }
 
 async function sendMessage(content) {
-  // === MODÉRATION : On vérifie les mots interdits ===
+  // Modération
   if (contientInsulte(content)) {
     if (window.afriToast) window.afriToast('🚫 Message bloqué : langage inapproprié');
     return false;
   }
-
-  // === ANTI-SPAM ===
   if (estSpam(content)) {
     if (window.afriToast) window.afriToast('⏳ Doucement ! Tu envoies trop de messages.');
     return false;
   }
 
   const tag = getMyTag();
+
+  const messageData = {
+    room: currentRoom,
+    gamertag: tag,
+    content: content
+  };
+
+  // Si on répond à un message, on ajoute les infos
+  if (replyingTo) {
+    messageData.reply_to = replyingTo.id;
+    messageData.reply_to_content = replyingTo.content.substring(0, 100);
+    messageData.reply_to_tag = replyingTo.gamertag;
+  }
+
   const res = await supaFetch('messages', {
     method: 'POST',
-    body: JSON.stringify({
-      room: currentRoom,
-      gamertag: tag,
-      content: content
-    })
+    body: JSON.stringify(messageData)
   });
 
-  // On enregistre ce message dans la mémoire anti-spam
   if (res) {
     derniersMessages.push({ contenu: content, timestamp: Date.now() });
+    replyingTo = null;
+    const bar = document.getElementById('reply-bar');
+    if (bar) bar.style.display = 'none';
   }
 
   return !!res;
