@@ -7,7 +7,8 @@
   let currentRoom = ROOM_DEFAULT;
   let lastMessageCount = 0;
   let avatarsMap = {}; // Annuaire des avatars : { gamertag: avatar_url }
-
+let replyingTo = null; // Stocke le message auquel on répond
+  
   function getCfg() {
     return window.AFRIARENA_CONFIG || null;
   }
