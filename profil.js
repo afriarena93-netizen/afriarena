@@ -99,13 +99,17 @@ async function chargerReputation() {
     const respectEl = document.getElementById('rep-respect');
 
     if (!ratings || ratings.length === 0) {
-      // Aucune note : on affiche les valeurs par défaut
-      if (ratingEl) ratingEl.innerHTML = '5,0 <span style="color:#FFC15E;font-size:20px">★</span>';
-      if (countEl) countEl.textContent = '0 avis';
-      if (fairplayEl) fairplayEl.textContent = '—';
-      if (punctualityEl) punctualityEl.textContent = '—';
-      if (respectEl) respectEl.textContent = '—';
-      return;
+  // Aucune note : on affiche 0 avis ET on cache la section détaillée
+  if (ratingEl) ratingEl.innerHTML = '5,0 <span style="color:#FFC15E;font-size:20px">★</span>';
+  if (countEl) countEl.textContent = '0 avis';
+  // Cacher la section "Réputation détaillée" si elle existe
+  const repSection = document.querySelector('.rep-grid');
+  if (repSection) repSection.parentElement.style.display = 'none';
+  return;
+} else {
+  // Si on a des notes, on s'assure que la section est visible
+  const repSection = document.querySelector('.rep-grid');
+  if (repSection) repSection.parentElement.style.display = '';
     }
 
     // Calcul de la moyenne
