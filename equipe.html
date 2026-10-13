@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#111217" />
+<title>Équipe — AfriArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+    <nav class="nav-links">
+      <a data-nav href="index.html" class="nav-link">Accueil</a>
+      <a data-nav href="communaute.html" class="nav-link">Communauté</a>
+      <a data-nav href="adversaires.html" class="nav-link">Adversaires</a>
+      <a data-nav href="equipes.html" class="nav-link">Équipes</a>
+      <a data-nav href="matchs.html" class="nav-link">Mes matchs</a>
+      <a data-nav href="chat.html" class="nav-link">Discussion</a>
+      <a data-nav href="tournois.html" class="nav-link">Tournois</a>
+      <a data-whatsapp href="#" class="nav-link whatsapp">WhatsApp</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="connexion.html" class="btn btn-primary btn-sm">Rejoindre</a>
+    </div>
+    <button class="hamburger" data-burger aria-expanded="false" aria-label="Ouvrir le menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-nav wrap" data-mobile-nav>
+    <a data-nav href="index.html">Accueil</a>
+    <a data-nav href="communaute.html">Communauté</a>
+    <a data-nav href="adversaires.html">Adversaires</a>
+    <a data-nav href="equipes.html">Équipes</a>
+    <a data-nav href="matchs.html">Mes matchs</a>
+    <a data-nav href="chat.html">Discussion</a>
+    <a data-nav href="tournois.html">Tournois</a>
+    <a data-whatsapp href="#" class="whatsapp">Groupe WhatsApp</a>
+  </nav>
+</header>
+
+<main>
+  <section class="wrap" style="padding-block:48px 24px">
+    <a href="equipes.html" style="color:var(--ink-faint);font-size:13px;text-decoration:none;">← Retour aux équipes</a>
+    <div class="card" style="margin-top:16px;padding:24px;">
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+        <div id="team-logo" style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#FF6B35,#FF8457);display:grid;place-items:center;font-size:40px;">🛡️</div>
+        <div style="flex:1;min-width:200px;">
+          <h1 id="team-name" style="font-size:clamp(1.6rem,4vw,2.4rem);">Chargement…</h1>
+          <p class="mono" id="team-meta" style="font-size:12px;color:var(--ink-faint);margin-top:6px;"></p>
+        </div>
+      </div>
+      <p id="team-desc" style="margin-top:16px;color:var(--ink-muted);"></p>
+      <div id="team-actions" style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;"></div>
+    </div>
+  </section>
+
+  <section class="wrap section-tight">
+    <p class="label">Membres</p>
+    <div id="team-members-list" style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
+      <div class="empty"><strong>Chargement…</strong></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+      <p style="margin-top:16px;max-width:380px;font-size:14px">La plateforme gaming africaine — née au Togo, pensée pour toute l'Afrique.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Plateforme</h4>
+      <ul>
+        <li><a href="communaute.html">Communautés</a></li>
+        <li><a href="adversaires.html">Adversaires</a></li>
+        <li><a href="equipes.html">Équipes</a></li>
+        <li><a href="matchs.html">Mes matchs</a></li>
+        <li><a href="chat.html">Discussion</a></li>
+        <li><a href="tournois.html">Tournois</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Communauté</h4>
+      <ul>
+        <li><a data-whatsapp href="#" class="wa">Groupe WhatsApp</a></li>
+        <li><a href="mailto:contact@afriarena.gg">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>© 2026 AfriArena — Né au Togo, pensé pour l’Afrique.</p>
+    <p class="mono">Les tournois payants arriveront progressivement.</p>
+  </div>
+</footer>
+
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script src="admin.js"></script>
+<script src="auth.js"></script>
+<script src="equipe.js"></script>
+</body>
+</html>
