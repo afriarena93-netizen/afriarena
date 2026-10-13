@@ -26,6 +26,7 @@ body{overflow-x:hidden}
 body{
   font-family:"Space Grotesk",system-ui,sans-serif;
   background:var(--bg);
+  overflow-x: hidden;
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
   min-height:100dvh;
