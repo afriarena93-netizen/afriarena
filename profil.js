@@ -225,13 +225,31 @@ async function chargerTotems() {
     if (rating >= 4.5) totems.push('🦁 Lion (Fair-play)');
 
     const container = document.getElementById('totems-container');
-    if (container) {
-      if (totems.length === 0) {
-        container.innerHTML = '<span style="color: #888; font-size: 0.9rem;">Aucun totem pour le moment (Jouez plus de matchs !)</span>';
-      } else {
-        container.innerHTML = totems.map(t => `<span style="background: #191A21; padding: 6px 12px; border-radius: 20px; margin-right: 8px; margin-bottom: 8px; display: inline-block; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); color: #FF6B35;">${t}</span>`).join('');
-      }
-    }
+if (container) {
+  if (totems.length === 0) {
+    container.innerHTML = '<span style="color: #888; font-size: 0.9rem;">Aucun totem pour le moment</span>';
+  } else {
+    const TOTEM_STYLES = {
+      'Lion':     { emoji: '🦁', gradient: 'linear-gradient(135deg, #FFC15E, #FF8457)', glow: 'rgba(255,193,94,0.5)',  label: 'Fair-play' },
+      'Éléphant': { emoji: '🐘', gradient: 'linear-gradient(135deg, #9CA3AF, #6B7280)', glow: 'rgba(156,163,175,0.5)', label: 'Régulier' },
+      'Panthère': { emoji: '🐆', gradient: 'linear-gradient(135deg, #CC8CFF, #78B7FF)', glow: 'rgba(204,140,255,0.5)', label: 'Rapide' },
+      'Aigle':    { emoji: '🦅', gradient: 'linear-gradient(135deg, #78B7FF, #06B6D4)', glow: 'rgba(120,183,255,0.5)', label: 'Stratège' }
+    };
+    container.innerHTML = totems.map(t => {
+      const key = Object.keys(TOTEM_STYLES).find(k => t.includes(k)) || 'Lion';
+      const style = TOTEM_STYLES[key];
+      return `
+        <div style="display:inline-flex;align-items:center;gap:10px;background:${style.gradient};color:#0b0c10;padding:10px 18px;border-radius:30px;font-weight:700;font-size:0.95rem;box-shadow:0 0 20px ${style.glow},0 4px 12px rgba(0,0,0,0.3);margin-right:8px;margin-bottom:8px;">
+          <span style="font-size:1.6rem;line-height:1;">${style.emoji}</span>
+          <span style="display:flex;flex-direction:column;line-height:1.1;">
+            <span style="font-size:0.95rem;">${key}</span>
+            <span style="font-size:0.7rem;opacity:0.75;font-weight:500;">${style.label}</span>
+          </span>
+        </div>
+      `;
+    }).join('');
+  }
+}
   } catch (e) {
     console.warn('Erreur chargement totems:', e);
   }
