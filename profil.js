@@ -189,7 +189,43 @@ async function chargerInfosJoueur() {
     if (editLabel && !isMyProfile) {
       editLabel.style.display = 'none';
     }
+// === CHARGER L'ÉQUIPE DU JOUEUR ===
+const teamRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/team_members?gamertag=eq.' + encodeURIComponent(tag) + '&select=team_id,role', {
+  headers: {
+    'apikey': cfg.SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+  }
+});
+const teamMembers = await teamRes.json();
+const teamContainer = document.getElementById('profile-team');
 
+if (teamContainer) {
+  if (teamMembers && teamMembers.length > 0) {
+    const tm = teamMembers[0];
+    // Récupérer les infos de l'équipe
+    const infoRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/teams?id=eq.' + tm.team_id, {
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    });
+    const teamInfo = await infoRes.json();
+
+    if (teamInfo && teamInfo.length > 0) {
+      const t = teamInfo[0];
+      const roleIcon = tm.role === 'Chef' ? '👑' : (tm.role === 'Officier' ? '⚔️' : '🛡️');
+      teamContainer.innerHTML = `
+        <a href="equipe.html?id=${t.id}" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(204,140,255,0.15));border:1px solid rgba(255,107,53,0.4);border-radius:12px;padding:8px 14px;">
+          <span style="font-size:22px;">${t.logo || '🛡️'}</span>
+          <span style="display:flex;flex-direction:column;line-height:1.2;">
+            <span style="font-size:13px;font-weight:600;color:#FF6B35;">${t.name}</span>
+            <span style="font-size:10px;color:#aaa;">${roleIcon} ${tm.role} · ${t.game}</span>
+          </span>
+        </a>
+      `;
+    }
+  }
+}
   } catch (e) {
     console.warn('Erreur chargement infos joueur:', e);
   }
