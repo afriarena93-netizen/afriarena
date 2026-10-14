@@ -93,63 +93,66 @@
   }
 
   function renderTournamentCard(t, allPlayers) {
-    const myTag = getMyTag();
-    const isMine = t.created_by === myTag;
-    const registered = allPlayers.filter(p => p.tournament_id === t.id);
-    const count = registered.length;
-    const iAmRegistered = registered.some(p => p.gamertag === myTag);
-    const isFull = count >= t.max_players;
-    const canStart = isMine && t.status === 'registration' && count >= 2;
+  
+function renderTournamentCard(t, allPlayers) {
+  const myTag = getMyTag();
+  const isMine = t.created_by === myTag;
+  const registered = allPlayers.filter(p => p.tournament_id === t.id);
+  const count = registered.length;
+  const iAmRegistered = registered.some(p => p.gamertag === myTag);
+  const isFull = count >= t.max_players;
+  const canStart = isMine && t.status === 'registration' && count >= 2;
 
-    const statusLabel = t.status === 'registration' ? 'INSCRIPTIONS OUVERTES'
-                       : t.status === 'started' ? 'EN COURS'
-                       : t.status === 'finished' ? 'TERMINÉ' : t.status;
+  const statusLabel = t.status === 'registration' ? 'INSCRIPTIONS OUVERTES'
+                     : t.status === 'started' ? 'EN COURS'
+                     : t.status === 'finished' ? 'TERMINÉ' : t.status;
 
-    let actionBtn = '';
-    if (t.status === 'registration') {
-      if (iAmRegistered) actionBtn = '<button class="btn btn-outline btn-sm" disabled>✅ Inscrit</button>';
-      else if (isFull) actionBtn = '<button class="btn btn-outline btn-sm" disabled>🔒 Complet</button>';
-      else actionBtn = '<button class="btn btn-primary btn-sm" data-join-tournament="' + t.id + '">🎯 S\'inscrire</button>';
-    }
-
-    let bracketHTML = '';
-    if (t.bracket && Array.isArray(t.bracket) && t.bracket.length > 0) {
-      bracketHTML = renderBracket(t.bracket, isMine, allPlayers);
-    }
-
-    const playersHTML = registered.length === 0
-      ? '<p class="mono" style="font-size:12px;color:var(--ink-faint)">Aucun joueur</p>'
-      : registered.map(p => '<p class="mono" style="font-size:13px;color:var(--ink);display:flex;align-items:center">' + avatarHTML(p) + p.gamertag + getBadgeHTML(p.pays) + '</p>').join('');
-
-    return `
-      <article class="tournament" style="position:relative;cursor:pointer" data-tournament-id="${t.id}">
-        <div class="tournament-head">
-          <div>
-            <h3>${t.name}</h3>
-            <p class="prize">🏆 ${t.game} · ${t.format}</p>
-          </div>
-          <span class="chip ${t.status === 'registration' ? 'info' : 'positive'}">${statusLabel}</span>
-        </div>
-        <div class="tournament-meta">
-          <div><p class="k">Jeu</p><p class="v">${t.game}</p></div>
-          <div><p class="k">Format</p><p class="v">${t.format}</p></div>
-          <div><p class="k">Joueurs</p><p class="v">${count} / ${t.max_players}</p></div>
-          <div><p class="k">Créé par</p><p class="v">${t.created_by}</p></div>
-        </div>
-        <div class="match-actions">
-          ${isMine ? '<button class="btn btn-ghost btn-sm" data-delete-tournament="' + t.id + '" style="color:#FF5050">🗑 Supprimer</button>' : ''}
-          ${canStart ? '<button class="btn btn-primary btn-sm" data-start-tournament="' + t.id + '">🚀 Démarrer</button>' : ''}
-          ${actionBtn}
-        </div>
-        <div id="details-${t.id}" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
-          <p class="label" style="margin-bottom:12px">Joueurs inscrits (${count}/${t.max_players})</p>
-          <div style="display:flex;flex-direction:column;gap:6px">${playersHTML}</div>
-          ${bracketHTML}
-        </div>
-      </article>
+  // === BOUTONS D'ACTION ===
+  let actionButtons = '';
+  if (isMine) {
+    // Créateur : Supprimer + Démarrer
+    actionButtons = `
+      <button class="btn btn-ghost btn-sm" data-delete-tournament="${t.id}" style="color:#FF5050;">🗑 Supprimer</button>
+      ${canStart ? `<button class="btn btn-primary btn-sm" data-start-tournament="${t.id}">🚀 Démarrer</button>` : ''}
     `;
+  } else if (iAmRegistered) {
+    // Inscrit (pas créateur) : Quitter
+    actionButtons = `
+      <button class="btn btn-outline btn-sm" data-leave-tournament="${t.id}" style="border-color:#FF5050;color:#FF5050;">🚪 Quitter le tournoi</button>
+    `;
+  } else if (isFull) {
+    // Complet
+    actionButtons = `<button class="btn btn-outline btn-sm" disabled>🔒 Complet</button>`;
+  } else if (t.status === 'registration') {
+    // Pas inscrit : S'inscrire
+    actionButtons = `<button class="btn btn-primary btn-sm" data-join-tournament="${t.id}">✅ S'inscrire</button>`;
   }
 
+  return `
+    <article class="card" style="padding:20px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3 style="font-size:18px;font-weight:700;">${t.name}</h3>
+          <p style="font-size:13px;color:#FF6B35;margin-top:4px;">🏆 ${t.game} · ${t.format}</p>
+        </div>
+        <span class="chip" style="font-size:10px;">${statusLabel}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;">
+        <div>
+          <p class="mono" style="font-size:10px;color:var(--ink-faint);">Joueurs</p>
+          <p style="font-size:14px;font-weight:600;margin-top:4px;">${count} / ${t.max_players}</p>
+        </div>
+        <div>
+          <p class="mono" style="font-size:10px;color:var(--ink-faint);">Créé par</p>
+          <p style="font-size:14px;font-weight:600;margin-top:4px;">${t.created_by}</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+        ${actionButtons}
+      </div>
+    </article>
+  `;
+}
   // ▼ SECTION 2 arrive ▼
  function renderBracket(bracket, isMine, allPlayers) {
   function paysOf(pseudo) {
@@ -447,6 +450,32 @@ async function startTournament(id) {
       openCreateTournamentModal();
       return;
     }
+    // Bouton Quitter le tournoi
+const leaveTournamentBtn = e.target.closest('[data-leave-tournament]');
+if (leaveTournamentBtn) {
+  e.preventDefault();
+  if (!confirm('Quitter ce tournoi ?')) return;
+  const id = leaveTournamentBtn.getAttribute('data-leave-tournament');
+  const myTag = getMyTag();
+  const cfg = getCfg();
+  leaveTournamentBtn.textContent = '⏳…';
+  leaveTournamentBtn.disabled = true;
+  try {
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&gamertag=eq.' + encodeURIComponent(myTag), {
+      method: 'DELETE',
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    });
+    if (res.ok) {
+      if (window.afriToast) window.afriToast('🚪 Tu as quitté le tournoi');
+      loadTournaments();
+    }
+  } catch (err) { console.warn(err); }
+  return;
+}
+    
 
     const winBtn = e.target.closest('[data-declare-winner]');
     if (winBtn) {
