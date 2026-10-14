@@ -153,7 +153,41 @@
     </div>
   </div>
 </section>
+<section class="wrap section-tight">
+  <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px">
+    <div>
+      <p class="label">En ce moment sur AfriArena</p>
+      <h2 class="section" style="margin-top:12px;font-size:clamp(1.4rem,3vw,2rem)">La communauté est en ligne.</h2>
+    </div>
+    <span class="chip positive"><span class="dot live"></span> En direct</span>
+  </div>
 
+  <div id="live-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:24px;">
+    <div class="card" style="padding:18px;text-align:center;">
+      <p class="stat-value" id="live-players" style="font-size:28px;">—</p>
+      <p class="stat-label">Joueurs inscrits</p>
+    </div>
+    <div class="card" style="padding:18px;text-align:center;">
+      <p class="stat-value" id="live-teams" style="font-size:28px;">—</p>
+      <p class="stat-label">Équipes créées</p>
+    </div>
+    <div class="card" style="padding:18px;text-align:center;">
+      <p class="stat-value" id="live-rooms" style="font-size:28px;">—</p>
+      <p class="stat-label">Rooms actives</p>
+    </div>
+    <div class="card" style="padding:18px;text-align:center;">
+      <p class="stat-value" id="live-matches" style="font-size:28px;">—</p>
+      <p class="stat-label">Matchs joués</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;padding:16px;">
+    <p class="label" style="font-size:11px;margin-bottom:12px;">Dernière activité</p>
+    <div id="live-activity">
+      <p style="color:#888;font-size:13px;">Chargement des activités…</p>
+    </div>
+  </div>
+</section>
 <section class="wrap section">
   <p class="label">Comment ça marche</p>
   <h2 class="section" style="margin-top:12px">De la recherche à la victoire.</h2>
@@ -279,5 +313,66 @@
 <script src="admin.js"></script>
 <script src="players-loader.js"></script>
   <script src="auth.js"></script>
+  <script>
+  (async function () {
+    const cfg = window.AFRIARENA_CONFIG;
+    if (!cfg) return;
+
+    async function count(table, filter) {
+      const path = table + '?select=id' + (filter ? '&' + filter : '');
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/' + path + '&limit=1000', {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Prefer': 'count=exact'
+        }
+      });
+      const data = await res.json();
+      return Array.isArray(data) ? data.length : 0;
+    }
+
+    try {
+      const [players, teams, rooms, matches] = await Promise.all([
+        count('players'),
+        count('teams'),
+        count('rooms'),
+        count('matches', 'status=eq.confirmed')
+      ]);
+
+      document.getElementById('live-players').textContent = players;
+      document.getElementById('live-teams').textContent = teams;
+      document.getElementById('live-rooms').textContent = rooms;
+      document.getElementById('live-matches').textContent = matches;
+    } catch (e) {
+      console.warn('Erreur live stats:', e);
+    }
+
+    // Derniers joueurs inscrits
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,city,created_at&order=created_at.desc&limit=3', {
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+        }
+      });
+      const recent = await res.json();
+      const box = document.getElementById('live-activity');
+
+      if (recent && recent.length > 0) {
+        box.innerHTML = recent.map(p => {
+          const time = new Date(p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;">
+            <span>👋 <strong>${p.gamertag}</strong> a rejoint AfriArena${p.city ? ' · ' + p.city : ''}</span>
+            <span style="color:#666;font-size:11px;">${time}</span>
+          </div>`;
+        }).join('');
+      } else {
+        box.innerHTML = '<p style="color:#888;font-size:13px;">Sois le premier à rejoindre la communauté !</p>';
+      }
+    } catch (e) {
+      console.warn('Erreur activité:', e);
+    }
+  })();
+  </script>
 </body>
 </html>
