@@ -202,6 +202,56 @@
     <p class="mono">Les tournois payants arriveront progressivement.</p>
   </div>
 </footer>
+        <!-- Modale Modifier mon profil -->
+<div id="edit-profile-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div class="modal" style="max-width:480px;width:100%;">
+    <div class="modal-head">
+      <div>
+        <h3>Modifier mon profil</h3>
+        <p>Mets à jour tes infos</p>
+      </div>
+      <button type="button" class="modal-close" id="edit-close">✕</button>
+    </div>
+    <form id="edit-profile-form">
+      <div class="form-row">
+        <label for="ep-bio">Bio</label>
+        <textarea id="ep-bio" rows="3" placeholder="Décris-toi en quelques mots..."></textarea>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label for="ep-country">Pays</label>
+          <select id="ep-country">
+            <option>Togo</option><option>Ghana</option><option>Bénin</option>
+            <option>Côte d'Ivoire</option><option>Nigeria</option>
+            <option>Sénégal</option><option>Cameroun</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="ep-city">Ville</label>
+          <input id="ep-city" placeholder="Lomé">
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label for="ep-game">Jeu préféré</label>
+          <select id="ep-game">
+            <option>Free Fire</option><option>eFootball</option>
+            <option>FC Mobile</option><option>PUBG Mobile</option>
+            <option>Call of Duty</option><option>Blood Strike</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="ep-level">ID dans le jeu</label>
+          <input id="ep-level" placeholder="Ex: KOSSI228">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="edit-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script src="supabase.js"></script>
 <script src="app.js"></script>
