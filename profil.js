@@ -311,6 +311,76 @@ async function chargerTotems() {
       return;
     }
   });
+  // === MODIFIER MON PROFIL ===
+async function bindEditProfile() {
+  const btn = document.getElementById('edit-profile-btn');
+  const modal = document.getElementById('edit-profile-modal');
+  const closeBtn = document.getElementById('edit-close');
+  const cancelBtn = document.getElementById('edit-cancel');
+  const form = document.getElementById('edit-profile-form');
+  const cfg = getCfg();
+  const tag = getMyTag();
+  if (!btn || !modal || !form || !cfg || !tag) return;
+
+  btn.addEventListener('click', async () => {
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag) + '&select=*', {
+        headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
+      });
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const p = data[0];
+        document.getElementById('ep-bio').value = p.bio || '';
+        document.getElementById('ep-city').value = p.city || '';
+        document.getElementById('ep-level').value = p.level || '';
+        document.getElementById('ep-country').value = p.country || 'Togo';
+        document.getElementById('ep-game').value = p.game || 'Free Fire';
+      }
+      modal.style.display = 'flex';
+    } catch (e) { console.warn(e); }
+  });
+
+  const closeModal = () => { modal.style.display = 'none'; };
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const bio = document.getElementById('ep-bio').value.trim();
+    const country = document.getElementById('ep-country').value;
+    const city = document.getElementById('ep-city').value.trim();
+    const game = document.getElementById('ep-game').value;
+    const level = document.getElementById('ep-level').value.trim();
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.textContent = '⏳ Enregistrement…';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag), {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ bio, country, city, game, level })
+      });
+      if (res.ok) {
+        closeModal();
+        if (window.afriToast) window.afriToast('✅ Profil mis à jour');
+        chargerInfosJoueur();
+      } else {
+        submitBtn.textContent = '❌ Erreur';
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      submitBtn.textContent = '❌ Erreur';
+      submitBtn.disabled = false;
+    }
+  });
+}
 
   function init() {
     bindAvatar();
@@ -319,6 +389,7 @@ async function chargerTotems() {
     chargerTotems();
     chargerHistorique();
     chargerReputation();
+    bindEditProfile();
   }
 
   if (document.readyState === 'loading') {
