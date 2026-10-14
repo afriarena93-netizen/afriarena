@@ -556,14 +556,144 @@ container.innerHTML = totems.map(t => {
       return;
     }
   });
+// === MODIFIER MON PROFIL ===
+function bindEditProfile() {
+  const btn = document.getElementById('edit-profile-btn');
+  if (!btn) return;
 
+  btn.addEventListener('click', () => {
+    const tag = getMyTag();
+    const cfg = getCfg();
+    if (!tag || !cfg) return;
+
+    // On récupère les infos actuelles du joueur
+    fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag) + '&select=*', {
+      headers: {
+        'apikey': cfg.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data || data.length === 0) return;
+      const p = data[0];
+
+      // On crée la modale
+      const existing = document.getElementById('edit-profile-backdrop');
+      if (existing) existing.remove();
+
+      const backdrop = document.createElement('div');
+      backdrop.id = 'edit-profile-backdrop';
+      backdrop.className = 'modal-backdrop open';
+      backdrop.innerHTML = `
+        <div class="modal">
+          <div class="modal-head">
+            <div>
+              <h3>Modifier mon profil</h3>
+              <p>Mets à jour tes infos</p>
+            </div>
+            <button type="button" class="modal-close" data-close-modal>✕</button>
+          </div>
+          <form id="edit-profile-form">
+            <div class="form-row">
+              <label for="ep-bio">Bio</label>
+              <textarea id="ep-bio" rows="3" placeholder="Décris-toi en quelques mots...">${p.bio || ''}</textarea>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label for="ep-country">Pays</label>
+                <select id="ep-country">
+                  <option>Togo</option><option>Ghana</option><option>Bénin</option>
+                  <option>Côte d'Ivoire</option><option>Nigeria</option>
+                  <option>Sénégal</option><option>Cameroun</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="ep-city">Ville</label>
+                <input id="ep-city" value="${p.city || ''}" placeholder="Lomé">
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label for="ep-game">Jeu préféré</label>
+                <select id="ep-game">
+                  <option>Free Fire</option><option>eFootball</option>
+                  <option>FC Mobile</option><option>PUBG Mobile</option>
+                  <option>Call of Duty</option><option>Blood Strike</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="ep-level">ID dans le jeu</label>
+                <input id="ep-level" value="${p.level || ''}" placeholder="Ex: KOSSI228">
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn btn-ghost" data-close-modal>Annuler</button>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      // Pré-sélectionner les valeurs actuelles
+      document.getElementById('ep-country').value = p.country || 'Togo';
+      document.getElementById('ep-game').value = p.game || 'Free Fire';
+
+      // Fermeture
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop || e.target.closest('[data-close-modal]')) {
+          backdrop.remove();
+        }
+      });
+
+      // Soumission
+      document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const bio = document.getElementById('ep-bio').value.trim();
+        const country = document.getElementById('ep-country').value;
+        const city = document.getElementById('ep-city').value.trim();
+        const game = document.getElementById('ep-game').value;
+        const level = document.getElementById('ep-level').value.trim();
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.textContent = '⏳ Enregistrement…';
+        submitBtn.disabled = true;
+
+        try {
+          const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag), {
+            method: 'PATCH',
+            headers: {
+              'apikey': cfg.SUPABASE_ANON_KEY,
+              'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ bio, country, city, game, level })
+          });
+          if (res.ok) {
+            backdrop.remove();
+            if (window.afriToast) window.afriToast('✅ Profil mis à jour');
+            chargerInfosJoueur();
+          } else {
+            submitBtn.textContent = '❌ Erreur';
+            submitBtn.disabled = false;
+          }
+        } catch (err) {
+          submitBtn.textContent = '❌ Erreur';
+          submitBtn.disabled = false;
+        }
+      });
+    });
+  });
+}
   function init() {
-    bindAvatar();
-    cacherBoutonSiPasProprietaire();
-    chargerInfosJoueur();
-    chargerTotems();
-    chargerHistorique();
-    chargerReputation();
+  bindAvatar();
+  cacherBoutonSiPasProprietaire();
+  chargerInfosJoueur();
+  chargerTotems();
+  chargerHistorique();
+  chargerReputation();
+  bindEditProfile();
   }
 
   if (document.readyState === 'loading') {
