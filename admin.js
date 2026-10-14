@@ -34,11 +34,15 @@
 
   // ===== Bouton rond discret =====
   function injectFab() {
-    // AJOUT : On vérifie si l'admin est connecté OU si l'URL contient ?admin=1
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') !== '1' && !isUnlocked()) {
-      return; // On arrête là, le bouton ne s'affiche pas pour les visiteurs
-    }
+  // Le bouton admin ne s'affiche QUE pour le propriétaire (zoro-maz)
+  const ADMIN_TAG = 'zoro-maz';
+  const myTag = localStorage.getItem('afriarena:myTag');
+  const isAdmin = (myTag === ADMIN_TAG);
+
+  // On affiche le bouton uniquement si c'est l'admin connecté
+  if (!isAdmin) {
+    return;
+  }
 
     if (document.getElementById('admin-fab')) return;
     const btn = document.createElement('button');
