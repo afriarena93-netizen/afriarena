@@ -91,8 +91,6 @@
       container.innerHTML = '<div class="empty"><strong>Erreur de chargement</strong>Réessaie dans un instant.</div>';
     }
   }
-
-  function renderTournamentCard(t, allPlayers) {
   
 function renderTournamentCard(t, allPlayers) {
   const myTag = getMyTag();
