@@ -99,8 +99,9 @@ function renderTournamentCard(t, allPlayers) {
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
-        ${actionButtons}
-      </div>
+  <button class="btn btn-outline btn-sm" data-view-tournament="${t.id}">👁 Voir le tournoi</button>
+  ${actionButtons}
+</div>
     </article>
   `;
 }
@@ -338,6 +339,51 @@ function avatarHTML(player) {
   document.addEventListener('click', async (e) => {
     const cfg = getCfg();
     if (!cfg) return;
+    // Voir un tournoi (afficher le bracket)
+const viewBtn = e.target.closest('[data-view-tournament]');
+if (viewBtn) {
+  e.preventDefault();
+  const id = viewBtn.getAttribute('data-view-tournament');
+  try {
+    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + id, {
+      headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
+    });
+    const data = await res.json();
+    if (!data || data.length === 0) return;
+    const t = data[0];
+    const myTag = getMyTag();
+    const isMine = t.created_by === myTag;
+
+    const existing = document.getElementById('view-tournament-backdrop');
+    if (existing) existing.remove();
+
+    const backdrop = document.createElement('div');
+    backdrop.id = 'view-tournament-backdrop';
+    backdrop.className = 'modal-backdrop open';
+    backdrop.innerHTML = `
+      <div class="modal" style="max-width:520px;">
+        <div class="modal-head">
+          <div>
+            <h3>${t.name}</h3>
+            <p>${t.game} · ${t.format}</p>
+          </div>
+          <button type="button" class="modal-close" data-close-modal>✕</button>
+        </div>
+        <div style="padding:16px 0;">
+          ${t.bracket && t.bracket.length > 0 ? renderBracket(t.bracket, isMine, []) : '<p style="color:#888;text-align:center;">Les inscriptions sont encore ouvertes. Le bracket apparaîtra une fois le tournoi démarré.</p>'}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+
+    backdrop.addEventListener('click', (ev) => {
+      if (ev.target === backdrop || ev.target.closest('[data-close-modal]')) {
+        backdrop.remove();
+      }
+    });
+  } catch (err) { console.warn(err); }
+  return;
+}
 
     // Créer un tournoi
     if (e.target.closest('[data-open-create-tournament]')) {
