@@ -20,8 +20,8 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden}
-body{overflow-x:hidden}
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
+body{overflow-x:hidden;width:100%}
 
 body{
   font-family:"Space Grotesk",system-ui,sans-serif;
