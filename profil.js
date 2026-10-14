@@ -92,18 +92,31 @@ async function chargerInfosJoueur() {
       }
     }
 
-    // Drapeau du pays
-const PAYS_EMOJI = {
-  'Togo': '🇹🇬', 'Ghana': '🇬🇭', 'Bénin': '🇧🇯',
-  'Côte d\'Ivoire': '🇨🇮', 'Nigeria': '🇳🇬', 'Sénégal': '🇸🇳',
-  'Cameroun': '🇨🇲', 'Mali': '🇲🇱', 'Burkina Faso': '🇧🇫',
-  'Algérie': '🇩🇿', 'Maroc': '🇲🇦', 'Tunisie': '🇹🇳',
-  'RD Congo': '🇨🇩', 'Gabon': '🇬🇦'
+    // Drapeau + Emoji animal + Surnom du pays
+const PAYS_INFO = {
+  'Togo': { flag: '🇹🇬', emoji: '🦅', surnom: 'Éperviers' },
+  'Ghana': { flag: '🇬🇭', emoji: '⭐', surnom: 'Black Stars' },
+  'Bénin': { flag: '🇧🇯', emoji: '🐿️', surnom: 'Écureuils' },
+  'Côte d\'Ivoire': { flag: '🇨🇮', emoji: '🐘', surnom: 'Éléphants' },
+  'Nigeria': { flag: '🇳🇬', emoji: '🦅', surnom: 'Super Eagles' },
+  'Sénégal': { flag: '🇸🇳', emoji: '🦁', surnom: 'Lions' },
+  'Cameroun': { flag: '🇨🇲', emoji: '🦁', surnom: 'Lions Indomptables' },
+  'Mali': { flag: '🇲🇱', emoji: '🦅', surnom: 'Aigles' },
+  'Burkina Faso': { flag: '🇧🇫', emoji: '🐎', surnom: 'Étalons' },
+  'Algérie': { flag: '🇩🇿', emoji: '🦊', surnom: 'Fennecs' },
+  'Maroc': { flag: '🇲🇦', emoji: '🦁', surnom: 'Lions de l\'Atlas' },
+  'Tunisie': { flag: '🇹🇳', emoji: '🦅', surnom: 'Aigles de Carthage' },
+  'RD Congo': { flag: '🇨🇩', emoji: '🐆', surnom: 'Léopards' },
+  'Gabon': { flag: '🇬🇦', emoji: '🐆', surnom: 'Panthères' }
 };
 const nameEl = document.getElementById('profile-name');
 if (nameEl) {
-  const flag = PAYS_EMOJI[p.country] || '';
-  nameEl.textContent = (p.gamertag || 'Joueur') + (flag ? ' ' + flag : '');
+  const info = PAYS_INFO[p.country];
+  if (info) {
+    nameEl.innerHTML = (p.gamertag || 'Joueur') + ' ' + info.flag + ' <span style="font-size:18px;">' + info.emoji + '</span> <span style="font-size:13px;color:#FF6B35;font-weight:500;">' + info.surnom + '</span>';
+  } else {
+    nameEl.textContent = p.gamertag || 'Joueur';
+  }
 }
 
     const metaEl = document.getElementById('profile-meta');
