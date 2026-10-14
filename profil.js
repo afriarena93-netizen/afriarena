@@ -92,8 +92,19 @@ async function chargerInfosJoueur() {
       }
     }
 
-    const nameEl = document.getElementById('profile-name');
-    if (nameEl) nameEl.textContent = p.gamertag || 'Joueur';
+    // Drapeau du pays
+const PAYS_EMOJI = {
+  'Togo': '🇹🇬', 'Ghana': '🇬🇭', 'Bénin': '🇧🇯',
+  'Côte d\'Ivoire': '🇨🇮', 'Nigeria': '🇳🇬', 'Sénégal': '🇸🇳',
+  'Cameroun': '🇨🇲', 'Mali': '🇲🇱', 'Burkina Faso': '🇧🇫',
+  'Algérie': '🇩🇿', 'Maroc': '🇲🇦', 'Tunisie': '🇹🇳',
+  'RD Congo': '🇨🇩', 'Gabon': '🇬🇦'
+};
+const nameEl = document.getElementById('profile-name');
+if (nameEl) {
+  const flag = PAYS_EMOJI[p.country] || '';
+  nameEl.textContent = (p.gamertag || 'Joueur') + (flag ? ' ' + flag : '');
+}
 
     const metaEl = document.getElementById('profile-meta');
     if (metaEl) {
