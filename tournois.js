@@ -1,51 +1,9 @@
-/* AfriArena — Tournois v4 : badges + avatars + bracket */
+/* AfriArena — Tournois */
 (function () {
   'use strict';
 
-  const BADGES_PAYS = {
-    'Togo':           { surnom: 'Éperviers',          emoji: '🦅' },
-    'Côte d\'Ivoire': { surnom: 'Éléphants',          emoji: '🐘' },
-    'Sénégal':        { surnom: 'Lions',              emoji: '🦁' },
-    'Cameroun':       { surnom: 'Lions Indomptables', emoji: '🦁' },
-    'Ghana':          { surnom: 'Black Stars',        emoji: '⭐' },
-    'Nigeria':        { surnom: 'Super Eagles',       emoji: '🦅' },
-    'Mali':           { surnom: 'Aigles',             emoji: '🦅' },
-    'Burkina Faso':   { surnom: 'Étalons',            emoji: '🐎' },
-    'Algérie':        { surnom: 'Fennecs',            emoji: '🦊' },
-    'Maroc':          { surnom: 'Lions de l\'Atlas',  emoji: '🦁' },
-    'Tunisie':        { surnom: 'Aigles de Carthage', emoji: '🦅' },
-    'RD Congo':       { surnom: 'Léopards',           emoji: '🐆' },
-    'Gabon':          { surnom: 'Panthères',          emoji: '🐆' },
-    'Bénin':          { surnom: 'Écureuils',          emoji: '🐿️' }
-  };
-
-  function getBadgeHTML(pays) {
-    if (!pays || !BADGES_PAYS[pays]) return '';
-    const b = BADGES_PAYS[pays];
-    return ' <span title="' + b.surnom + '" style="font-size:.9em;margin-left:4px">' + b.emoji + '</span>';
-  }
-
-  function avatarHTML(p) {
-    const pseudo = p.gamertag || '?';
-    if (p.avatar) {
-      return '<img src="' + p.avatar + '" alt="' + pseudo + '" style="width:26px;height:26px;border-radius:8px;object-fit:cover;margin-right:8px;vertical-align:middle;flex-shrink:0">';
-    }
-    return '<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-light));color:#0b0c10;font-weight:700;font-size:12px;margin-right:8px;flex-shrink:0">' + pseudo.charAt(0).toUpperCase() + '</span>';
-  }
-
   function getCfg() { return window.AFRIARENA_CONFIG || null; }
-
-  function getMyTag() {
-    let tag = localStorage.getItem('afriarena:myTag');
-    if (!tag || tag.trim() === '' || tag === 'Anonyme') {
-      tag = prompt('Ton pseudo :');
-      if (tag && tag.trim()) {
-        tag = tag.trim();
-        localStorage.setItem('afriarena:myTag', tag);
-      } else return null;
-    }
-    return tag;
-  }
+  function getMyTag() { return localStorage.getItem('afriarena:myTag') || null; }
 
   async function loadTournaments() {
     const cfg = getCfg();
@@ -54,23 +12,22 @@
     if (!container) return;
 
     try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?select=*&order=created_at.desc&limit=30', {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?select=*&order=created_at.desc', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
-      if (!res.ok) { container.innerHTML = '<div class="empty"><strong>Erreur ' + res.status + '</strong></div>'; return; }
       const tournaments = await res.json();
 
-      const tpRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?select=tournament_id,gamertag', {
+      const tpRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?select=*', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
-      const tp = tpRes.ok ? await tpRes.json() : [];
+      const tp = await tpRes.json();
 
       const profRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,country,avatar_url', {
         headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
       });
       const profiles = profRes.ok ? await profRes.json() : [];
 
-      const allPlayers = tp.map(p => {
+      const allPlayers = (tp || []).map(p => {
         const prof = profiles.find(x => x.gamertag === p.gamertag);
         return {
           tournament_id: p.tournament_id,
@@ -91,7 +48,7 @@
       container.innerHTML = '<div class="empty"><strong>Erreur de chargement</strong>Réessaie dans un instant.</div>';
     }
   }
-  
+  // === AFFICHAGE D'UNE CARTE TOURNOI ===
 function renderTournamentCard(t, allPlayers) {
   const myTag = getMyTag();
   const isMine = t.created_by === myTag;
@@ -108,21 +65,17 @@ function renderTournamentCard(t, allPlayers) {
   // === BOUTONS D'ACTION ===
   let actionButtons = '';
   if (isMine) {
-    // Créateur : Supprimer + Démarrer
     actionButtons = `
       <button class="btn btn-ghost btn-sm" data-delete-tournament="${t.id}" style="color:#FF5050;">🗑 Supprimer</button>
       ${canStart ? `<button class="btn btn-primary btn-sm" data-start-tournament="${t.id}">🚀 Démarrer</button>` : ''}
     `;
   } else if (iAmRegistered) {
-    // Inscrit (pas créateur) : Quitter
     actionButtons = `
       <button class="btn btn-outline btn-sm" data-leave-tournament="${t.id}" style="border-color:#FF5050;color:#FF5050;">🚪 Quitter le tournoi</button>
     `;
   } else if (isFull) {
-    // Complet
     actionButtons = `<button class="btn btn-outline btn-sm" disabled>🔒 Complet</button>`;
   } else if (t.status === 'registration') {
-    // Pas inscrit : S'inscrire
     actionButtons = `<button class="btn btn-primary btn-sm" data-join-tournament="${t.id}">✅ S'inscrire</button>`;
   }
 
@@ -151,24 +104,33 @@ function renderTournamentCard(t, allPlayers) {
     </article>
   `;
 }
-  // ▼ SECTION 2 arrive ▼
- function renderBracket(bracket, isMine, allPlayers) {
-  function paysOf(pseudo) {
-    if (!pseudo) return null;
-    const j = allPlayers.find(p => p.gamertag === pseudo);
-    return j ? j.pays : null;
-  }
-  function avatarOf(pseudo) {
-    if (!pseudo) return null;
-    const j = allPlayers.find(p => p.gamertag === pseudo);
-    return j ? j.avatar : null;
+
+// === GÉNÉRATION DU BRACKET ===
+function generateBracket(players) {
+  const shuffled = [...players].sort(() => Math.random() - 0.5);
+  const rounds = [];
+  let current = shuffled.map(name => ({ p1: name, p2: null, winner: null }));
+
+  // Premier tour : on apparie les joueurs
+  const firstRoundMatches = [];
+  for (let i = 0; i < current.length; i += 2) {
+    if (i + 1 < current.length) {
+      firstRoundMatches.push({ p1: shuffled[i], p2: shuffled[i + 1], winner: null });
+    } else {
+      firstRoundMatches.push({ p1: shuffled[i], p2: null, winner: shuffled[i] });
+    }
   }
 
-  let html = '<p class="label" style="margin-top:20px;margin-bottom:12px">🏆 Bracket</p>';
+  rounds.push({ round: 1, matches: firstRoundMatches });
+  return rounds;
+}
 
+// === AFFICHAGE DU BRACKET ===
+function renderBracket(bracket, isMine, allPlayers) {
+  if (!bracket || bracket.length === 0) return '';
+  let html = '<div style="margin-top:20px;">';
   bracket.forEach((round, roundIndex) => {
-    html += '<p class="mono" style="font-size:11px;color:var(--ink-faint);margin:14px 0 6px;letter-spacing:.1em">TOUR ' + (roundIndex + 1) + '</p>';
-
+    html += '<p class="label" style="margin-top:16px;">Tour ' + round.round + '</p>';
     round.matches.forEach((m, matchIndex) => {
       const p1 = m.p1 || 'En attente';
       const p2 = m.p2 || 'En attente';
@@ -177,133 +139,59 @@ function renderTournamentCard(t, allPlayers) {
       const p1Won = m.winner === m.p1;
       const p2Won = m.winner === m.p2;
 
-      const p1HTML = avatarHTML({ gamertag: m.p1 || '?', avatar: avatarOf(m.p1) }) + '<span style="' + (p1Won ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)') + '">' + p1 + getBadgeHTML(paysOf(m.p1)) + (p1Won ? ' 🏆' : '') + '</span>';
-      const p2HTML = avatarHTML({ gamertag: m.p2 || '?', avatar: avatarOf(m.p2) }) + '<span style="' + (p2Won ? 'color:var(--positive);font-weight:700' : 'color:var(--ink)') + '">' + p2 + getBadgeHTML(paysOf(m.p2)) + (p2Won ? ' 🏆' : '') + '</span>';
-
       html += '<div style="padding:10px 12px;background:var(--panel);border-radius:10px;border:1px solid var(--line);margin-bottom:6px">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">';
 
       if (canClick) {
-        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|1" class="mono" style="flex:1;text-align:left;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;display:flex;align-items:center">' + p1HTML + '</button>';
+        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|1" class="mono" style="flex:1;text-align:left;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;">' + p1 + (p1Won ? ' 🏆' : '') + '</button>';
         html += '<span class="mono" style="font-size:11px;color:var(--ink-faint)">vs</span>';
-        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|2" class="mono" style="flex:1;text-align:right;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;display:flex;align-items:center;justify-content:flex-end">' + p2HTML + '</button>';
+        html += '<button data-declare-winner="' + roundIndex + '|' + matchIndex + '|2" class="mono" style="flex:1;text-align:right;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;">' + p2 + (p2Won ? ' 🏆' : '') + '</button>';
       } else {
-        html += '<span class="mono" style="flex:1;font-size:13px;display:flex;align-items:center">' + p1HTML + '</span>';
+        html += '<span class="mono" style="flex:1;font-size:13px;">' + p1 + (p1Won ? ' 🏆' : '') + '</span>';
         html += '<span class="mono" style="font-size:11px;color:var(--ink-faint)">vs</span>';
-        html += '<span class="mono" style="flex:1;text-align:right;font-size:13px;display:flex;align-items:center;justify-content:flex-end">' + p2HTML + '</span>';
+        html += '<span class="mono" style="flex:1;text-align:right;font-size:13px;">' + p2 + (p2Won ? ' 🏆' : '') + '</span>';
       }
 
       html += '</div>';
-
       if (!done && m.p1 && m.p2 && isMine) {
         html += '<p class="mono" style="font-size:10px;color:var(--ink-faint);text-align:center;margin-top:6px">Clique sur le gagnant</p>';
       }
-
       html += '</div>';
     });
   });
-
-  if (bracket.length >= 1) {
-    const lastRound = bracket[bracket.length - 1];
-    if (lastRound.matches.length === 1 && lastRound.matches[0].winner) {
-      const champ = lastRound.matches[0].winner;
-      html += '<div style="margin-top:16px;padding:16px;background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(255,107,53,.05));border:1px solid rgba(255,107,53,.35);border-radius:14px;text-align:center">';
-      html += '<p class="label" style="color:var(--brand)">CHAMPION 🏆</p>';
-      html += '<p style="font-size:22px;font-weight:700;color:var(--ink);margin-top:8px;display:flex;align-items:center;justify-content:center">' + avatarHTML({ gamertag: champ, avatar: avatarOf(champ) }) + champ + getBadgeHTML(paysOf(champ)) + '</p>';
-      html += '</div>';
-    }
-  }
-
+  html += '</div>';
   return html;
 }
 
-function generateBracket(players) {
-  const shuffled = [...players].sort(() => Math.random() - 0.5);
-  const matches = [];
-  for (let i = 0; i < shuffled.length; i += 2) {
-    matches.push({ p1: shuffled[i], p2: shuffled[i + 1] || null, winner: null });
+// === FONCTIONS UTILITAIRES ===
+function getBadgeHTML(pays) {
+  if (!pays) return '';
+  const map = {
+    'Togo': '🇹🇬', 'Ghana': '🇬🇭', 'Bénin': '🇧🇯',
+    'Côte d\'Ivoire': '🇨🇮', 'Nigeria': '🇳🇬', 'Sénégal': '🇸🇳',
+    'Cameroun': '🇨🇲', 'Mali': '🇲🇱', 'Burkina Faso': '🇧🇫',
+    'Algérie': '🇩🇿', 'Maroc': '🇲🇦', 'Tunisie': '🇹🇳',
+    'RD Congo': '🇨🇩', 'Gabon': '🇬🇦'
+  };
+  return ' ' + (map[pays] || '');
+}
+
+function paysOf(pseudo) {
+  const players = window._afriAllPlayers || [];
+  const found = players.find(p => p.gamertag === pseudo);
+  return found ? found.pays : null;
+}
+
+function avatarHTML(player) {
+  if (!player || !player.gamertag) return '';
+  if (player.avatar) {
+    return '<img src="' + player.avatar + '" style="width:24px;height:24px;border-radius:50%;object-fit:cover;margin-right:6px;vertical-align:middle;" alt="">';
   }
-  return [{ round: 1, matches }];
+  const initial = player.gamertag.charAt(0).toUpperCase();
+  return '<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF8457);color:#0b0c10;font-weight:700;font-size:11px;margin-right:6px;vertical-align:middle;">' + initial + '</span>';
 }
-
-async function declareWinner(tournamentId, bracket, roundIndex, matchIndex, winnerSide) {
-  const cfg = getCfg();
-  if (!cfg) return false;
-
-  const match = bracket[roundIndex].matches[matchIndex];
-  const winner = winnerSide === '1' ? match.p1 : match.p2;
-  if (!winner) return false;
-
-  match.winner = winner;
-
-  const round = bracket[roundIndex];
-  const allDone = round.matches.every(m => m.winner);
-
-  let newStatus = 'started';
-  let newBracket = bracket;
-
-  if (allDone) {
-    const winners = round.matches.map(m => m.winner).filter(Boolean);
-
-    if (winners.length <= 1) {
-      newStatus = 'finished';
-    } else {
-      const nextMatches = [];
-      for (let i = 0; i < winners.length; i += 2) {
-        nextMatches.push({
-          p1: winners[i],
-          p2: winners[i + 1] || null,
-          winner: null
-        });
-      }
-      newBracket = [...bracket, { round: roundIndex + 2, matches: nextMatches }];
-    }
-  }
-
-  try {
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + tournamentId, {
-      method: 'PATCH',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({ bracket: newBracket, status: newStatus })
-    });
-    return res.ok;
-  } catch (e) { return false; }
-}
-
-async function startTournament(id) {
-  const cfg = getCfg();
-  if (!cfg) return false;
-  try {
-    const pRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&select=gamertag', {
-      headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
-    });
-    if (!pRes.ok) return false;
-    const players = await pRes.json();
-    const names = players.map(p => p.gamertag);
-    if (names.length < 2) return false;
-
-    const bracket = generateBracket(names);
-
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + id, {
-      method: 'PATCH',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ status: 'started', bracket: bracket })
-    });
-    return res.ok;
-  } catch (e) { return false; }
-}
-
-// ▼ SECTION 3 arrive ▼
-   async function createTournament(name, game, format, maxPlayers, tag) {
+    // === CRÉATION D'UN TOURNOI ===
+  async function createTournament(name, game, format, maxPlayers, tag) {
     const cfg = getCfg();
     if (!cfg) return false;
     try {
@@ -328,33 +216,7 @@ async function startTournament(id) {
     } catch (e) { return false; }
   }
 
-  async function joinTournament(tournamentId) {
-    const cfg = getCfg();
-    const tag = getMyTag();
-    if (!cfg || !tag) return false;
-    try {
-      const checkRes = await fetch(
-        cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + tournamentId + '&gamertag=eq.' + encodeURIComponent(tag) + '&select=id',
-        { headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY } }
-      );
-      const existing = checkRes.ok ? await checkRes.json() : [];
-      if (existing && existing.length > 0) {
-        if (window.afriToast) window.afriToast('⚠ Déjà inscrit');
-        return 'already';
-      }
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players', {
-        method: 'POST',
-        headers: {
-          'apikey': cfg.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ tournament_id: tournamentId, gamertag: tag })
-      });
-      return res.ok;
-    } catch (e) { return false; }
-  }
-
+  // === SUPPRIMER UN TOURNOI ===
   async function deleteTournament(id) {
     const cfg = getCfg();
     if (!cfg) return false;
@@ -367,9 +229,42 @@ async function startTournament(id) {
     } catch (e) { return false; }
   }
 
+  // === DÉMARRER UN TOURNOI ===
+  async function startTournament(id) {
+    const cfg = getCfg();
+    if (!cfg) return false;
+    try {
+      const pRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&select=gamertag', {
+        headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
+      });
+      if (!pRes.ok) return false;
+      const players = await pRes.json();
+      const names = players.map(p => p.gamertag);
+      if (names.length < 2) return false;
+
+      const bracket = generateBracket(names);
+
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + id, {
+        method: 'PATCH',
+        headers: {
+          'apikey': cfg.SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'started', bracket: bracket })
+      });
+      return res.ok;
+    } catch (e) { return false; }
+  }
+
+  // === MODALE DE CRÉATION ===
   function openCreateTournamentModal() {
     const tag = getMyTag();
-    if (!tag) return;
+    if (!tag) {
+      alert('Connecte-toi pour créer un tournoi.');
+      window.location.href = 'connexion.html';
+      return;
+    }
     const existing = document.getElementById('tournament-backdrop');
     if (existing) existing.remove();
 
@@ -379,10 +274,7 @@ async function startTournament(id) {
     backdrop.innerHTML = `
       <div class="modal">
         <div class="modal-head">
-          <div>
-            <h3>Créer un tournoi</h3>
-            <p>Les joueurs pourront s'inscrire</p>
-          </div>
+          <div><h3>Créer un tournoi</h3><p>Les joueurs pourront s\'inscrire</p></div>
           <button type="button" class="modal-close" data-close-modal>✕</button>
         </div>
         <form id="tournament-form">
@@ -398,8 +290,10 @@ async function startTournament(id) {
           </div>
           <div class="form-row"><label for="t-players">Nombre de joueurs</label>
             <select id="t-players">
-              <option value="4">4 joueurs</option><option value="8" selected>8 joueurs</option>
-              <option value="16">16 joueurs</option><option value="32">32 joueurs</option>
+              <option value="4">4 joueurs</option>
+              <option value="8" selected>8 joueurs</option>
+              <option value="16">16 joueurs</option>
+              <option value="32">32 joueurs</option>
             </select>
           </div>
           <div class="modal-actions">
@@ -412,8 +306,6 @@ async function startTournament(id) {
     document.body.appendChild(backdrop);
 
     const form = document.getElementById('tournament-form');
-    setTimeout(() => document.getElementById('t-name').focus(), 100);
-
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop || e.target.closest('[data-close-modal]')) backdrop.remove();
     });
@@ -423,7 +315,7 @@ async function startTournament(id) {
       const name = document.getElementById('t-name').value.trim();
       const game = document.getElementById('t-game').value;
       const format = document.getElementById('t-format').value;
-      const maxPlayers = parseInt(document.getElementById('t-players').value, 10);
+      const maxPlayers = parseInt(document.getElementById('t-players').value);
       if (!name) return;
 
       const submitBtn = form.querySelector('button[type="submit"]');
@@ -433,7 +325,7 @@ async function startTournament(id) {
       const ok = await createTournament(name, game, format, maxPlayers, tag);
       if (ok) {
         backdrop.remove();
-        if (window.afriToast) window.afriToast('🏆 Tournoi créé');
+        if (window.afriToast) window.afriToast('🏆 Tournoi créé !');
         loadTournaments();
       } else {
         submitBtn.textContent = '❌ Erreur';
@@ -442,105 +334,93 @@ async function startTournament(id) {
     });
   }
 
+  // === GESTION DES CLICS ===
   document.addEventListener('click', async (e) => {
+    const cfg = getCfg();
+    if (!cfg) return;
+
+    // Créer un tournoi
     if (e.target.closest('[data-open-create-tournament]')) {
       e.preventDefault();
       openCreateTournamentModal();
       return;
     }
-    // Bouton Quitter le tournoi
-const leaveTournamentBtn = e.target.closest('[data-leave-tournament]');
-if (leaveTournamentBtn) {
-  e.preventDefault();
-  if (!confirm('Quitter ce tournoi ?')) return;
-  const id = leaveTournamentBtn.getAttribute('data-leave-tournament');
-  const myTag = getMyTag();
-  const cfg = getCfg();
-  leaveTournamentBtn.textContent = '⏳…';
-  leaveTournamentBtn.disabled = true;
-  try {
-    const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&gamertag=eq.' + encodeURIComponent(myTag), {
-      method: 'DELETE',
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-      }
-    });
-    if (res.ok) {
-      if (window.afriToast) window.afriToast('🚪 Tu as quitté le tournoi');
-      loadTournaments();
-    }
-  } catch (err) { console.warn(err); }
-  return;
-}
-    
 
-    const winBtn = e.target.closest('[data-declare-winner]');
-    if (winBtn) {
+    // Quitter un tournoi
+    const leaveTournamentBtn = e.target.closest('[data-leave-tournament]');
+    if (leaveTournamentBtn) {
       e.preventDefault();
-      e.stopPropagation();
-
-      const parts = winBtn.getAttribute('data-declare-winner').split('|');
-      const roundIndex = parseInt(parts[0], 10);
-      const matchIndex = parseInt(parts[1], 10);
-      const side = parts[2];
-
-      const card = winBtn.closest('[data-tournament-id]');
-      if (!card) return;
-      const tid = card.getAttribute('data-tournament-id');
-
-      const cfg = getCfg();
-      if (!cfg) return;
-
-      const r = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + tid + '&select=bracket', {
-        headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
-      });
-      const data = await r.json();
-      if (!data || !data.length) return;
-      const bracket = data[0].bracket;
-      if (!bracket) return;
-
-      const ok = await declareWinner(tid, bracket, roundIndex, matchIndex, side);
-      if (ok) {
-        if (window.afriToast) window.afriToast('🏆 Gagnant déclaré');
-        loadTournaments();
-      } else {
-        if (window.afriToast) window.afriToast('❌ Erreur');
-      }
+      if (!confirm('Quitter ce tournoi ?')) return;
+      const id = leaveTournamentBtn.getAttribute('data-leave-tournament');
+      const myTag = getMyTag();
+      leaveTournamentBtn.textContent = '⏳…';
+      leaveTournamentBtn.disabled = true;
+      try {
+        const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players?tournament_id=eq.' + id + '&gamertag=eq.' + encodeURIComponent(myTag), {
+          method: 'DELETE',
+          headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
+        });
+        if (res.ok) {
+          if (window.afriToast) window.afriToast('🚪 Tu as quitté le tournoi');
+          loadTournaments();
+        }
+      } catch (err) { console.warn(err); }
       return;
     }
 
-    const card = e.target.closest('[data-tournament-id]');
-    if (card && !e.target.closest('button')) {
-      const id = card.getAttribute('data-tournament-id');
-      const details = document.getElementById('details-' + id);
-      if (details) details.style.display = details.style.display === 'none' ? 'block' : 'none';
-      return;
-    }
-
+    // S'inscrire à un tournoi
     const joinBtn = e.target.closest('[data-join-tournament]');
     if (joinBtn) {
       e.preventDefault();
       const id = joinBtn.getAttribute('data-join-tournament');
+      const myTag = getMyTag();
+      if (!myTag) {
+        alert('Connecte-toi pour t\'inscrire.');
+        window.location.href = 'connexion.html';
+        return;
+      }
       joinBtn.textContent = '⏳…';
       joinBtn.disabled = true;
-      const result = await joinTournament(id);
-      if (result === true) {
-        if (window.afriToast) window.afriToast('🎯 Inscrit');
+      try {
+        const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournament_players', {
+          method: 'POST',
+          headers: {
+            'apikey': cfg.SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ tournament_id: id, gamertag: myTag })
+        });
+        if (res.ok) {
+          if (window.afriToast) window.afriToast('✅ Inscrit !');
+          loadTournaments();
+        } else {
+          joinBtn.textContent = '❌ Erreur';
+        }
+      } catch (err) { joinBtn.textContent = '❌'; }
+      return;
+    }
+
+    // Supprimer un tournoi
+    const delBtn = e.target.closest('[data-delete-tournament]');
+    if (delBtn) {
+      e.preventDefault();
+      if (!confirm('Supprimer ce tournoi ?')) return;
+      const id = delBtn.getAttribute('data-delete-tournament');
+      delBtn.textContent = '⏳…';
+      delBtn.disabled = true;
+      const ok = await deleteTournament(id);
+      if (ok) {
+        if (window.afriToast) window.afriToast('🗑 Tournoi supprimé');
         loadTournaments();
-      } else if (result === 'already') {
-        loadTournaments();
-      } else {
-        joinBtn.textContent = '❌';
-        setTimeout(() => { joinBtn.textContent = '🎯 S\'inscrire'; joinBtn.disabled = false; }, 2000);
       }
       return;
     }
 
+    // Démarrer un tournoi
     const startBtn = e.target.closest('[data-start-tournament]');
     if (startBtn) {
       e.preventDefault();
-      if (!confirm('Démarrer le tournoi ? Les inscriptions seront fermées.')) return;
       const id = startBtn.getAttribute('data-start-tournament');
       startBtn.textContent = '⏳…';
       startBtn.disabled = true;
@@ -550,25 +430,76 @@ if (leaveTournamentBtn) {
         loadTournaments();
       } else {
         startBtn.textContent = '❌ Erreur';
-        setTimeout(() => { startBtn.textContent = '🚀 Démarrer'; startBtn.disabled = false; }, 2000);
+        startBtn.disabled = false;
       }
       return;
     }
 
-    const delBtn = e.target.closest('[data-delete-tournament]');
-    if (delBtn) {
+    // Déclarer un gagnant
+    const winBtn = e.target.closest('[data-declare-winner]');
+    if (winBtn) {
       e.preventDefault();
-      const id = delBtn.getAttribute('data-delete-tournament');
-      if (!confirm('Supprimer ce tournoi ?')) return;
-      const ok = await deleteTournament(id);
-      if (ok) {
-        if (window.afriToast) window.afriToast('🗑 Tournoi supprimé');
-        loadTournaments();
-      }
+      e.stopPropagation();
+      const parts = winBtn.getAttribute('data-declare-winner').split('|');
+      const roundIndex = parseInt(parts[0], 10);
+      const matchIndex = parseInt(parts[1], 10);
+      const side = parts[2];
+
+      try {
+        const tRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?status=eq.started', {
+          headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY }
+        });
+        const tournaments = await tRes.json();
+        if (!tournaments || tournaments.length === 0) return;
+        const t = tournaments[0];
+        const bracket = t.bracket || [];
+        const match = bracket[roundIndex] && bracket[roundIndex].matches[matchIndex];
+        if (!match) return;
+
+        const winner = side === '1' ? match.p1 : match.p2;
+        match.winner = winner;
+
+        // Vérifier si tous les matchs du tour sont finis
+        const currentRound = bracket[roundIndex];
+        const allDone = currentRound.matches.every(m => m.winner);
+
+        if (allDone) {
+          const winners = currentRound.matches.map(m => m.winner);
+          if (winners.length === 1) {
+            const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + t.id, {
+              method: 'PATCH',
+              headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: 'finished', bracket: bracket })
+            });
+            if (res.ok) { if (window.afriToast) window.afriToast('🏆 Champion : ' + winners[0] + ' !'); loadTournaments(); }
+            return;
+          }
+          const nextMatches = [];
+          for (let i = 0; i < winners.length; i += 2) {
+            if (i + 1 < winners.length) {
+              nextMatches.push({ p1: winners[i], p2: winners[i + 1], winner: null });
+            } else {
+              nextMatches.push({ p1: winners[i], p2: null, winner: winners[i] });
+            }
+          }
+          bracket.push({ round: currentRound.round + 1, matches: nextMatches });
+        }
+
+        const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/tournaments?id=eq.' + t.id, {
+          method: 'PATCH',
+          headers: { 'apikey': cfg.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bracket: bracket })
+        });
+        if (res.ok) {
+          if (window.afriToast) window.afriToast('🏆 ' + winner + ' avance !');
+          loadTournaments();
+        }
+      } catch (err) { console.warn(err); }
       return;
     }
   });
 
+  // === INITIALISATION ===
   function init() {
     if (!document.getElementById('tournaments-list')) return;
     loadTournaments();
@@ -577,5 +508,7 @@ if (leaveTournamentBtn) {
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
-  } else { init(); }
+  } else {
+    init();
+  }
 })();
