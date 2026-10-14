@@ -53,6 +53,11 @@
 </header>
 
 <main>
+  <div class="live-ticker" aria-label="Activité en direct">
+  <div class="live-ticker-inner" id="ticker-content">
+    <span>⚡ Chargement de l'activité…</span>
+  </div>
+  </div>
 <section class="wrap hero-grid" style="position:relative;overflow:hidden;">
   <style>
     .hero-particles { position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden; }
@@ -342,7 +347,55 @@
     <p class="mono">Les tournois payants arriveront progressivement.</p>
   </div>
 </footer>
-
+<style>
+  .live-ticker {
+    overflow: hidden;
+    background: rgba(25, 26, 33, 0.6);
+    border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+    padding: 10px 0;
+    position: relative;
+  }
+  .live-ticker::before {
+    content: '● EN DIRECT';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: rgba(17, 18, 23, 0.95);
+    color: #FF6B35;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    z-index: 2;
+    border-right: 1px solid rgba(255, 107, 53, 0.2);
+  }
+  .live-ticker-inner {
+    display: inline-block;
+    white-space: nowrap;
+    animation: tickerScroll 40s linear infinite;
+    padding-left: 100%;
+    font-size: 13px;
+    color: rgba(245, 245, 247, 0.7);
+  }
+  .live-ticker-inner span {
+    display: inline-block;
+    margin-right: 60px;
+  }
+  .live-ticker-inner strong {
+    color: #FF6B35;
+    font-weight: 600;
+  }
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live-ticker-inner { animation: none; padding-left: 100px; }
+  }
+</style>
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script src="admin.js"></script>
@@ -407,6 +460,28 @@
     } catch (e) {
       console.warn('Erreur activité:', e);
     }
+    // === TICKER EN DIRECT ===
+try {
+  const tickerRes = await fetch(cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,city,game&order=created_at.desc&limit=10', {
+    headers: {
+      'apikey': cfg.SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
+    }
+  });
+  const tickerPlayers = await tickerRes.json();
+  const tickerBox = document.getElementById('ticker-content');
+
+  if (tickerBox && tickerPlayers && tickerPlayers.length > 0) {
+    const items = tickerPlayers.map(p =>
+      `<span>👋 <strong>${p.gamertag}</strong> a rejoint AfriArena${p.city ? ' · ' + p.city : ''}${p.game ? ' · ' + p.game : ''}</span>`
+    ).join('');
+    tickerBox.innerHTML = items + items;
+  } else if (tickerBox) {
+    tickerBox.innerHTML = '<span>La communauté AfriArena se prépare… Rejoins-nous !</span>';
+  }
+} catch (e) {
+  console.warn('Erreur ticker:', e);
+}
   })();
   </script>
   <script>
