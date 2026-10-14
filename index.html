@@ -409,5 +409,29 @@
     }
   })();
   </script>
+  <script>
+  (function () {
+    // Pour l'exemple : le match commence à la prochaine heure pile + 5 min
+    const now = new Date();
+    const target = new Date();
+    target.setHours(now.getHours() + 1, 5, 0, 0);
+
+    function updateCountdown() {
+      const diff = target - new Date();
+      if (diff <= 0) {
+        document.getElementById('countdown-value').textContent = 'En cours';
+        return;
+      }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('countdown-value').textContent =
+        String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  })();
+  </script>
 </body>
 </html>
