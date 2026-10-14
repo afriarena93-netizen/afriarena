@@ -764,78 +764,11 @@ function bindEditProfile() {
   chargerTotems();
   chargerHistorique();
   chargerReputation();
-  bindEditProfile();
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
-  // === MODIFIER MON PROFIL ===
-function bindEditProfile() {
-  const btn = document.getElementById('edit-profile-btn');
-  if (!btn) return;
-
-  btn.addEventListener('click', () => {
-    const tag = getMyTag();
-    const cfg = getCfg();
-    if (!tag || !cfg) return;
-
-    // On récupère les infos actuelles du joueur
-    fetch(cfg.SUPABASE_URL + '/rest/v1/players?gamertag=eq.' + encodeURIComponent(tag) + '&select=*', {
-      headers: {
-        'apikey': cfg.SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (!data || data.length === 0) return;
-      const p = data[0];
-
-      // On crée la modale
-      const existing = document.getElementById('edit-profile-backdrop');
-      if (existing) existing.remove();
-
-      const backdrop = document.createElement('div');
-      backdrop.id = 'edit-profile-backdrop';
-      backdrop.className = 'modal-backdrop open';
-      backdrop.innerHTML = `
-        <div class="modal">
-          <div class="modal-head">
-            <div>
-              <h3>Modifier mon profil</h3>
-              <p>Mets à jour tes infos</p>
-            </div>
-            <button type="button" class="modal-close" data-close-modal>✕</button>
-          </div>
-          <form id="edit-profile-form">
-            <div class="form-row">
-              <label for="ep-bio">Bio</label>
-              <textarea id="ep-bio" rows="3" placeholder="Décris-toi en quelques mots...">${p.bio || ''}</textarea>
-            </div>
-            <div class="form-grid-2">
-              <div class="form-row">
-                <label for="ep-country">Pays</label>
-                <select id="ep-country">
-                  <option>Togo</option><option>Ghana</option><option>Bénin</option>
-                  <option>Côte d'Ivoire</option><option>Nigeria</option>
-                  <option>Sénégal</option><option>Cameroun</option>
-                </select>
-              </div>
-              <div class="form-row">
-                <label for="ep-city">Ville</label>
-                <input id="ep-city" value="${p.city || ''}" placeholder="Lomé">
-              </div>
-            </div>
-            <div class="form-grid-2">
-              <div class="form-row">
-                <label for="ep-game">Jeu préféré</label>
-                <select id="ep-game">
-                  <option>Free Fire</option><option>eFootball</option>
-                  <option>FC Mobile</option><option>PUBG Mobile</option>
-                  <option>Call of Duty</option><option>Blood Strike</option>
-                </select>
-          }
     init();
   }
 })();
