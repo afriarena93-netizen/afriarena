@@ -1,594 +1,1414 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" //
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#0b0c10" />
-<title>AfriArena — La plateforme gaming africaine</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
-<link rel="stylesheet" href="06-home.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c12">
+
+  <meta name="description"
+        content="AfriArena : la communauté gaming africaine. Trouve des adversaires, forme ton équipe et joue ensemble.">
+
+  <title>AfriArena — L'arène des joueurs africains</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0c12;
+      --panel: #141620;
+      --panel-light: #1c1f2c;
+
+      --brand: #ff6b35;
+      --brand-light: #ffad62;
+      --purple: #b987ff;
+      --blue: #78b7ff;
+      --green: #9ce878;
+
+      --ink: #f5f5f7;
+      --muted: #a4a6b5;
+      --faint: #6f7283;
+
+      --line: rgba(255,255,255,0.09);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Space Grotesk", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .wrap {
+      width: min(1160px, calc(100% - 30px));
+      margin-inline: auto;
+    }
+
+    .brand {
+      color: var(--brand);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .mono {
+      font-family: "DM Mono", monospace;
+    }
+
+    .label {
+      color: var(--brand);
+      font-family: "DM Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+        /* BOUTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 19px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: #171018;
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .btn-primary:hover {
+      background: var(--brand-light);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.04);
+      color: var(--ink);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.09);
+    }
+
+    /* SECTIONS */
+    .section {
+      padding: 76px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .section-head h2 {
+      margin: 8px 0 0;
+      font-size: clamp(26px, 4vw, 38px);
+      line-height: 1.15;
+    }
+
+    .section-head p {
+      max-width: 440px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* CARTES */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .25s, border-color .25s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,107,53,.45);
+    }
+
+    /* PETIT BADGE */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+    }
+
+    /* GRILLE */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+        /* NAVIGATION */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(11,12,18,.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -.8px;
+      white-space: nowrap;
+    }
+
+    .logo-mark {
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), #ff9c55);
+      color: #151018;
+      font-size: 21px;
+      font-weight: 700;
+      box-shadow: 0 0 24px rgba(255,107,53,.2);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--ink);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 43px;
+      height: 43px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    /* PETIT ÉCRAN */
+    @media (max-width: 850px) {
+      .nav-links {
+        gap: 13px;
+      }
+
+      .nav-links a {
+        font-size: 12px;
+      }
+
+      .nav-actions .btn {
+        padding: 10px 12px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav-inner {
+        min-height: 68px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        padding: 18px 20px;
+        background: #11121b;
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 12px 5px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav-actions .btn {
+        display: none;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+    }
+        /* BANDEAU D'ACCUEIL */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 78px 0 65px;
+      background:
+        radial-gradient(ellipse at 85% 35%,
+          rgba(185,135,255,.15), transparent 42%),
+        radial-gradient(ellipse at 10% 80%,
+          rgba(255,107,53,.12), transparent 38%),
+        var(--bg);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent);
+    }
+
+    .hero-inner {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      border: 1px solid rgba(255,107,53,.3);
+      border-radius: 99px;
+      background: rgba(255,107,53,.07);
+      color: var(--brand-light);
+      font-family: "DM Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      margin: 23px 0 18px;
+      font-size: clamp(39px, 6vw, 70px);
+      font-weight: 700;
+      letter-spacing: -3px;
+      line-height: 1.04;
+    }
+
+    .hero h1 span {
+      display: block;
+      color: var(--brand);
+    }
+
+    .hero-copy > p {
+      max-width: 510px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .hero-note {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 25px;
+      color: var(--faint);
+      font-size: 12px;
+    }
+
+    .hero-note strong {
+      color: var(--ink);
+    }
+
+    /* ILLUSTRATION DU HERO */
+    .hero-art {
+      position: relative;
+      min-height: 340px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-orbit {
+      position: absolute;
+      width: min(100%, 360px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(185,135,255,.25);
+      border-radius: 50%;
+      box-shadow:
+        0 0 70px rgba(185,135,255,.08),
+        inset 0 0 70px rgba(255,107,53,.05);
+    }
+
+    .hero-orbit::before,
+    .hero-orbit::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,107,53,.18);
+      border-radius: 50%;
+    }
+
+    .hero-orbit::before {
+      inset: 25px;
+    }
+
+    .hero-orbit::after {
+      inset: 55px;
+    }
+
+    .hero-emblem {
+      position: relative;
+      width: 190px;
+      height: 220px;
+      display: grid;
+      place-items: center;
+      clip-path: polygon(50% 0, 94% 22%, 86% 76%, 50% 100%, 14% 76%, 6% 22%);
+      background: linear-gradient(145deg, var(--brand), #8d53db);
+      filter: drop-shadow(0 0 35px rgba(255,107,53,.2));
+    }
+
+    .hero-emblem span {
+      font-size: 85px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 5px 25px rgba(0,0,0,.3);
+    }
+
+    @media (max-width: 680px) {
+      .hero {
+        padding: 55px 0 35px;
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .hero h1 {
+        letter-spacing: -1.8px;
+      }
+
+      .hero-copy > p {
+        font-size: 14px;
+      }
+
+      .hero-art {
+        min-height: 250px;
+      }
+
+      .hero-orbit {
+        width: 250px;
+      }
+
+      .hero-emblem {
+        width: 135px;
+        height: 160px;
+      }
+
+      .hero-emblem span {
+        font-size: 65px;
+      }
+    }
+        /* CARTES DES JEUX */
+    .game-card {
+      position: relative;
+      min-height: 225px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      isolation: isolate;
+    }
+
+    .game-visual {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      opacity: .95;
+    }
+
+    .game-visual::before {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      top: -55px;
+      right: -35px;
+      border-radius: 50%;
+      background: var(--glow, rgba(255,107,53,.25));
+      filter: blur(3px);
+    }
+
+    .game-visual::after {
+      content: attr(data-symbol);
+      position: absolute;
+      top: 20px;
+      right: 22px;
+      color: rgba(255,255,255,.15);
+      font-size: 100px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .game-freefire {
+      --glow: rgba(255,107,53,.35);
+      background: linear-gradient(135deg, #311b23, #151620 70%);
+    }
+
+    .game-efootball {
+      --glow: rgba(80,145,255,.3);
+      background: linear-gradient(135deg, #142d4c, #151620 70%);
+    }
+
+    .game-fcmobile {
+      --glow: rgba(185,135,255,.3);
+      background: linear-gradient(135deg, #35204d, #151620 70%);
+    }
+
+    .game-bloodstrike {
+      --glow: rgba(255,70,90,.3);
+      background: linear-gradient(135deg, #451b2a, #151620 70%);
+    }
+
+    .game-cod {
+      --glow: rgba(156,232,120,.22);
+      background: linear-gradient(135deg, #273528, #151620 70%);
+    }
+
+    .game-pubg {
+      --glow: rgba(255,190,75,.25);
+      background: linear-gradient(135deg, #49321a, #151620 70%);
+    }
+
+    .game-top,
+    .game-bottom {
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .game-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 13px;
+      background: rgba(255,255,255,.08);
+      font-size: 22px;
+    }
+
+    .game-bottom h3 {
+      margin: 0 0 5px;
+      font-size: 20px;
+    }
+
+    .game-bottom p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .game-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--brand-light);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .game-link:hover {
+      color: white;
+    }
+        /* STATISTIQUES */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .stat-card {
+      padding: 19px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat-card .stat-accent {
+      color: var(--brand);
+    }
+
+    /* ACTIVITÉ RÉCENTE */
+    .activity-panel {
+      padding: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .activity-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .activity-title h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,.025);
+      border-radius: 12px;
+    }
+
+    .activity-avatar {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(185,135,255,.13);
+      color: var(--purple);
+      font-weight: 700;
+    }
+
+    .activity-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-info strong {
+      display: block;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+    }
+
+    .activity-info span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .activity-empty {
+      padding: 20px 5px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 680px) {
+      .stats-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .section {
+        padding: 52px 0;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .grid,
+      .grid-two {
+        grid-template-columns: 1fr;
+      }
+
+      .game-card {
+        min-height: 205px;
+      }
+    }
+        /* COMMENT ÇA MARCHE */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .step-card {
+      position: relative;
+      padding: 25px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .step-number {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      border: 1px solid rgba(255,107,53,.3);
+      border-radius: 14px;
+      background: rgba(255,107,53,.09);
+      color: var(--brand);
+      font-family: "DM Mono", monospace;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .step-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .step-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    /* BLOC COMMUNAUTÉ */
+    .community-banner {
+      position: relative;
+      overflow: hidden;
+      padding: 38px;
+      border: 1px solid rgba(185,135,255,.24);
+      border-radius: 24px;
+      background:
+        radial-gradient(
+          circle at 90% 20%,
+          rgba(185,135,255,.2),
+          transparent 40%
+        ),
+        linear-gradient(120deg, #201729, #17141f);
+    }
+
+    .community-banner h2 {
+      max-width: 620px;
+      margin: 10px 0 14px;
+      font-size: clamp(27px, 4vw, 42px);
+      line-height: 1.15;
+    }
+
+    .community-banner p {
+      max-width: 570px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .community-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 680px) {
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step-card {
+        padding: 20px;
+      }
+
+      .community-banner {
+        padding: 25px 20px;
+      }
+    }
+        /* PIED DE PAGE */
+    .footer {
+      padding: 35px 0 25px;
+      border-top: 1px solid var(--line);
+      background: #090a10;
+    }
+
+    .footer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      flex-wrap: wrap;
+      padding-bottom: 25px;
+    }
+
+    .footer p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-links a:hover {
+      color: var(--brand);
+    }
+
+    .footer-bottom {
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    /* ANIMATIONS */
+    .reveal {
+      animation: appear .7s ease both;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* PETITS ÉCRANS */
+    @media (max-width: 680px) {
+      .footer-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .footer-links {
+        gap: 14px;
+      }
+
+      .hero-buttons .btn {
+        flex: 1;
+      }
+    }
+
+    /* ACCESSIBILITÉ */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<header class="nav">
-  <div class="wrap nav-inner">
-    <a href="index.html" class="logo">
-      <svg class="logo-emblem" viewBox="0 0 48 48" aria-hidden="true">
-        <defs>
-          <linearGradient id="lg-brand" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FF6B35"/>
-            <stop offset="55%" stop-color="#FF8457"/>
-            <stop offset="100%" stop-color="#CC8CFF"/>
-          </linearGradient>
-        </defs>
-        <path d="M24 2 L43 11 V26 C43 37 35 44 24 46 C13 44 5 37 5 26 V11 Z" fill="url(#lg-brand)"/>
-        <path d="M17 33 L24 15 L31 33" fill="none" stroke="#0b0c10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M20 27 L28 27" stroke="#0b0c10" stroke-width="3" stroke-linecap="round"/>
-        <path d="M11 38 L14 34 M37 38 L34 34" stroke="#0b0c10" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
-      </svg>
-      <span>Afri<span class="brand">Arena</span></span>
-    </a>
-    <nav class="nav-links">
-      <a data-nav href="index.html" class="nav-link">Accueil</a>
-      <a data-nav href="communaute.html" class="nav-link">Communauté</a>
-      <a data-nav href="adversaires.html" class="nav-link">Adversaires</a>
-      <a data-nav href="matchs.html" class="nav-link">Mes matchs</a>
-      <a data-nav href="chat.html" class="nav-link">Discussion</a>
-      <a data-nav href="tournois.html" class="nav-link">Tournois</a>
-      <a data-nav href="equipes.html" class="nav-link">Équipes</a>
-      <a data-whatsapp href="#" class="nav-link whatsapp">WhatsApp</a>
-    </nav>
-    <div class="nav-actions">
-      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
-      <a href="connexion.html" class="btn btn-primary btn-sm">Rejoindre</a>
-    </div>
-    <button class="hamburger" data-burger aria-expanded="false" aria-label="Ouvrir le menu">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-    </button>
-  </div>
-  <nav class="mobile-nav wrap" data-mobile-nav>
-    <a data-nav href="index.html">Accueil</a>
-    <a data-nav href="communaute.html">Communauté</a>
-    <a data-nav href="adversaires.html">Adversaires</a>
-    <a data-nav href="matchs.html">Mes matchs</a>
-    <a data-nav href="chat.html">Discussion</a>
-    <a data-nav href="tournois.html">Tournois</a>
-    <a data-nav href="equipes.html">Équipes</a>
-    <a data-whatsapp href="#" class="whatsapp">Groupe WhatsApp</a>
-    <div class="actions">
-      <a href="connexion.html" class="btn btn-outline btn-block">Se connecter</a>
-      <a href="connexion.html" class="btn btn-primary btn-block">Rejoindre la communauté</a>
-    </div>
-  </nav>
-</header>
+  <!-- NAVIGATION -->
+  <header class="navbar">
+    <div class="wrap nav-inner">
 
-<main>
-
-<div class="live-ticker" aria-label="Activité en direct">
-  <div class="live-ticker-inner" id="ticker-content">
-    <span>⚡ Chargement de l'activité…</span>
-  </div>
-</div>
-
-<!-- ===================== HERO ===================== -->
-<section class="home-hero" data-parallax>
-  <div class="home-hero-bg" aria-hidden="true"></div>
-
-  <div class="wrap home-hero-grid">
-
-    <div class="home-hero-copy">
-      <span class="chip reveal" data-reveal-delay="0">
-        <span class="dot" style="background:var(--brand)"></span>
-        La communauté gaming africaine
-      </span>
-      <h1 class="home-hero-title reveal" data-reveal-delay="100">
-        L'arène des<br><span class="accent">joueurs africains</span>.
-      </h1>
-      <p class="home-hero-sub reveal" data-reveal-delay="200">
-        Trouve des adversaires, rejoins une équipe et fais vibrer la scène gaming africaine — de Lomé à Accra, de Dakar à Kinshasa.
-      </p>
-      <div class="home-hero-cta reveal" data-reveal-delay="300">
-        <a href="adversaires.html" class="btn btn-primary home-btn-lg">⚡ Trouver un adversaire</a>
-        <a href="connexion.html" class="btn btn-outline home-btn-lg">Rejoindre la communauté</a>
-      </div>
-      <p class="home-hero-trust reveal" data-reveal-delay="400">
-        Gratuit · Multi-jeux · Pensé pour l'Afrique
-      </p>
-    </div>
-
-    <div class="home-hero-visual reveal" data-reveal-delay="250" aria-hidden="true">
-      <svg class="home-scene" viewBox="0 0 600 480" preserveAspectRatio="xMidYMid meet" data-parallax-scene>
-        <defs>
-          <radialGradient id="scene-glow-a" cx="50%" cy="60%" r="55%">
-            <stop offset="0%" stop-color="#FF6B35" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="scene-glow-b" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stop-color="#CC8CFF" stop-opacity="0.35"/>
-            <stop offset="100%" stop-color="#CC8CFF" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="scene-floor" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#FF6B35" stop-opacity="0.28"/>
-            <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="scene-ring" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FF6B35"/>
-            <stop offset="100%" stop-color="#CC8CFF"/>
-          </linearGradient>
-        </defs>
-
-        <ellipse cx="300" cy="300" rx="260" ry="180" fill="url(#scene-glow-a)" class="scene-layer" data-parallax-speed="8"/>
-        <ellipse cx="300" cy="200" rx="220" ry="150" fill="url(#scene-glow-b)" class="scene-layer" data-parallax-speed="14"/>
-
-        <g class="scene-layer scene-beams" data-parallax-speed="4" opacity="0.55">
-          <path d="M300 60 L160 380 L180 380 Z" fill="#FF6B35" opacity="0.10"/>
-          <path d="M300 60 L440 380 L420 380 Z" fill="#CC8CFF" opacity="0.10"/>
-          <path d="M300 40 L260 380 L340 380 Z" fill="#ffffff" opacity="0.04"/>
-        </g>
-
-        <g class="scene-layer scene-arena" data-parallax-speed="10">
-          <ellipse cx="300" cy="290" rx="180" ry="60" fill="none" stroke="url(#scene-ring)" stroke-width="2" opacity="0.9" class="scene-ring-outer"/>
-          <ellipse cx="300" cy="290" rx="140" ry="46" fill="none" stroke="#FF6B35" stroke-width="1.5" opacity="0.55" class="scene-ring-mid"/>
-          <ellipse cx="300" cy="290" rx="100" ry="32" fill="none" stroke="#FF6B35" stroke-width="1" opacity="0.35" class="scene-ring-inner"/>
-          <ellipse cx="300" cy="290" rx="60" ry="20" fill="#FF6B35" opacity="0.14" class="scene-core"/>
-        </g>
-
-        <g class="scene-layer scene-floor" data-parallax-speed="6">
-          <path d="M120 380 L480 380 L560 470 L40 470 Z" fill="url(#scene-floor)"/>
-          <g stroke="#FF6B35" stroke-width="1" opacity="0.35">
-            <path d="M150 380 L90 470"/>
-            <path d="M210 380 L170 470"/>
-            <path d="M270 380 L250 470"/>
-            <path d="M330 380 L350 470"/>
-            <path d="M390 380 L430 470"/>
-            <path d="M450 380 L510 470"/>
-            <path d="M120 400 L480 400" opacity="0.6"/>
-            <path d="M105 420 L495 420" opacity="0.5"/>
-            <path d="M90 440 L510 440" opacity="0.4"/>
-            <path d="M75 460 L525 460" opacity="0.3"/>
-          </g>
-        </g>
-
-        <g class="scene-layer scene-player-left" data-parallax-speed="18" transform="translate(180,255)">
-          <path d="M-38 78 Q-38 42 -10 34 L6 34 Q30 40 32 68 Q32 78 26 78 Z" fill="#0b0c10"/>
-          <path d="M-12 34 Q-26 28 -26 8 Q-26 -12 -6 -18 Q12 -22 22 -10 Q30 -2 24 8 L14 12 Q18 20 12 24 L12 34 Z" fill="#0b0c10"/>
-          <ellipse cx="-8" cy="6" rx="9" ry="13" fill="#0b0c10"/>
-          <path d="M-8 -8 Q4 -26 20 -14" stroke="#0b0c10" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <path d="M20 -14 Q26 -4 22 6" stroke="#FF6B35" stroke-width="1.6" fill="none" opacity="0.85"/>
-          <path d="M-6 -18 Q4 -22 12 -16" stroke="#FF6B35" stroke-width="1.6" fill="none" opacity="0.85"/>
-          <path d="M-38 78 Q-36 46 -10 36" stroke="#FF6B35" stroke-width="1.2" fill="none" opacity="0.5"/>
-        </g>
-
-        <g class="scene-layer scene-player-right" data-parallax-speed="18" transform="translate(420,255)">
-          <path d="M38 78 Q38 42 10 34 L-6 34 Q-30 40 -32 68 Q-32 78 -26 78 Z" fill="#0b0c10"/>
-          <path d="M12 34 Q26 28 26 8 Q26 -12 6 -18 Q-12 -22 -22 -10 Q-30 -2 -24 8 L-14 12 Q-18 20 -12 24 L-12 34 Z" fill="#0b0c10"/>
-          <ellipse cx="8" cy="6" rx="9" ry="13" fill="#0b0c10"/>
-          <path d="M8 -8 Q-4 -26 -20 -14" stroke="#0b0c10" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <path d="M-20 -14 Q-26 -4 -22 6" stroke="#CC8CFF" stroke-width="1.6" fill="none" opacity="0.85"/>
-          <path d="M6 -18 Q-4 -22 -12 -16" stroke="#CC8CFF" stroke-width="1.6" fill="none" opacity="0.85"/>
-          <path d="M38 78 Q36 46 10 36" stroke="#CC8CFF" stroke-width="1.2" fill="none" opacity="0.5"/>
-        </g>
-
-        <g class="scene-layer scene-particles" data-parallax-speed="24">
-          <circle class="scene-particle p1" cx="120" cy="240" r="3" fill="#FF6B35"/>
-          <circle class="scene-particle p2" cx="470" cy="180" r="2.5" fill="#CC8CFF"/>
-          <circle class="scene-particle p3" cx="220" cy="120" r="2" fill="#FF8457"/>
-          <circle class="scene-particle p4" cx="380" cy="90"  r="2.5" fill="#FF6B35"/>
-          <circle class="scene-particle p5" cx="520" cy="320" r="2" fill="#CC8CFF"/>
-          <circle class="scene-particle p6" cx="80"  cy="380" r="2" fill="#FF8457"/>
-          <circle class="scene-particle p7" cx="300" cy="60"  r="2" fill="#FF6B35"/>
-        </g>
-
-        <g class="scene-layer scene-emblem" data-parallax-speed="12" transform="translate(300,205)">
-          <circle r="46" fill="#0b0c10" stroke="url(#scene-ring)" stroke-width="2"/>
-          <path d="M-22 20 L0 -20 L22 20" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M-11 6 L11 6" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
-        </g>
-      </svg>
-    </div>
-
-  </div>
-</section>
-
-<!-- ===================== STATS ===================== -->
-<section class="wrap home-stats-section" id="home-stats-section">
-  <div class="home-stats reveal">
-    <div class="home-stat" data-stat="players">
-      <span class="home-stat-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
-      </span>
-      <p class="home-stat-value" id="live-players" data-count-target="0">0</p>
-      <p class="home-stat-label">Joueurs inscrits</p>
-    </div>
-    <div class="home-stat" data-stat="teams">
-      <span class="home-stat-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </span>
-      <p class="home-stat-value" id="live-teams" data-count-target="0">0</p>
-      <p class="home-stat-label">Équipes créées</p>
-    </div>
-    <div class="home-stat" data-stat="rooms">
-      <span class="home-stat-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      </span>
-      <p class="home-stat-value" id="live-rooms" data-count-target="0">0</p>
-      <p class="home-stat-label">Rooms actives</p>
-    </div>
-    <div class="home-stat" data-stat="matches">
-      <span class="home-stat-icon" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 5h12v14H6z"/></svg>
-      </span>
-      <p class="home-stat-value" id="live-matches" data-count-target="0">0</p>
-      <p class="home-stat-label">Matchs enregistrés</p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== JEUX ===================== -->
-<section class="wrap home-section">
-  <header class="home-section-head reveal">
-    <div>
-      <p class="label">Communautés</p>
-      <h2 class="home-section-title">Rejoins ta scène.</h2>
-    </div>
-    <a href="communaute.html" class="btn btn-outline btn-sm">Voir tous les hubs</a>
-  </header>
-
-  <div class="home-games">
-    <a href="freefire.html" class="home-game reveal" data-game="freefire">
-      <div class="home-game-art">
-        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
-          <defs>
-            <linearGradient id="ff-sky" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2a1108"/>
-              <stop offset="100%" stop-color="#0b0c10"/>
-            </linearGradient>
-          </defs>
-          <rect width="320" height="180" fill="url(#ff-sky)"/>
-          <circle cx="70" cy="50" r="26" fill="#FF6B35" opacity="0.35"/>
-          <path d="M40 150 Q120 90 200 130 Q260 155 320 140 L320 180 L0 180 Z" fill="#0b0c10" opacity="0.9"/>
-          <path d="M160 40 L190 70 L140 80 Z" fill="#FF6B35" opacity="0.85"/>
-          <path d="M160 40 L120 60 L150 68 Z" fill="#FF8457" opacity="0.9"/>
-          <circle cx="160" cy="52" r="6" fill="#0b0c10"/>
-          <path d="M154 48 L166 48" stroke="#0b0c10" stroke-width="1.5"/>
-        </svg>
-        <span class="home-game-badge">FF</span>
-      </div>
-      <div class="home-game-body">
-        <h3>Free Fire</h3>
-        <p>Battle royale</p>
-        <span class="home-game-link">Voir la communauté →</span>
-      </div>
-    </a>
-
-    <a href="efootball.html" class="home-game reveal" data-game="efootball">
-      <div class="home-game-art">
-        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
-          <rect width="320" height="180" fill="#0a1420"/>
-          <path d="M160 20 L300 170 L20 170 Z" fill="#123049" opacity="0.85"/>
-          <path d="M160 20 L300 170 M160 20 L20 170 M60 130 L260 130 M100 90 L220 90 M140 55 L180 55" stroke="#78B7FF" stroke-width="1.5" opacity="0.55"/>
-          <circle cx="160" cy="110" r="14" fill="#B8F27C" opacity="0.9"/>
-          <path d="M150 110 L170 110 M160 100 L160 120" stroke="#0b0c10" stroke-width="1.5"/>
-        </svg>
-        <span class="home-game-badge">eF</span>
-      </div>
-      <div class="home-game-body">
-        <h3>eFootball</h3>
-        <p>Football 1v1</p>
-        <span class="home-game-link">Voir la communauté →</span>
-      </div>
-    </a>
-
-    <a href="fcmobile.html" class="home-game reveal" data-game="fcmobile">
-      <div class="home-game-art">
-        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
-          <rect width="320" height="180" fill="#0f1a10"/>
-          <circle cx="160" cy="90" r="55" fill="none" stroke="#B8F27C" stroke-width="1.5" opacity="0.5"/>
-          <circle cx="160" cy="90" r="30" fill="none" stroke="#B8F27C" stroke-width="1.5" opacity="0.7"/>
-          <circle cx="160" cy="90" r="14" fill="#B8F27C" opacity="0.9"/>
-          <path d="M152 82 L168 82 L172 96 L160 102 L148 96 Z" fill="#0b0c10" opacity="0.85"/>
-          <path d="M40 160 Q160 120 280 160" stroke="#B8F27C" stroke-width="1.5" fill="none" opacity="0.4"/>
-        </svg>
-        <span class="home-game-badge">FC</span>
-      </div>
-      <div class="home-game-body">
-        <h3>FC Mobile</h3>
-        <p>Football mobile</p>
-        <span class="home-game-link">Voir la communauté →</span>
-      </div>
-    </a>
-
-    <a href="bloodstrike.html" class="home-game reveal" data-game="bloodstrike">
-      <div class="home-game-art">
-        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
-          <rect width="320" height="180" fill="#1a0f1f"/>
-          <circle cx="160" cy="90" r="50" fill="none" stroke="#CC8CFF" stroke-width="1.5" opacity="0.8"/>
-          <path d="M160 40 L160 60 M160 120 L160 140 M110 90 L130 90 M190 90 L210 90" stroke="#CC8CFF" stroke-width="2"/>
-          <circle cx="160" cy="90" r="6" fill="#CC8CFF"/>
-          <path d="M110 150 L210 150 L200 160 L120 160 Z" fill="#0b0c10"/>
-          <path d="M130 150 L140 130 L180 130 L190 150" stroke="#CC8CFF" stroke-width="1.5" fill="none" opacity="0.7"/>
-        </svg>
-        <span class="home-game-badge">BS</span>
-      </div>
-      <div class="home-game-body">
-        <h3>Blood Strike</h3>
-        <p>FPS mobile</p>
-        <span class="home-game-link">Voir la communauté →</span>
-      </div>
-    </a>
-
-    <a href="callofduty.html" class="home-game reveal" data-game="callofduty">
-      <div class="home-game-art">
-        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
-          <rect width="320" height="180" fill="#1a1208"/>
-          <circle cx="160" cy="90" r="55" fill="none" stroke="#FF8457" stroke-width="1.5" opacity="0.85"/>
-          <circle cx="160" cy="90" r="38" fill="none" stroke="#FF8457" stroke-width="1" opacity="0.55"/>
-          <path d="M160 25 L160 45 M160 135 L160 155 M95 90 L115 90 M205 90 L225 90" stroke="#FF8457" stroke-width="2"/>
-          <circle cx="160" cy="90" r="3" fill="#FF8457"/>
-          <path d="M100 150 L220 150 L210 165 L110 165 Z" fill="#0b0c10" opacity="0.9"/>
-        </svg>
-        <span class="home-game-badge">CD</span>
-      </div>
-      <div class="home-game-body">
-        <h3>Call of Duty Mobile</h3>
-        <p>FPS compétitif</p>
-        <span class="home-game-link">Voir la communauté →</span>
-      </div>
-    </a>
-
-    <a href="pubg.html" class="home-game reveal" data-game="pubg">
-      <div class="home-game-art">
-        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
-          <rect width="320" height="180" fill="#0a1420"/>
-          <path d="M100 60 Q160 20 220 60 L220 100 Q220 130 160 140 Q100 130 100 100 Z" fill="#78B7FF" opacity="0.25"/>
-          <path d="M110 70 Q160 40 210 70 L210 100 Q210 122 160 130 Q110 122 110 100 Z" fill="#0b0c10" opacity="0.85"/>
-          <path d="M140 60 Q160 48 180 60" stroke="#78B7FF" stroke-width="2" fill="none"/>
-          <circle cx="160" cy="100" r="8" fill="#78B7FF" opacity="0.9"/>
-          <path d="M60 160 L260 160" stroke="#78B7FF" stroke-width="1" opacity="0.5"/>
-        </svg>
-        <span class="home-game-badge">PB</span>
-      </div>
-      <div class="home-game-body">
-        <h3>PUBG Mobile</h3>
-        <p>Battle royale</p>
-        <span class="home-game-link">Voir la communauté →</span>
-      </div>
-    </a>
-  </div>
-</section>
-
-<!-- ===================== JOUEURS ===================== -->
-<section class="wrap home-section" id="home-players-section">
-  <header class="home-section-head reveal">
-    <div>
-      <p class="label">Nouveaux joueurs</p>
-      <h2 class="home-section-title">Ils viennent de rejoindre l'arène.</h2>
-    </div>
-    <a href="communaute.html" class="btn btn-outline btn-sm">Voir tous</a>
-  </header>
-  <div class="home-players reveal" id="home-featured-players">
-    <p class="home-empty">Chargement des joueurs…</p>
-  </div>
-</section>
-
-<!-- ===================== COMMENT ÇA MARCHE ===================== -->
-<section class="wrap home-section">
-  <header class="home-section-head reveal">
-    <div>
-      <p class="label">Comment ça marche</p>
-      <h2 class="home-section-title">De la recherche à la victoire.</h2>
-    </div>
-  </header>
-  <div class="home-steps">
-    <article class="home-step reveal">
-      <span class="home-step-num">01</span>
-      <h3>Crée ton compte</h3>
-      <p>Rejoins AfriArena gratuitement en quelques secondes.</p>
-    </article>
-    <article class="home-step reveal">
-      <span class="home-step-num">02</span>
-      <h3>Trouve des joueurs</h3>
-      <p>Filtre par jeu, ville, mode et disponibilité.</p>
-    </article>
-    <article class="home-step reveal">
-      <span class="home-step-num">03</span>
-      <h3>Joue et progresse</h3>
-      <p>Matchs, équipes et tournois — au même endroit.</p>
-    </article>
-  </div>
-</section>
-
-<!-- ===================== ACTIVITÉ ===================== -->
-<section class="wrap home-section">
-  <div class="home-activity-card reveal">
-    <p class="label">Dernière activité</p>
-    <div id="live-activity" class="home-activity-list">
-      <p class="home-empty">Chargement des activités…</p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== WHATSAPP ===================== -->
-<section class="wrap home-section">
-  <div class="wa-card reveal">
-    <div class="wa-inner">
-      <div>
-        <span class="label home-label-positive">Canal communautaire</span>
-        <h3 class="title">Tu cherches un adversaire maintenant ?</h3>
-        <p class="desc">
-          Rejoins le groupe WhatsApp AfriArena pour rencontrer des joueurs, proposer un match
-          et recevoir les annonces importantes. Ce n'est pas obligatoire pour utiliser la
-          plateforme.
-        </p>
-      </div>
-      <a data-whatsapp href="#" class="btn btn-primary">Rejoindre le groupe →</a>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="wrap footer-grid">
-    <div>
       <a href="index.html" class="logo">
-        <svg class="logo-emblem" viewBox="0 0 48 48" aria-hidden="true">
-          <path d="M24 2 L43 11 V26 C43 37 35 44 24 46 C13 44 5 37 5 26 V11 Z" fill="url(#lg-brand)"/>
-          <path d="M17 33 L24 15 L31 33" fill="none" stroke="#0b0c10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M20 27 L28 27" stroke="#0b0c10" stroke-width="3" stroke-linecap="round"/>
-        </svg>
+        <span class="logo-mark">A</span>
         <span>Afri<span class="brand">Arena</span></span>
       </a>
-      <p style="margin-top:16px;max-width:380px;font-size:14px">
-        AfriArena réunit les joueurs du Togo et de toute l'Afrique autour de leurs jeux préférés.
-      </p>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html" class="active">Accueil</a>
+        <a href="communaute.html">Communauté</a>
+        <a href="adversaires.html">Adversaires</a>
+        <a href="matchs.html">Matchs</a>
+        <a href="tournois.html">Tournois</a>
+        <a href="equipes.html">Équipes</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="connexion.html" class="btn btn-primary">
+          Se connecter ↗
+        </a>
+
+        <button class="menu-toggle" id="menu-toggle"
+                aria-label="Ouvrir le menu"
+                aria-expanded="false">☰</button>
+      </div>
+
     </div>
-    <div class="footer-col">
-      <h4>Plateforme</h4>
-      <ul>
-        <li><a href="communaute.html">Communautés</a></li>
-        <li><a href="adversaires.html">Adversaires</a></li>
-        <li><a href="matchs.html">Mes matchs</a></li>
-        <li><a href="chat.html">Discussion</a></li>
-        <li><a href="tournois.html">Tournois</a></li>
-        <li><a href="equipes.html">Équipes</a></li>
-      </ul>
+  </header>
+
+  <!-- ACCUEIL -->
+  <main>
+
+    <section class="hero">
+      <div class="wrap hero-inner">
+
+        <div class="hero-copy reveal">
+
+          <div class="hero-tag">
+            <span class="dot"></span>
+            L'ARÈNE GAMING AFRICAINE
+          </div>
+
+          <h1>
+            Ton jeu.
+            <span>Ta communauté.</span>
+            Ta victoire.
+          </h1>
+
+          <p>
+            Trouve des joueurs, forme ton équipe, organise tes matchs
+            et fais entendre ton nom dans la communauté gaming africaine.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="communaute.html" class="btn btn-primary">
+              Rejoindre l'arène ↗
+            </a>
+
+            <a href="#jeux" class="btn btn-secondary">
+              Explorer les jeux ↓
+            </a>
+          </div>
+
+          <div class="hero-note">
+            <span class="dot"></span>
+            <span><strong>Une communauté en construction</strong> — rejoins l'aventure.</span>
+          </div>
+
+        </div>
+
+        <div class="hero-art" aria-label="Emblème AfriArena">
+          <div class="hero-orbit"></div>
+          <div class="hero-emblem">
+            <span>A</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STATISTIQUES -->
+    <section class="wrap" aria-label="Statistiques de la communauté">
+      <div class="stats-strip">
+
+        <div class="stat-card">
+          <strong id="stat-players">—</strong>
+          <span>Joueurs inscrits</span>
+        </div>
+
+        <div class="stat-card">
+          <strong id="stat-teams">—</strong>
+          <span>Équipes créées</span>
+        </div>
+
+        <div class="stat-card">
+          <strong id="stat-matches">—</strong>
+          <span>Matchs enregistrés</span>
+        </div>
+
+        <div class="stat-card">
+          <strong class="stat-accent">6</strong>
+          <span>Jeux présentés</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- JEUX -->
+    <section class="section" id="jeux">
+      <div class="wrap">
+
+        <div class="section-head">
+          <div>
+            <div class="label">CHOISIS TON TERRAIN</div>
+            <h2>Entre dans le jeu.</h2>
+            <p>
+              Sélectionne ton univers et rencontre des joueurs
+              qui partagent ta passion.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid">
+
+          <a href="freefire.html"
+             class="card game-card game-freefire">
+            <div class="game-visual" data-symbol="FF"></div>
+            <div class="game-top">
+              <span class="game-icon">🔥</span>
+              <span class="badge">MOBILE</span>
+            </div>
+            <div class="game-bottom">
+              <h3>Free Fire</h3>
+              <p>Battle royale · Survie · Escouades</p>
+              <span class="game-link">Explorer le jeu ↗</span>
+            </div>
+          </a>
+
+          <a href="efootball.html"
+             class="card game-card game-efootball">
+            <div class="game-visual" data-symbol="⚽"></div>
+            <div class="game-top">
+              <span class="game-icon">⚽</span>
+              <span class="badge">FOOTBALL</span>
+            </div>
+            <div class="game-bottom">
+              <h3>eFootball</h3>
+              <p>Football · Duels · Compétition</p>
+              <span class="game-link">Explorer le jeu ↗</span>
+            </div>
+          </a>
+
+          <a href="fcmobile.html"
+             class="card game-card game-fcmobile">
+            <div class="game-visual" data-symbol="FC"></div>
+            <div class="game-top">
+              <span class="game-icon">🏆</span>
+              <span class="badge">FOOTBALL</span>
+            </div>
+            <div class="game-bottom">
+              <h3>FC Mobile</h3>
+              <p>Football mobile · Clubs · Défis</p>
+              <span class="game-link">Explorer le jeu ↗</span>
+            </div>
+          </a>
+
+          <a href="bloodstrike.html"
+             class="card game-card game-bloodstrike">
+            <div class="game-visual" data-symbol="BS"></div>
+            <div class="game-top">
+              <span class="game-icon">🎯</span>
+              <span class="badge">ACTION</span>
+            </div>
+            <div class="game-bottom">
+              <h3>Blood Strike</h3>
+              <p>Action · Réflexes · Escouades</p>
+              <span class="game-link">Explorer le jeu ↗</span>
+            </div>
+          </a>
+
+          <a href="callofduty.html"
+             class="card game-card game-cod">
+            <div class="game-visual" data-symbol="COD"></div>
+            <div class="game-top">
+              <span class="game-icon">🛡️</span>
+              <span class="badge">ACTION</span>
+            </div>
+            <div class="game-bottom">
+              <h3>Call of Duty</h3>
+              <p>Action · Tactique · Multijoueur</p>
+              <span class="game-link">Explorer le jeu ↗</span>
+            </div>
+          </a>
+
+          <a href="pubg.html"
+             class="card game-card game-pubg">
+            <div class="game-visual" data-symbol="PUBG"></div>
+            <div class="game-top">
+              <span class="game-icon">🎮</span>
+              <span class="badge">BATTLE ROYALE</span>
+            </div>
+            <div class="game-bottom">
+              <h3>PUBG Mobile</h3>
+              <p>Survie · Stratégie · Escouades</p>
+              <span class="game-link">Explorer le jeu ↗</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+        <!-- COMMENT ÇA MARCHE -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="label">TON AVENTURE COMMENCE ICI</div>
+            <h2>Comment ça marche ?</h2>
+            <p>Trois étapes pour commencer ton aventure gaming.</p>
+          </div>
+        </div>
+
+        <div class="steps-grid">
+          <article class="step-card">
+            <div class="step-number">01</div>
+            <h3>Crée ton compte</h3>
+            <p>Inscris-toi pour rejoindre la communauté AfriArena.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">02</div>
+            <h3>Trouve tes joueurs</h3>
+            <p>Rencontre des adversaires et recherche des coéquipiers.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">03</div>
+            <h3>Passe à l'action</h3>
+            <p>Organise tes matchs et développe ton équipe.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVITÉ RÉCENTE -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="label">LA COMMUNAUTÉ</div>
+            <h2>Derniers joueurs inscrits</h2>
+            <p>Découvre les dernières inscriptions disponibles.</p>
+          </div>
+
+          <a href="communaute.html" class="btn btn-secondary">
+            Voir la communauté ↗
+          </a>
+        </div>
+
+        <div class="activity-panel">
+          <div class="activity-title">
+            <h3>Activité récente</h3>
+            <span class="badge">INSCRIPTIONS</span>
+          </div>
+
+          <div class="activity-list" id="ticker-content">
+            <div class="activity-empty">
+              Chargement des joueurs...
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPEL À L'ACTION -->
+    <section class="section">
+      <div class="wrap">
+        <div class="community-banner">
+          <div class="label">TA PLACE EST ICI</div>
+          <h2>Le prochain grand joueur pourrait être toi.</h2>
+          <p>
+            Rejoins AfriArena, développe ton réseau gaming
+            et construis ton aventure avec d'autres passionnés.
+          </p>
+
+          <div class="community-actions">
+            <a href="connexion.html" class="btn btn-primary">
+              Commencer maintenant ↗
+            </a>
+            <a href="adversaires.html" class="btn btn-secondary">
+              Trouver des adversaires
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PIED DE PAGE -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <a href="index.html" class="logo">
+            <span class="logo-mark">A</span>
+            <span>Afri<span class="brand">Arena</span></span>
+          </a>
+          <p>La communauté gaming africaine.</p>
+        </div>
+
+        <nav class="footer-links" aria-label="Liens de pied de page">
+          <a href="communaute.html">Communauté</a>
+          <a href="matchs.html">Matchs</a>
+          <a href="tournois.html">Tournois</a>
+          <a href="equipes.html">Équipes</a>
+          <a href="connexion.html">Connexion</a>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        © <span id="current-year"></span> AfriArena — Tous droits réservés.
+      </div>
     </div>
-    <div class="footer-col">
-      <h4>Communauté</h4>
-      <ul>
-        <li><a data-whatsapp href="#" class="wa">Groupe WhatsApp</a></li>
-        <li><a href="mailto:contact@afriarena.gg">Contact</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="wrap footer-bottom">
-    <p>© 2026 AfriArena — Né au Togo, pensé pour l'Afrique.</p>
-    <p class="mono">Les tournois payants arriveront progressivement.</p>
-  </div>
-</footer>
+  </footer>
 
-<script src="supabase.js"></script>
-<script src="app.js"></script>
-<script src="admin.js"></script>
-<script src="players-loader.js"></script>
-<script src="auth.js"></script>
+  <!-- CONFIGURATION SUPABASE -->
+  <script src="supabase.js"></script>
 
-<script>
-(async function () {
-  const cfg = window.AFRIARENA_CONFIG;
-  if (!cfg || !cfg.SUPABASE_URL) return;
+  <!-- MENU MOBILE -->
+  <script>
+    const menuToggle = document.getElementById("menu-toggle");
+    const navLinks = document.getElementById("nav-links");
 
-  const headers = {
-    'apikey': cfg.SUPABASE_ANON_KEY,
-    'Authorization': 'Bearer ' + cfg.SUPABASE_ANON_KEY
-  };
-
-  function esc(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-
-  async function countRows(table) {
-    try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/' + table + '?select=id&limit=0', {
-        headers: Object.assign({}, headers, { 'Prefer': 'count=exact' })
+    if (menuToggle && navLinks) {
+      menuToggle.addEventListener("click", () => {
+        const opened = navLinks.classList.toggle("open");
+        menuToggle.setAttribute("aria-expanded", String(opened));
+        menuToggle.textContent = opened ? "✕" : "☰";
       });
-      if (!res.ok) return null;
-      const cr = res.headers.get('content-range') || '';
-      const total = cr.split('/')[1];
-      if (!total || total === '*') return null;
-      const n = parseInt(total, 10);
-      return isNaN(n) ? null : n;
-    } catch (e) { return null; }
-  }
 
-  // === STATS ===
-  try {
-    const results = await Promise.all([
-      countRows('players'), countRows('teams'), countRows('rooms'), countRows('matches')
-    ]);
-    const ids = ['live-players', 'live-teams', 'live-rooms', 'live-matches'];
-    ids.forEach(function (id, i) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const val = results[i];
-      const parent = el.closest('.home-stat');
-      if (val === null) { if (parent) parent.setAttribute('hidden', ''); }
-      else { el.setAttribute('data-count-target', String(val)); el.textContent = '0'; }
-    });
-    const section = document.getElementById('home-stats-section');
-    if (section) {
-      const visible = section.querySelectorAll('.home-stat:not([hidden])');
-      if (visible.length === 0) section.setAttribute('hidden', '');
+      navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("open");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.textContent = "☰";
+        });
+      });
     }
-  } catch (e) {}
 
-  // === JOUEURS RÉCENTS ===
-  let recent = [];
-  try {
-    const res = await fetch(
-      cfg.SUPABASE_URL + '/rest/v1/players?select=gamertag,city,game,created_at&order=created_at.desc&limit=10',
-      { headers: headers }
-    );
-    if (res.ok) recent = await res.json();
-    if (!Array.isArray(recent)) recent = [];
-  } catch (e) { recent = []; }
+    document.getElementById("current-year").textContent =
+      new Date().getFullYear();
 
-  const box = document.getElementById('live-activity');
-  if (box) {
-    if (recent.length > 0) {
-      box.innerHTML = recent.slice(0, 3).map(function (p) {
-        const time = new Date(p.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-        return '<div class="home-activity-item">' +
-          '<span>👋 <strong>' + esc(p.gamertag) + '</strong> a rejoint AfriArena' + (p.city ? ' · ' + esc(p.city) : '') + '</span>' +
-          '<span class="home-activity-time">' + time + '</span>' +
-          '</div>';
-      }).join('');
-    } else {
-      box.innerHTML = '<p class="home-empty">Sois le premier à rejoindre la communauté !</p>';
+    // Les statistiques restent indisponibles si Supabase ne répond pas.
+    async function loadCount(table, elementId) {
+      const element = document.getElementById(elementId);
+      const config = window.AFRIARENA_CONFIG;
+
+      if (!config || !config.SUPABASE_URL ||
+          !config.SUPABASE_ANON_KEY) {
+        element.textContent = "—";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          config.SUPABASE_URL +
+          "/rest/v1/" + table + "?select=*",
+          {
+            method: "HEAD",
+            headers: {
+              "apikey": config.SUPABASE_ANON_KEY,
+              "Authorization": "Bearer " + config.SUPABASE_ANON_KEY,
+              "Prefer": "count=exact",
+              "Range": "0-0"
+            }
+          }
+        );
+
+        const range = response.headers.get("content-range");
+        const match = range && range.match(/\/(\d+)$/);
+
+        element.textContent =
+          response.ok && match ? match[1] : "—";
+      } catch (error) {
+        element.textContent = "—";
+      }
     }
-  }
 
-  const tickerBox = document.getElementById('ticker-content');
-  if (tickerBox) {
-    if (recent.length > 0) {
-      const items = recent.map(function (p) {
-        return '<span>👋 <strong>' + esc(p.gamertag) + '</strong> a rejoint AfriArena' +
-          (p.city ? ' · ' + esc(p.city) : '') + (p.game ? ' · ' + esc(p.game) : '') + '</span>';
-      }).join('');
-      tickerBox.innerHTML = items + items;
-    } else {
-      tickerBox.innerHTML = '<span>La communauté AfriArena se prépare… Rejoins-nous !</span>';
+    async function loadRecentPlayers() {
+      const box = document.getElementById("ticker-content");
+      const config = window.AFRIARENA_CONFIG;
+
+      if (!config || !config.SUPABASE_URL ||
+          !config.SUPABASE_ANON_KEY) {
+        box.textContent =
+          "Les inscriptions seront affichées lorsque la connexion sera configurée.";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          config.SUPABASE_URL +
+          "/rest/v1/players?select=gamertag,city,created_at" +
+          "&order=created_at.desc&limit=5",
+          {
+            headers: {
+              "apikey": config.SUPABASE_ANON_KEY,
+              "Authorization": "Bearer " + config.SUPABASE_ANON_KEY
+            }
+          }
+        );
+
+        if (!response.ok) throw new Error("Chargement impossible");
+
+        const players = await response.json();
+        box.replaceChildren();
+
+        if (!players.length) {
+          box.textContent = "Aucun joueur inscrit pour le moment.";
+          return;
+        }
+
+        players.forEach(player => {
+          const item = document.createElement("div");
+          item.className = "activity-item";
+
+          const avatar = document.createElement("div");
+          avatar.className = "activity-avatar";
+          avatar.textContent =
+            (player.gamertag || "J").charAt(0).toUpperCase();
+
+          const info = document.createElement("div");
+          info.className = "activity-info";
+
+          const name = document.createElement("strong");
+          name.textContent = player.gamertag || "Joueur";
+
+          const details = document.createElement("span");
+          details.textContent = player.city
+            ? "Ville : " + player.city
+            : "Nouveau membre";
+
+          info.append(name, details);
+          item.append(avatar, info);
+          box.append(item);
+        });
+      } catch (error) {
+        box.textContent =
+          "Impossible de charger les inscriptions pour le moment.";
+      }
     }
-  }
 
-  const feat = document.getElementById('home-featured-players');
-  if (feat) {
-    if (recent.length > 0) {
-      feat.innerHTML = recent.slice(0, 4).map(function (p) {
-        const initial = (p.gamertag || '?').charAt(0).toUpperCase();
-        const profileUrl = 'profil.html?gamertag=' + encodeURIComponent(p.gamertag);
-        return '<a href="' + profileUrl + '" class="home-player">' +
-          '<span class="home-player-avatar">' + esc(initial) + '</span>' +
-          '<span class="home-player-info">' +
-          '<span class="home-player-name">' + esc(p.gamertag) + '</span>' +
-          '<span class="home-player-meta">' + esc(p.city || 'Afrique') + (p.game ? ' · ' + esc(p.game) : '') + '</span>' +
-          '</span>' +
-          '<span class="home-player-arrow">→</span>' +
-          '</a>';
-      }).join('');
-    } else {
-      feat.innerHTML = '<p class="home-empty">Aucun joueur pour l\'instant. <a href="connexion.html">Rejoins-nous</a>.</p>';
-    }
-  }
-})();
-</script>
+    loadCount("players", "stat-players");
+    loadCount("teams", "stat-teams");
+    loadCount("matches", "stat-matches");
+    loadRecentPlayers();
+  </script>
 
-<script src="home.js" defer></script>
+  <!-- SCRIPTS EXISTANTS -->
+  <script src="app.js"></script>
+  <script src="players-loader.js"></script>
+  <script src="auth.js"></script>
+
 </body>
 </html>
