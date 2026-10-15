@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#111217" />
+<meta name="theme-color" content="#0b0c10" />
 <title>AfriArena — La plateforme gaming africaine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,19 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <a href="index.html" class="logo">
-      <span class="logo-mark">A</span>
+      <svg class="logo-emblem" viewBox="0 0 48 48" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg-brand" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF6B35"/>
+            <stop offset="55%" stop-color="#FF8457"/>
+            <stop offset="100%" stop-color="#CC8CFF"/>
+          </linearGradient>
+        </defs>
+        <path d="M24 2 L43 11 V26 C43 37 35 44 24 46 C13 44 5 37 5 26 V11 Z" fill="url(#lg-brand)"/>
+        <path d="M17 33 L24 15 L31 33" fill="none" stroke="#0b0c10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 27 L28 27" stroke="#0b0c10" stroke-width="3" stroke-linecap="round"/>
+        <path d="M11 38 L14 34 M37 38 L34 34" stroke="#0b0c10" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+      </svg>
       <span>Afri<span class="brand">Arena</span></span>
     </a>
     <nav class="nav-links">
@@ -55,89 +67,169 @@
 
 <main>
 
-<!-- Bandeau d'activité en direct -->
 <div class="live-ticker" aria-label="Activité en direct">
   <div class="live-ticker-inner" id="ticker-content">
     <span>⚡ Chargement de l'activité…</span>
   </div>
 </div>
 
-<!-- HERO -->
-<section class="wrap home-hero">
-  <div class="home-hero-copy">
-    <span class="chip">
-      <span class="dot" style="background:var(--brand)"></span>
-      La communauté gaming africaine
-    </span>
-    <h1 class="home-hero-title">
-      L'arène des<br><span class="accent">joueurs africains</span>.
-    </h1>
-    <p class="home-hero-sub">
-      Trouve des adversaires, rejoins une équipe et fais vibrer la communauté gaming africaine — de Lomé à Accra, de Dakar à Kinshasa.
-    </p>
-    <div class="home-hero-cta">
-      <a href="adversaires.html" class="btn btn-primary home-btn-lg">⚡ Trouver un adversaire</a>
-      <a href="connexion.html" class="btn btn-outline home-btn-lg">Rejoindre la communauté</a>
-    </div>
-    <p class="home-hero-trust">✓ Gratuit · ✓ Multi-jeux · ✓ Compatible mobile</p>
-  </div>
+<!-- ===================== HERO ===================== -->
+<section class="home-hero" data-parallax>
+  <div class="home-hero-bg" aria-hidden="true"></div>
 
-  <div class="home-hero-visual" aria-hidden="true">
-    <div class="home-visual-glow"></div>
-    <div class="home-visual-ring"></div>
-    <div class="home-visual-mark"><span>A</span></div>
-    <div class="home-visual-chip home-visual-chip--1">
-      <span class="home-visual-chip-icon">🎮</span>
-      <span>Free Fire · eFootball · FC Mobile</span>
+  <div class="wrap home-hero-grid">
+
+    <div class="home-hero-copy">
+      <span class="chip reveal" data-reveal-delay="0">
+        <span class="dot" style="background:var(--brand)"></span>
+        La communauté gaming africaine
+      </span>
+      <h1 class="home-hero-title reveal" data-reveal-delay="100">
+        L'arène des<br><span class="accent">joueurs africains</span>.
+      </h1>
+      <p class="home-hero-sub reveal" data-reveal-delay="200">
+        Trouve des adversaires, rejoins une équipe et fais vibrer la scène gaming africaine — de Lomé à Accra, de Dakar à Kinshasa.
+      </p>
+      <div class="home-hero-cta reveal" data-reveal-delay="300">
+        <a href="adversaires.html" class="btn btn-primary home-btn-lg">⚡ Trouver un adversaire</a>
+        <a href="connexion.html" class="btn btn-outline home-btn-lg">Rejoindre la communauté</a>
+      </div>
+      <p class="home-hero-trust reveal" data-reveal-delay="400">
+        Gratuit · Multi-jeux · Pensé pour l'Afrique
+      </p>
     </div>
-    <div class="home-visual-chip home-visual-chip--2">
-      <span class="home-visual-chip-icon">🌍</span>
-      <span>Afrique de l'Ouest &amp; centrale</span>
+
+    <div class="home-hero-visual reveal" data-reveal-delay="250" aria-hidden="true">
+      <svg class="home-scene" viewBox="0 0 600 480" preserveAspectRatio="xMidYMid meet" data-parallax-scene>
+        <defs>
+          <radialGradient id="scene-glow-a" cx="50%" cy="60%" r="55%">
+            <stop offset="0%" stop-color="#FF6B35" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="scene-glow-b" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#CC8CFF" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#CC8CFF" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="scene-floor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF6B35" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="scene-ring" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF6B35"/>
+            <stop offset="100%" stop-color="#CC8CFF"/>
+          </linearGradient>
+        </defs>
+
+        <ellipse cx="300" cy="300" rx="260" ry="180" fill="url(#scene-glow-a)" class="scene-layer" data-parallax-speed="8"/>
+        <ellipse cx="300" cy="200" rx="220" ry="150" fill="url(#scene-glow-b)" class="scene-layer" data-parallax-speed="14"/>
+
+        <g class="scene-layer scene-beams" data-parallax-speed="4" opacity="0.55">
+          <path d="M300 60 L160 380 L180 380 Z" fill="#FF6B35" opacity="0.10"/>
+          <path d="M300 60 L440 380 L420 380 Z" fill="#CC8CFF" opacity="0.10"/>
+          <path d="M300 40 L260 380 L340 380 Z" fill="#ffffff" opacity="0.04"/>
+        </g>
+
+        <g class="scene-layer scene-arena" data-parallax-speed="10">
+          <ellipse cx="300" cy="290" rx="180" ry="60" fill="none" stroke="url(#scene-ring)" stroke-width="2" opacity="0.9" class="scene-ring-outer"/>
+          <ellipse cx="300" cy="290" rx="140" ry="46" fill="none" stroke="#FF6B35" stroke-width="1.5" opacity="0.55" class="scene-ring-mid"/>
+          <ellipse cx="300" cy="290" rx="100" ry="32" fill="none" stroke="#FF6B35" stroke-width="1" opacity="0.35" class="scene-ring-inner"/>
+          <ellipse cx="300" cy="290" rx="60" ry="20" fill="#FF6B35" opacity="0.14" class="scene-core"/>
+        </g>
+
+        <g class="scene-layer scene-floor" data-parallax-speed="6">
+          <path d="M120 380 L480 380 L560 470 L40 470 Z" fill="url(#scene-floor)"/>
+          <g stroke="#FF6B35" stroke-width="1" opacity="0.35">
+            <path d="M150 380 L90 470"/>
+            <path d="M210 380 L170 470"/>
+            <path d="M270 380 L250 470"/>
+            <path d="M330 380 L350 470"/>
+            <path d="M390 380 L430 470"/>
+            <path d="M450 380 L510 470"/>
+            <path d="M120 400 L480 400" opacity="0.6"/>
+            <path d="M105 420 L495 420" opacity="0.5"/>
+            <path d="M90 440 L510 440" opacity="0.4"/>
+            <path d="M75 460 L525 460" opacity="0.3"/>
+          </g>
+        </g>
+
+        <g class="scene-layer scene-player-left" data-parallax-speed="18" transform="translate(180,255)">
+          <path d="M-38 78 Q-38 42 -10 34 L6 34 Q30 40 32 68 Q32 78 26 78 Z" fill="#0b0c10"/>
+          <path d="M-12 34 Q-26 28 -26 8 Q-26 -12 -6 -18 Q12 -22 22 -10 Q30 -2 24 8 L14 12 Q18 20 12 24 L12 34 Z" fill="#0b0c10"/>
+          <ellipse cx="-8" cy="6" rx="9" ry="13" fill="#0b0c10"/>
+          <path d="M-8 -8 Q4 -26 20 -14" stroke="#0b0c10" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M20 -14 Q26 -4 22 6" stroke="#FF6B35" stroke-width="1.6" fill="none" opacity="0.85"/>
+          <path d="M-6 -18 Q4 -22 12 -16" stroke="#FF6B35" stroke-width="1.6" fill="none" opacity="0.85"/>
+          <path d="M-38 78 Q-36 46 -10 36" stroke="#FF6B35" stroke-width="1.2" fill="none" opacity="0.5"/>
+        </g>
+
+        <g class="scene-layer scene-player-right" data-parallax-speed="18" transform="translate(420,255)">
+          <path d="M38 78 Q38 42 10 34 L-6 34 Q-30 40 -32 68 Q-32 78 -26 78 Z" fill="#0b0c10"/>
+          <path d="M12 34 Q26 28 26 8 Q26 -12 6 -18 Q-12 -22 -22 -10 Q-30 -2 -24 8 L-14 12 Q-18 20 -12 24 L-12 34 Z" fill="#0b0c10"/>
+          <ellipse cx="8" cy="6" rx="9" ry="13" fill="#0b0c10"/>
+          <path d="M8 -8 Q-4 -26 -20 -14" stroke="#0b0c10" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M-20 -14 Q-26 -4 -22 6" stroke="#CC8CFF" stroke-width="1.6" fill="none" opacity="0.85"/>
+          <path d="M6 -18 Q-4 -22 -12 -16" stroke="#CC8CFF" stroke-width="1.6" fill="none" opacity="0.85"/>
+          <path d="M38 78 Q36 46 10 36" stroke="#CC8CFF" stroke-width="1.2" fill="none" opacity="0.5"/>
+        </g>
+
+        <g class="scene-layer scene-particles" data-parallax-speed="24">
+          <circle class="scene-particle p1" cx="120" cy="240" r="3" fill="#FF6B35"/>
+          <circle class="scene-particle p2" cx="470" cy="180" r="2.5" fill="#CC8CFF"/>
+          <circle class="scene-particle p3" cx="220" cy="120" r="2" fill="#FF8457"/>
+          <circle class="scene-particle p4" cx="380" cy="90"  r="2.5" fill="#FF6B35"/>
+          <circle class="scene-particle p5" cx="520" cy="320" r="2" fill="#CC8CFF"/>
+          <circle class="scene-particle p6" cx="80"  cy="380" r="2" fill="#FF8457"/>
+          <circle class="scene-particle p7" cx="300" cy="60"  r="2" fill="#FF6B35"/>
+        </g>
+
+        <g class="scene-layer scene-emblem" data-parallax-speed="12" transform="translate(300,205)">
+          <circle r="46" fill="#0b0c10" stroke="url(#scene-ring)" stroke-width="2"/>
+          <path d="M-22 20 L0 -20 L22 20" fill="none" stroke="#FF6B35" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M-11 6 L11 6" stroke="#FF6B35" stroke-width="4" stroke-linecap="round"/>
+        </g>
+      </svg>
     </div>
-    <div class="home-visual-chip home-visual-chip--3">
-      <span class="home-visual-chip-icon">🏆</span>
-      <span>Matchs · Équipes · Tournois</span>
-    </div>
+
   </div>
 </section>
 
-<!-- STATS -->
+<!-- ===================== STATS ===================== -->
 <section class="wrap home-stats-section" id="home-stats-section">
-  <div class="home-stats" id="home-stats">
+  <div class="home-stats reveal">
     <div class="home-stat" data-stat="players">
       <span class="home-stat-icon" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
       </span>
-      <p class="home-stat-value" id="live-players">—</p>
+      <p class="home-stat-value" id="live-players" data-count-target="0">0</p>
       <p class="home-stat-label">Joueurs inscrits</p>
     </div>
     <div class="home-stat" data-stat="teams">
       <span class="home-stat-icon" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </span>
-      <p class="home-stat-value" id="live-teams">—</p>
+      <p class="home-stat-value" id="live-teams" data-count-target="0">0</p>
       <p class="home-stat-label">Équipes créées</p>
     </div>
     <div class="home-stat" data-stat="rooms">
       <span class="home-stat-icon" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
       </span>
-      <p class="home-stat-value" id="live-rooms">—</p>
+      <p class="home-stat-value" id="live-rooms" data-count-target="0">0</p>
       <p class="home-stat-label">Rooms actives</p>
     </div>
     <div class="home-stat" data-stat="matches">
       <span class="home-stat-icon" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 5h12v14H6z"/></svg>
       </span>
-      <p class="home-stat-value" id="live-matches">—</p>
+      <p class="home-stat-value" id="live-matches" data-count-target="0">0</p>
       <p class="home-stat-label">Matchs enregistrés</p>
     </div>
   </div>
 </section>
 
-<!-- JEUX -->
+<!-- ===================== JEUX ===================== -->
 <section class="wrap home-section">
-  <header class="home-section-head">
+  <header class="home-section-head reveal">
     <div>
       <p class="label">Communautés</p>
       <h2 class="home-section-title">Rejoins ta scène.</h2>
@@ -146,48 +238,119 @@
   </header>
 
   <div class="home-games">
-    <a href="freefire.html" class="home-game" data-game="freefire">
-      <div class="home-game-art"><span class="home-game-badge">FF</span></div>
+    <a href="freefire.html" class="home-game reveal" data-game="freefire">
+      <div class="home-game-art">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
+          <defs>
+            <linearGradient id="ff-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2a1108"/>
+              <stop offset="100%" stop-color="#0b0c10"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="180" fill="url(#ff-sky)"/>
+          <circle cx="70" cy="50" r="26" fill="#FF6B35" opacity="0.35"/>
+          <path d="M40 150 Q120 90 200 130 Q260 155 320 140 L320 180 L0 180 Z" fill="#0b0c10" opacity="0.9"/>
+          <path d="M160 40 L190 70 L140 80 Z" fill="#FF6B35" opacity="0.85"/>
+          <path d="M160 40 L120 60 L150 68 Z" fill="#FF8457" opacity="0.9"/>
+          <circle cx="160" cy="52" r="6" fill="#0b0c10"/>
+          <path d="M154 48 L166 48" stroke="#0b0c10" stroke-width="1.5"/>
+        </svg>
+        <span class="home-game-badge">FF</span>
+      </div>
       <div class="home-game-body">
         <h3>Free Fire</h3>
         <p>Battle royale</p>
         <span class="home-game-link">Voir la communauté →</span>
       </div>
     </a>
-    <a href="efootball.html" class="home-game" data-game="efootball">
-      <div class="home-game-art"><span class="home-game-badge">eF</span></div>
+
+    <a href="efootball.html" class="home-game reveal" data-game="efootball">
+      <div class="home-game-art">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
+          <rect width="320" height="180" fill="#0a1420"/>
+          <path d="M160 20 L300 170 L20 170 Z" fill="#123049" opacity="0.85"/>
+          <path d="M160 20 L300 170 M160 20 L20 170 M60 130 L260 130 M100 90 L220 90 M140 55 L180 55" stroke="#78B7FF" stroke-width="1.5" opacity="0.55"/>
+          <circle cx="160" cy="110" r="14" fill="#B8F27C" opacity="0.9"/>
+          <path d="M150 110 L170 110 M160 100 L160 120" stroke="#0b0c10" stroke-width="1.5"/>
+        </svg>
+        <span class="home-game-badge">eF</span>
+      </div>
       <div class="home-game-body">
         <h3>eFootball</h3>
         <p>Football 1v1</p>
         <span class="home-game-link">Voir la communauté →</span>
       </div>
     </a>
-    <a href="fcmobile.html" class="home-game" data-game="fcmobile">
-      <div class="home-game-art"><span class="home-game-badge">FC</span></div>
+
+    <a href="fcmobile.html" class="home-game reveal" data-game="fcmobile">
+      <div class="home-game-art">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
+          <rect width="320" height="180" fill="#0f1a10"/>
+          <circle cx="160" cy="90" r="55" fill="none" stroke="#B8F27C" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="160" cy="90" r="30" fill="none" stroke="#B8F27C" stroke-width="1.5" opacity="0.7"/>
+          <circle cx="160" cy="90" r="14" fill="#B8F27C" opacity="0.9"/>
+          <path d="M152 82 L168 82 L172 96 L160 102 L148 96 Z" fill="#0b0c10" opacity="0.85"/>
+          <path d="M40 160 Q160 120 280 160" stroke="#B8F27C" stroke-width="1.5" fill="none" opacity="0.4"/>
+        </svg>
+        <span class="home-game-badge">FC</span>
+      </div>
       <div class="home-game-body">
         <h3>FC Mobile</h3>
         <p>Football mobile</p>
         <span class="home-game-link">Voir la communauté →</span>
       </div>
     </a>
-    <a href="bloodstrike.html" class="home-game" data-game="bloodstrike">
-      <div class="home-game-art"><span class="home-game-badge">BS</span></div>
+
+    <a href="bloodstrike.html" class="home-game reveal" data-game="bloodstrike">
+      <div class="home-game-art">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
+          <rect width="320" height="180" fill="#1a0f1f"/>
+          <circle cx="160" cy="90" r="50" fill="none" stroke="#CC8CFF" stroke-width="1.5" opacity="0.8"/>
+          <path d="M160 40 L160 60 M160 120 L160 140 M110 90 L130 90 M190 90 L210 90" stroke="#CC8CFF" stroke-width="2"/>
+          <circle cx="160" cy="90" r="6" fill="#CC8CFF"/>
+          <path d="M110 150 L210 150 L200 160 L120 160 Z" fill="#0b0c10"/>
+          <path d="M130 150 L140 130 L180 130 L190 150" stroke="#CC8CFF" stroke-width="1.5" fill="none" opacity="0.7"/>
+        </svg>
+        <span class="home-game-badge">BS</span>
+      </div>
       <div class="home-game-body">
         <h3>Blood Strike</h3>
         <p>FPS mobile</p>
         <span class="home-game-link">Voir la communauté →</span>
       </div>
     </a>
-    <a href="callofduty.html" class="home-game" data-game="callofduty">
-      <div class="home-game-art"><span class="home-game-badge">CD</span></div>
+
+    <a href="callofduty.html" class="home-game reveal" data-game="callofduty">
+      <div class="home-game-art">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
+          <rect width="320" height="180" fill="#1a1208"/>
+          <circle cx="160" cy="90" r="55" fill="none" stroke="#FF8457" stroke-width="1.5" opacity="0.85"/>
+          <circle cx="160" cy="90" r="38" fill="none" stroke="#FF8457" stroke-width="1" opacity="0.55"/>
+          <path d="M160 25 L160 45 M160 135 L160 155 M95 90 L115 90 M205 90 L225 90" stroke="#FF8457" stroke-width="2"/>
+          <circle cx="160" cy="90" r="3" fill="#FF8457"/>
+          <path d="M100 150 L220 150 L210 165 L110 165 Z" fill="#0b0c10" opacity="0.9"/>
+        </svg>
+        <span class="home-game-badge">CD</span>
+      </div>
       <div class="home-game-body">
         <h3>Call of Duty Mobile</h3>
         <p>FPS compétitif</p>
         <span class="home-game-link">Voir la communauté →</span>
       </div>
     </a>
-    <a href="pubg.html" class="home-game" data-game="pubg">
-      <div class="home-game-art"><span class="home-game-badge">PB</span></div>
+
+    <a href="pubg.html" class="home-game reveal" data-game="pubg">
+      <div class="home-game-art">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" class="home-game-scene">
+          <rect width="320" height="180" fill="#0a1420"/>
+          <path d="M100 60 Q160 20 220 60 L220 100 Q220 130 160 140 Q100 130 100 100 Z" fill="#78B7FF" opacity="0.25"/>
+          <path d="M110 70 Q160 40 210 70 L210 100 Q210 122 160 130 Q110 122 110 100 Z" fill="#0b0c10" opacity="0.85"/>
+          <path d="M140 60 Q160 48 180 60" stroke="#78B7FF" stroke-width="2" fill="none"/>
+          <circle cx="160" cy="100" r="8" fill="#78B7FF" opacity="0.9"/>
+          <path d="M60 160 L260 160" stroke="#78B7FF" stroke-width="1" opacity="0.5"/>
+        </svg>
+        <span class="home-game-badge">PB</span>
+      </div>
       <div class="home-game-body">
         <h3>PUBG Mobile</h3>
         <p>Battle royale</p>
@@ -197,40 +360,40 @@
   </div>
 </section>
 
-<!-- JOUEURS EN VEDETTE -->
+<!-- ===================== JOUEURS ===================== -->
 <section class="wrap home-section" id="home-players-section">
-  <header class="home-section-head">
+  <header class="home-section-head reveal">
     <div>
       <p class="label">Nouveaux joueurs</p>
       <h2 class="home-section-title">Ils viennent de rejoindre l'arène.</h2>
     </div>
     <a href="communaute.html" class="btn btn-outline btn-sm">Voir tous</a>
   </header>
-  <div class="home-players" id="home-featured-players">
+  <div class="home-players reveal" id="home-featured-players">
     <p class="home-empty">Chargement des joueurs…</p>
   </div>
 </section>
 
-<!-- COMMENT ÇA MARCHE -->
+<!-- ===================== COMMENT ÇA MARCHE ===================== -->
 <section class="wrap home-section">
-  <header class="home-section-head">
+  <header class="home-section-head reveal">
     <div>
       <p class="label">Comment ça marche</p>
       <h2 class="home-section-title">De la recherche à la victoire.</h2>
     </div>
   </header>
   <div class="home-steps">
-    <article class="home-step">
+    <article class="home-step reveal">
       <span class="home-step-num">01</span>
       <h3>Crée ton compte</h3>
       <p>Rejoins AfriArena gratuitement en quelques secondes.</p>
     </article>
-    <article class="home-step">
+    <article class="home-step reveal">
       <span class="home-step-num">02</span>
       <h3>Trouve des joueurs</h3>
       <p>Filtre par jeu, ville, mode et disponibilité.</p>
     </article>
-    <article class="home-step">
+    <article class="home-step reveal">
       <span class="home-step-num">03</span>
       <h3>Joue et progresse</h3>
       <p>Matchs, équipes et tournois — au même endroit.</p>
@@ -238,9 +401,9 @@
   </div>
 </section>
 
-<!-- ACTIVITÉ RÉCENTE -->
+<!-- ===================== ACTIVITÉ ===================== -->
 <section class="wrap home-section">
-  <div class="home-activity-card">
+  <div class="home-activity-card reveal">
     <p class="label">Dernière activité</p>
     <div id="live-activity" class="home-activity-list">
       <p class="home-empty">Chargement des activités…</p>
@@ -248,9 +411,9 @@
   </div>
 </section>
 
-<!-- WHATSAPP -->
+<!-- ===================== WHATSAPP ===================== -->
 <section class="wrap home-section">
-  <div class="wa-card">
+  <div class="wa-card reveal">
     <div class="wa-inner">
       <div>
         <span class="label home-label-positive">Canal communautaire</span>
@@ -271,7 +434,14 @@
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <a href="index.html" class="logo"><span class="logo-mark">A</span><span>Afri<span class="brand">Arena</span></span></a>
+      <a href="index.html" class="logo">
+        <svg class="logo-emblem" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 2 L43 11 V26 C43 37 35 44 24 46 C13 44 5 37 5 26 V11 Z" fill="url(#lg-brand)"/>
+          <path d="M17 33 L24 15 L31 33" fill="none" stroke="#0b0c10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M20 27 L28 27" stroke="#0b0c10" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>Afri<span class="brand">Arena</span></span>
+      </a>
       <p style="margin-top:16px;max-width:380px;font-size:14px">
         AfriArena réunit les joueurs du Togo et de toute l'Afrique autour de leurs jeux préférés.
       </p>
@@ -306,6 +476,7 @@
 <script src="admin.js"></script>
 <script src="players-loader.js"></script>
 <script src="auth.js"></script>
+
 <script>
 (async function () {
   const cfg = window.AFRIARENA_CONFIG;
@@ -318,17 +489,13 @@
 
   function esc(s) {
     return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   async function countRows(table) {
-    const qs = 'select=id&limit=0';
     try {
-      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/' + table + '?' + qs, {
+      const res = await fetch(cfg.SUPABASE_URL + '/rest/v1/' + table + '?select=id&limit=0', {
         headers: Object.assign({}, headers, { 'Prefer': 'count=exact' })
       });
       if (!res.ok) return null;
@@ -343,10 +510,7 @@
   // === STATS ===
   try {
     const results = await Promise.all([
-      countRows('players'),
-      countRows('teams'),
-      countRows('rooms'),
-      countRows('matches')
+      countRows('players'), countRows('teams'), countRows('rooms'), countRows('matches')
     ]);
     const ids = ['live-players', 'live-teams', 'live-rooms', 'live-matches'];
     ids.forEach(function (id, i) {
@@ -354,20 +518,17 @@
       if (!el) return;
       const val = results[i];
       const parent = el.closest('.home-stat');
-      if (val === null) {
-        if (parent) parent.setAttribute('hidden', '');
-      } else {
-        el.textContent = val;
-      }
+      if (val === null) { if (parent) parent.setAttribute('hidden', ''); }
+      else { el.setAttribute('data-count-target', String(val)); el.textContent = '0'; }
     });
     const section = document.getElementById('home-stats-section');
     if (section) {
       const visible = section.querySelectorAll('.home-stat:not([hidden])');
       if (visible.length === 0) section.setAttribute('hidden', '');
     }
-  } catch (e) { /* stats silencieuses en cas d'erreur */ }
+  } catch (e) {}
 
-  // === JOUEURS RÉCENTS (une seule requête) ===
+  // === JOUEURS RÉCENTS ===
   let recent = [];
   try {
     const res = await fetch(
@@ -378,7 +539,6 @@
     if (!Array.isArray(recent)) recent = [];
   } catch (e) { recent = []; }
 
-  // Activité (3 derniers)
   const box = document.getElementById('live-activity');
   if (box) {
     if (recent.length > 0) {
@@ -394,14 +554,12 @@
     }
   }
 
-  // Ticker
   const tickerBox = document.getElementById('ticker-content');
   if (tickerBox) {
     if (recent.length > 0) {
       const items = recent.map(function (p) {
         return '<span>👋 <strong>' + esc(p.gamertag) + '</strong> a rejoint AfriArena' +
-          (p.city ? ' · ' + esc(p.city) : '') +
-          (p.game ? ' · ' + esc(p.game) : '') + '</span>';
+          (p.city ? ' · ' + esc(p.city) : '') + (p.game ? ' · ' + esc(p.game) : '') + '</span>';
       }).join('');
       tickerBox.innerHTML = items + items;
     } else {
@@ -409,7 +567,6 @@
     }
   }
 
-  // Joueurs en vedette (4)
   const feat = document.getElementById('home-featured-players');
   if (feat) {
     if (recent.length > 0) {
@@ -431,5 +588,7 @@
   }
 })();
 </script>
+
+<script src="home.js" defer></script>
 </body>
 </html>
