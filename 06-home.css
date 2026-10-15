@@ -1,0 +1,539 @@
+/* ================================================================
+   AfriArena — Styles de la page d'accueil
+   Chargé APRÈS styles.css. Contient uniquement les styles propres
+   à index.html pour ne pas interférer avec les autres pages.
+   ================================================================ */
+
+[hidden] { display: none !important; }
+
+/* ================================================================
+   TICKER — déplacé depuis index.html inline
+   ================================================================ */
+.live-ticker {
+  overflow: hidden;
+  background: rgba(25, 26, 33, 0.6);
+  border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+  padding: 10px 0;
+  position: relative;
+}
+.live-ticker::before {
+  content: '● EN DIRECT';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(17, 18, 23, 0.95);
+  color: #FF6B35;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  z-index: 2;
+  border-right: 1px solid rgba(255, 107, 53, 0.2);
+}
+.live-ticker-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: tickerScroll 40s linear infinite;
+  padding-left: 100%;
+  font-size: 13px;
+  color: rgba(245, 245, 247, 0.7);
+}
+.live-ticker-inner span { display: inline-block; margin-right: 60px; }
+.live-ticker-inner strong { color: #FF6B35; font-weight: 600; }
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-ticker-inner { animation: none; padding-left: 100px; }
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+  padding-block: 48px 40px;
+}
+@media (min-width: 1024px) {
+  .home-hero {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    padding-block: 72px 64px;
+  }
+}
+.home-hero-copy { max-width: 640px; }
+
+.home-hero-title {
+  margin-top: 20px;
+  font-size: clamp(2.1rem, 8vw, 4.2rem);
+  line-height: 1.03;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: var(--ink);
+}
+.home-hero-title .accent {
+  background: linear-gradient(135deg, var(--brand), #CC8CFF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.home-hero-sub {
+  margin-top: 20px;
+  font-size: clamp(15px, 3.6vw, 17px);
+  line-height: 1.65;
+  color: var(--ink-muted);
+  max-width: 520px;
+}
+
+.home-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+.home-btn-lg {
+  padding: 14px 24px;
+  font-size: 15px;
+  border-radius: 14px;
+}
+@media (max-width: 480px) {
+  .home-hero-cta { flex-direction: column; }
+  .home-hero-cta .btn { width: 100%; }
+}
+
+.home-hero-trust {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* ================================================================
+   HERO VISUAL (illustration CSS pure, aucune image externe)
+   ================================================================ */
+.home-hero-visual {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  margin-inline: auto;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+}
+.home-visual-glow {
+  position: absolute;
+  inset: 5%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,107,53,0.55), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(204,140,255,0.35), transparent 55%);
+  filter: blur(50px);
+  z-index: 0;
+  border-radius: 50%;
+}
+.home-visual-ring {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  border: 1px solid rgba(255,107,53,0.25);
+  box-shadow: inset 0 0 60px rgba(255,107,53,0.15);
+  z-index: 1;
+}
+.home-visual-mark {
+  position: relative;
+  z-index: 2;
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #FF6B35, #FF8457 40%, #CC8CFF);
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 30px 60px -20px rgba(255,107,53,0.5),
+    0 0 0 1px rgba(255,255,255,0.06) inset;
+}
+.home-visual-mark span {
+  font-size: clamp(48px, 12vw, 88px);
+  font-weight: 700;
+  color: #0b0c10;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.home-visual-chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(25, 26, 33, 0.92);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--ink);
+  z-index: 3;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  white-space: nowrap;
+  animation: floatChip 6s ease-in-out infinite;
+}
+.home-visual-chip--1 { top: 6%; left: 2%; animation-delay: 0s; }
+.home-visual-chip--2 { top: 46%; right: -4%; animation-delay: 1.5s; }
+.home-visual-chip--3 { bottom: 4%; left: 6%; animation-delay: 3s; }
+.home-visual-chip-icon { font-size: 14px; }
+
+@keyframes floatChip {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@media (max-width: 640px) {
+  .home-visual-chip { font-size: 11px; padding: 6px 10px; }
+  .home-visual-chip--2 { right: -2%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-visual-chip { animation: none; }
+}
+
+/* ================================================================
+   STATS
+   ================================================================ */
+.home-stats-section { padding-block: 8px 40px; }
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(25,26,33,0.9), rgba(21,22,28,0.7));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+@media (min-width: 640px) {
+  .home-stats { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+}
+.home-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 8px;
+  text-align: center;
+  align-items: center;
+}
+.home-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255,107,53,0.10);
+  color: var(--brand);
+  margin-bottom: 4px;
+}
+.home-stat-value {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1;
+}
+.home-stat-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ================================================================
+   SECTIONS GÉNÉRIQUES
+   ================================================================ */
+.home-section { padding-block: 40px; }
+@media (min-width: 1024px) {
+  .home-section { padding-block: 64px; }
+}
+.home-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.home-section-title {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  margin-top: 10px;
+  letter-spacing: -0.02em;
+}
+
+/* ================================================================
+   JEUX
+   ================================================================ */
+.home-games {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 400px) {
+  .home-games { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .home-games { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+}
+
+.home-game {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 200ms ease, border-color 200ms ease;
+  color: inherit;
+}
+.home-game:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+.home-game-art {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.10), transparent 60%),
+    linear-gradient(135deg, #2a2d38, #14151b);
+  overflow: hidden;
+}
+.home-game-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 8px);
+  opacity: 0.5;
+}
+.home-game[data-game="freefire"] .home-game-art {
+  background: radial-gradient(circle at 30% 30%, rgba(255,107,53,0.35), transparent 70%), linear-gradient(135deg, #2a1a12, #14151b);
+}
+.home-game[data-game="efootball"] .home-game-art {
+  background: radial-gradient(circle at 30% 30%, rgba(120,183,255,0.35), transparent 70%), linear-gradient(135deg, #12202a, #14151b);
+}
+.home-game[data-game="fcmobile"] .home-game-art {
+  background: radial-gradient(circle at 30% 30%, rgba(184,242,124,0.30), transparent 70%), linear-gradient(135deg, #1a2412, #14151b);
+}
+.home-game[data-game="bloodstrike"] .home-game-art {
+  background: radial-gradient(circle at 30% 30%, rgba(204,140,255,0.35), transparent 70%), linear-gradient(135deg, #221a2a, #14151b);
+}
+.home-game[data-game="callofduty"] .home-game-art {
+  background: radial-gradient(circle at 30% 30%, rgba(255,132,87,0.35), transparent 70%), linear-gradient(135deg, #2a1e12, #14151b);
+}
+.home-game[data-game="pubg"] .home-game-art {
+  background: radial-gradient(circle at 30% 30%, rgba(120,183,255,0.30), transparent 70%), linear-gradient(135deg, #12202a, #14151b);
+}
+.home-game-badge {
+  position: relative;
+  z-index: 1;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(32px, 8vw, 48px);
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.04em;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+.home-game-body {
+  padding: 16px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.home-game-body h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.home-game-body p {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.02em;
+}
+.home-game-link {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--brand);
+  font-weight: 500;
+  transition: transform 200ms ease;
+  display: inline-block;
+}
+.home-game:hover .home-game-link { transform: translateX(3px); }
+
+/* ================================================================
+   JOUEURS EN VEDETTE
+   ================================================================ */
+.home-players {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 640px) {
+  .home-players { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+.home-player {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: inherit;
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+.home-player:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.home-player-avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--brand), #CC8CFF);
+  color: #0b0c10;
+  font-weight: 700;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.home-player-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-player-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-player-meta {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-player-arrow {
+  color: var(--ink-faint);
+  font-size: 16px;
+  transition: color 200ms ease, transform 200ms ease;
+}
+.home-player:hover .home-player-arrow {
+  color: var(--brand);
+  transform: translateX(3px);
+}
+
+.home-empty {
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-muted);
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+.home-empty a { color: var(--brand); text-decoration: underline; }
+
+/* ================================================================
+   COMMENT ÇA MARCHE
+   ================================================================ */
+.home-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 720px) {
+  .home-steps { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+}
+.home-step {
+  padding: 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.home-step-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--brand);
+  letter-spacing: 0.15em;
+}
+.home-step h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.home-step p {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+/* ================================================================
+   ACTIVITÉ RÉCENTE
+   ================================================================ */
+.home-activity-card {
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.home-activity-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+}
+.home-activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 13px;
+}
+.home-activity-item:last-child { border-bottom: 0; }
+.home-activity-time {
+  color: var(--ink-faint);
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   CARTE WHATSAPP — petite retouche
+   ================================================================ */
+.home-label-positive { color: var(--positive); }
+
+/* ================================================================
+   RESPONSIVE GÉNÉRAL
+   ================================================================ */
+@media (max-width: 640px) {
+  .home-section { padding-block: 32px; }
+  .home-section-head { margin-bottom: 20px; }
+  .home-activity-card { padding: 16px; }
+  .home-stat { padding: 8px 4px; }
+  }
